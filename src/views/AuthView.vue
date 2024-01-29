@@ -66,7 +66,10 @@ import Panel from 'primevue/panel';
 import InputText from 'primevue/inputtext';
 import Button from 'primevue/button';
 
-const view = ref('signup');
+import { supabaseClient } from '@/supabase/supabase-client';
+import { type SignUpWithPasswordCredentials } from '@supabase/supabase-js';
+
+const view = ref('signin');
 function toggleView() {
 	console.log('Toggle View');
 	if (view.value === 'signin') {
@@ -81,11 +84,54 @@ const password = ref('');
 const firstName = ref('');
 const lastName = ref('');
 
-function handleSignIn() {
-	console.log('Sign In');
+async function handleSignIn() {
+	try {
+		const { error } = await supabaseClient.auth.signInWithPassword({
+			email: email.value,
+			password: password.value,
+		});
+		if (error) {
+			throw error;
+		}
+		clearFormInputs();
+	} catch (error) {
+		console.error('Sign In Error', error);
+	}
 }
 
-function handleSignUp() {
-	console.log('Sign Up');
+async function handleSignUp() {
+	try {
+		let signUpObject: SignUpWithPasswordCredentials = {
+			email: email.value,
+			password: password.value,
+		};
+		if (firstName.value && lastName.value) {
+			signUpObject = {
+				...signUpObject,
+				options: {
+					data: {
+						first_name: firstName.value,
+						last_name: lastName.value,
+					},
+				},
+			};
+		}
+		console.log(signUpObject);
+
+		const { error } = await supabaseClient.auth.signUp(signUpObject);
+		if (error) {
+			throw error;
+		}
+		clearFormInputs();
+	} catch (error) {
+		console.error('Sign Up Error', error);
+	}
+}
+
+function clearFormInputs() {
+	email.value = '';
+	password.value = '';
+	firstName.value = '';
+	lastName.value = '';
 }
 </script>

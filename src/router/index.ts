@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import HomeView from '../views/HomeView.vue';
+import LayoutView from '@/views/LayoutView.vue';
 import { supabaseClient } from '@/supabase/supabase-client';
 
 const router = createRouter({
@@ -7,11 +7,17 @@ const router = createRouter({
 	routes: [
 		{
 			path: '/',
-			name: 'home',
-			component: HomeView,
-			meta: {
-				auth: true,
-			},
+			component: LayoutView,
+			children: [
+				{
+					path: '/',
+					name: 'home',
+					component: () => import('@/views/HomeView.vue'),
+					meta: {
+						auth: true,
+					},
+				},
+			],
 		},
 		{
 			path: '/auth',

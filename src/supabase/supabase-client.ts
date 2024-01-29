@@ -8,10 +8,12 @@ const supabaseClient = createClient(
 );
 
 supabaseClient.auth.onAuthStateChange((event) => {
-	// if (event === 'SIGNED_OUT') {
-	// 	router.push({ name: 'auth' });
-	// }
 	console.log(`Auth state: ${event}`);
+	if (event === 'SIGNED_IN') {
+		router.push({ name: 'home' });
+	} else if (event === 'SIGNED_OUT') {
+		router.push({ name: 'auth' });
+	}
 });
 
 export { supabaseClient };
