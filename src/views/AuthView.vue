@@ -1,5 +1,5 @@
 <template>
-	<div class="text-2xl">Home View</div>
+  <div>Auth View</div>
 </template>
 
 <script setup lang="ts"></script>
