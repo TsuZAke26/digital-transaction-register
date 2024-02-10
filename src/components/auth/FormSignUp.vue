@@ -24,6 +24,8 @@
       <span v-if="formErrors.lastName" class="text-sm text-red-500">{{ formErrors.lastName }}</span>
     </div>
 
+    <div class="w-full border border-gray-700"></div>
+
     <!-- Email Address -->
     <div class="flex flex-col gap-2">
       <Input
@@ -75,6 +77,8 @@
 import { useForm, useIsFormValid } from 'vee-validate';
 import { toTypedSchema } from '@vee-validate/yup';
 import { object, string, ref } from 'yup';
+import type { SignUpWithPasswordCredentials } from '@supabase/supabase-js';
+import { anonClient } from '@/supabase/supabase-client';
 
 import Input from '../daisy/Input.vue';
 import Button from '../daisy/Button.vue';
@@ -101,6 +105,24 @@ const [password, passwordAttrs] = defineField('password');
 const [passwordMatch, passwordMatchAttrs] = defineField('passwordMatch');
 
 const handleSignUp = async () => {
-  console.log('Sign Up');
+  try {
+    let signUpObject: SignUpWithPasswordCredentials = {
+      email: email.value as string,
+      password: password.value as string,
+      options: {
+        data: {
+          first_name: firstName.value as string,
+          last_name: lastName.value as string
+        }
+      }
+    };
+
+    const { error } = await anonClient.auth.signUp(signUpObject);
+    if (error) {
+      throw error;
+    }
+  } catch (error) {
+    console.error('Sign Up Error', error);
+  }
 };
 </script>
