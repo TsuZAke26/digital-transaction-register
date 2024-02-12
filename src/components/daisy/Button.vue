@@ -1,10 +1,9 @@
 <template>
-  <button class="w-full max-w-xs btn" @click="$emit('click')">{{ label }}</button>
+  <button class="btn" @click="$emit('click')">
+    <slot></slot>
+  </button>
 </template>
 
 <script setup lang="ts">
-defineProps({
-  label: String
-});
 defineEmits(['click']);
 </script>

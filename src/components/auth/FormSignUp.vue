@@ -24,7 +24,7 @@
       <span v-if="formErrors.lastName" class="text-sm text-red-500">{{ formErrors.lastName }}</span>
     </div>
 
-    <div class="w-full border border-gray-700"></div>
+    <div class="w-full border border-gray-400"></div>
 
     <!-- Email Address -->
     <div class="flex flex-col gap-2">
@@ -64,12 +64,9 @@
       }}</span>
     </div>
 
-    <Button
-      label="Sign Up"
-      @click="handleSignUp"
-      class="btn-primary"
-      :class="!isFormValid ? 'btn-disabled' : ''"
-    />
+    <Button @click="handleSignUp" class="btn-primary" :class="!isFormValid ? 'btn-disabled' : ''">
+      Sign Up
+    </Button>
   </div>
 </template>
 

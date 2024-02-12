@@ -24,12 +24,9 @@
       <span v-if="formErrors.password" class="text-sm text-red-500">{{ formErrors.password }}</span>
     </div>
 
-    <Button
-      label="Sign In"
-      @click="handleSignIn"
-      class="btn-primary"
-      :class="!isFormValid ? 'btn-disabled' : ''"
-    />
+    <Button @click="handleSignIn" class="btn-primary" :class="!isFormValid ? 'btn-disabled' : ''">
+      Sign In
+    </Button>
   </div>
 </template>
 
