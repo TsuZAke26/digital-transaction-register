@@ -39,7 +39,11 @@ import { formatDate, formatAmount } from '@/util/transaction-utils';
 import Card from '@/components/daisy/Card.vue';
 
 const accountsStore = useAccountsStore();
-const { accountPreviews } = accountsStore;
+const { accountPreviews, getAccountPreviews } = accountsStore;
+
+setTimeout(async () => {
+  await getAccountPreviews();
+}, 3000);
 
 const handleAccountCardClick = (accountId: number) => {
   console.log(`Account id: ${accountId}`);
