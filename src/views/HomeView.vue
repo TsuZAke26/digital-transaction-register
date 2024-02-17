@@ -5,7 +5,7 @@
       :key="preview.id"
       :title="preview.name"
       class="w-full border shadow-none cursor-pointer"
-      @click="handleAccountCardClick(preview.id)"
+      @click="handleAccountPreviewCardClick(preview.id)"
     >
       <template #body>
         <div v-if="preview.transactions.length" class="flex flex-col gap-4">
@@ -32,11 +32,14 @@
 </template>
 
 <script setup lang="ts">
-import { useAccountsStore } from '@/stores/accounts';
+import { useRouter } from 'vue-router';
 
+import { useAccountsStore } from '@/stores/accounts';
 import { formatDate, formatAmount } from '@/util/transaction-utils';
 
 import Card from '@/components/daisy/Card.vue';
+
+const router = useRouter();
 
 const accountsStore = useAccountsStore();
 const { accountPreviews, getAccountPreviews } = accountsStore;
@@ -45,7 +48,12 @@ setTimeout(async () => {
   await getAccountPreviews();
 }, 3000);
 
-const handleAccountCardClick = (accountId: number) => {
-  console.log(`Account id: ${accountId}`);
+const handleAccountPreviewCardClick = (accountId: number) => {
+  router.push({
+    name: 'account',
+    params: {
+      id: accountId
+    }
+  });
 };
 </script>

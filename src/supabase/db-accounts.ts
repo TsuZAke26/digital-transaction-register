@@ -1,13 +1,12 @@
 import { anonClient } from './supabase-client';
-import type { Accounts } from '@/types/db-tables';
-
-import type { AccountPreview } from '@/types/account-preview';
+import type { Accounts } from '@/types/supabase/db-tables';
+import type { AccountPreview } from '@/types/ui/account-preview';
 
 export async function fetchAccountPreviews(): Promise<AccountPreview[]> {
   // try {
   //   const { data: accounts_data, error: accounts_error } = await anonClient
   //     .from('accounts')
-  //     .select();
+  //     .select('id, name, account_type');
   //   if (accounts_error) {
   //     throw accounts_error;
   //   }
@@ -52,10 +51,29 @@ export async function fetchAccountPreviews(): Promise<AccountPreview[]> {
   ];
 }
 
-function _transformToAccountPreview(accountRow: Accounts): AccountPreview {
-  return {
-    id: accountRow.id,
-    name: accountRow.name,
-    transactions: []
-  };
+export async function fetchAccounts(): Promise<Accounts[]> {
+  // let result: Accounts[] = [];
+  // try {
+  //   const { data: accounts_data, error: accounts_error } = await anonClient
+  //     .from('accounts')
+  //     .select();
+  //   if (accounts_error) {
+  //     throw accounts_error;
+  //   }
+  //   result = accounts_data;
+  // } catch (error) {
+  //   console.error(error);
+  // }
+  // return result;
+
+  return [
+    {
+      account_type: 'Checking',
+      balance: 1.23,
+      created_at: '2024-02-16',
+      id: 1,
+      name: 'Checking Account 1',
+      user_id: '21476b83-c5fa-4cfc-8f16-05cfce647538'
+    }
+  ];
 }

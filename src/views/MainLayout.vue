@@ -1,7 +1,7 @@
 <template>
   <div class="drawer">
     <!-- Drawer toggle control -->
-    <input id="app-drawer" type="checkbox" class="drawer-toggle" />
+    <input ref="drawerToggle" id="app-drawer" type="checkbox" class="drawer-toggle" />
 
     <!-- Drawer "Content" -->
     <div class="flex flex-col drawer-content">
@@ -31,7 +31,7 @@
           <div class="flex-none hidden md:block">
             <ul class="menu menu-horizontal">
               <!-- Navbar menu content here -->
-              <li><a>My Accounts</a></li>
+              <li @click="router.push({ name: 'accounts' })"><a>My Accounts</a></li>
               <li @click="handleSignOut"><a>Sign Out</a></li>
             </ul>
           </div>
@@ -49,7 +49,9 @@
       <label for="app-drawer" aria-label="close sidebar" class="drawer-overlay"></label>
       <ul class="min-h-full p-4 w-60 menu bg-base-200">
         <!-- Drawer content here -->
-        <li><a>My Accounts</a></li>
+        <li @click="handleMenuItemClick('home')"><a>Home</a></li>
+        <li @click="handleMenuItemClick('accounts')"><a>My Accounts</a></li>
+        <div class="w-full my-2 border border-neutral-300"></div>
         <li @click="handleSignOut"><a>Sign Out</a></li>
       </ul>
     </div>
@@ -57,11 +59,20 @@
 </template>
 
 <script setup lang="ts">
-import { RouterView } from 'vue-router';
+import { ref, type Ref } from 'vue';
+import { RouterView, useRouter } from 'vue-router';
 
 import { anonClient } from '@/supabase/supabase-client';
 
 import Navbar from '@/components/daisy/Navbar.vue';
+
+const router = useRouter();
+
+const drawerToggle: Ref<HTMLInputElement | null> = ref(null);
+function handleMenuItemClick(routeName: string) {
+  router.push({ name: routeName });
+  drawerToggle.value?.click();
+}
 
 const handleSignOut = async () => {
   try {

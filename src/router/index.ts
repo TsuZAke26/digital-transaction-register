@@ -18,12 +18,29 @@ const router = createRouter({
       component: MainLayout,
       children: [
         {
-          path: '/',
+          path: '',
           name: 'home',
           component: () => import('@/views/HomeView.vue'),
           meta: {
             auth: true
           }
+        },
+        {
+          path: 'accounts',
+          name: 'accounts',
+          component: () => import('@/views/AccountsView.vue'),
+          meta: {
+            auth: true
+          }
+        },
+        {
+          path: 'accounts/:id',
+          name: 'account',
+          component: () => import('@/views/accounts/AccountView.vue'),
+          meta: {
+            auth: true
+          },
+          props: true
         }
       ]
     }

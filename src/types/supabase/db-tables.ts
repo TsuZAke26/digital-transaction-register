@@ -5,7 +5,7 @@ export type Accounts = {
   balance: number;
   created_at: string;
   id: number;
-  max_balance: number;
+  max_balance?: number;
   name: string;
   user_id: string;
 };
