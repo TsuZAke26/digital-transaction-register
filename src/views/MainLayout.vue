@@ -1,4 +1,6 @@
 <template>
+  <Progress v-show="showProgress" class="fixed top-0 left-0 right-0" />
+
   <div class="drawer">
     <!-- Drawer toggle control -->
     <input ref="drawerToggle" id="app-drawer" type="checkbox" class="drawer-toggle" />
@@ -67,8 +69,10 @@ import { ref, type Ref } from 'vue';
 import { RouterView, useRouter } from 'vue-router';
 
 import { anonClient } from '@/supabase/supabase-client';
+import { useAppStore } from '@/stores/app';
 
 import Navbar from '@/components/daisy/Navbar.vue';
+import Progress from '@/components/app/Progress.vue';
 
 const router = useRouter();
 
@@ -77,6 +81,9 @@ function handleMenuItemClick(routeName: string) {
   router.push({ name: routeName });
   drawerToggle.value?.click();
 }
+
+const appStore = useAppStore();
+const { showProgress } = appStore;
 
 const handleSignOut = async () => {
   try {

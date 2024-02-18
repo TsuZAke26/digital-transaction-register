@@ -28,13 +28,21 @@
       </template>
     </Card>
   </div>
-  <div v-else class="text-xl font-semibold text-center">No accounts exist yet :(</div>
+  <div
+    v-else-if="showProgress && !accountPreviews.length"
+    class="text-xl font-semibold text-center"
+  >
+    <!-- Replace with Skeletons -->
+    Loading account previews...
+  </div>
 </template>
 
 <script setup lang="ts">
 import { useRouter } from 'vue-router';
 
 import { useAccountsStore } from '@/stores/accounts';
+import { useAppStore } from '@/stores/app';
+
 import { formatDate, formatAmount } from '@/util/transaction-utils';
 
 import Card from '@/components/daisy/Card.vue';
@@ -44,9 +52,13 @@ const router = useRouter();
 const accountsStore = useAccountsStore();
 const { accountPreviews, getAccountPreviews } = accountsStore;
 
-setTimeout(async () => {
-  await getAccountPreviews();
-}, 3000);
+const appStore = useAppStore();
+const { showProgress, startGradualProgress, stopGradualProgress } = appStore;
+startGradualProgress();
+getAccountPreviews().finally(() => {
+  stopGradualProgress();
+  console.log('finish');
+});
 
 const handleAccountPreviewCardClick = (accountId: number) => {
   router.push({
