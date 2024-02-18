@@ -1,7 +1,7 @@
 <template>
   <select
     class="w-full select select-bordered"
-    @input="$emit('update:modelValue', $event.target.value)"
+    @input="$emit('update:modelValue', ($event.target as HTMLSelectElement).value)"
   >
     <option disabled selected>{{ placeholder }}</option>
     <option v-for="value in values" :key="value">{{ value }}</option>

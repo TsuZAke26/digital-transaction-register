@@ -5,13 +5,13 @@
     :value="modelValue"
     class="w-full input input-bordered"
     @blur="$emit('blur')"
-    @input="$emit('update:modelValue', $event.target.value)"
+    @input="$emit('update:modelValue', ($event.target as HTMLInputElement).value)"
   />
 </template>
 
 <script setup lang="ts">
 defineProps({
-  modelValue: String,
+  modelValue: [String, Number],
   placeholder: String,
   type: {
     type: String,

@@ -109,8 +109,8 @@ const { addAccount } = accountsStore;
 const handleNewAccount = async () => {
   // TODO: turn on loading state
   const result = await addAccount({
-    name: name.value,
-    accountType: accountType.value,
+    name: name.value as string,
+    accountType: accountType.value as 'Checking' | 'Savings' | 'Credit Line',
     maxBalance: maxBalance.value
   });
   if (result === true) {
