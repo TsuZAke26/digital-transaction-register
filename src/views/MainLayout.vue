@@ -8,7 +8,11 @@
       <!-- Navbar -->
       <Navbar class="fixed top-0 left-0 right-0 z-10 bg-base-300">
         <template #start>
-          <label for="app-drawer" aria-label="open sidebar" class="btn btn-square btn-ghost">
+          <label
+            for="app-drawer"
+            aria-label="open sidebar"
+            class="md:hidden btn btn-square btn-ghost"
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
