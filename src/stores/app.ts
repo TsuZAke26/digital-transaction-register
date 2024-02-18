@@ -1,37 +1,18 @@
+import { ref } from 'vue';
 import { acceptHMRUpdate, defineStore } from 'pinia';
-import { computed, ref } from 'vue';
 
 export const useAppStore = defineStore('app', () => {
-  const progressValue = ref(0);
-  const showProgress = computed(() => {
-    return progressValue.value > 0;
-  });
-  function setProgress(value: number) {
-    progressValue.value = value;
+  const isLoading = ref(false);
+  function startLoading() {
+    console.log('startLoading()');
+    isLoading.value = true;
+  }
+  function stopLoading() {
+    console.log('stopLoading()');
+    isLoading.value = false;
   }
 
-  let gradualTimeout: NodeJS.Timeout;
-  function startGradualProgress() {
-    console.log('startGradualProgress()');
-
-    gradualTimeout = setInterval(() => {
-      if (progressValue.value < 105) {
-        progressValue.value += Math.random();
-      }
-    }, 250);
-  }
-
-  function stopGradualProgress() {
-    console.log('stopGradualProgress()');
-
-    clearInterval(gradualTimeout);
-
-    progressValue.value = 100;
-
-    setTimeout(() => (progressValue.value = 0), 2500);
-  }
-
-  return { progressValue, showProgress, setProgress, startGradualProgress, stopGradualProgress };
+  return { isLoading, startLoading, stopLoading };
 });
 
 if (import.meta.hot) {

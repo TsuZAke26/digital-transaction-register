@@ -1,5 +1,5 @@
 <template>
-  <Progress v-show="showProgress" class="fixed top-0 left-0 right-0" />
+  <Progress v-show="isLoading" class="fixed top-0 left-0 right-0 z-20" />
 
   <div class="drawer">
     <!-- Drawer toggle control -->
@@ -83,7 +83,7 @@ function handleMenuItemClick(routeName: string) {
 }
 
 const appStore = useAppStore();
-const { showProgress } = appStore;
+const { isLoading } = appStore;
 
 const handleSignOut = async () => {
   try {

@@ -7,15 +7,11 @@ import type { Accounts } from '@/types/supabase/db-tables';
 import type { NewAccount } from '@/types/ui/accounts';
 import { fetchAccountPreviews, fetchAccounts, insertAccount } from '@/supabase/db-accounts';
 
-// import { useProgress } from '@/composables/progress';
-
 const toast = useToast();
-// const { startGradualProgress, stopGradualProgress } = useProgress();
 
 export const useAccountsStore = defineStore('accounts', () => {
   const accountPreviews: Ref<AccountPreview[]> = ref([]);
   async function getAccountPreviews() {
-    // startGradualProgress();
     const fetchedAccountPreviews = await fetchAccountPreviews();
     if (fetchedAccountPreviews) {
       fetchedAccountPreviews.forEach((fetchedAccountPreview) => {
@@ -28,7 +24,6 @@ export const useAccountsStore = defineStore('accounts', () => {
         }
       });
     }
-    // stopGradualProgress();
   }
 
   const accounts: Ref<Accounts[]> = ref([]);
