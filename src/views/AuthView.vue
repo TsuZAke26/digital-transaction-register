@@ -2,7 +2,7 @@
   <div class="container flex flex-col items-center justify-center min-h-screen gap-8 p-4 mx-auto">
     <div class="text-2xl">Digital Transaction Register</div>
     <div class="">
-      <Card :title="cardTitle" class="border border-neutral-300">
+      <Card :title="cardTitle" class="border">
         <template #body>
           <div v-if="view === 'signin'" class="mt-4">
             <FormSignIn />

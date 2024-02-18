@@ -1,23 +1,29 @@
 import { ref, type Ref } from 'vue';
 import { defineStore } from 'pinia';
+import { useToast, POSITION } from 'vue-toastification';
 
 import type { AccountPreview } from '@/types/ui/account-preview';
-import { fetchAccountPreviews, fetchAccounts } from '@/supabase/db-accounts';
 import type { Accounts } from '@/types/supabase/db-tables';
+import type { NewAccount } from '@/types/ui/accounts';
+import { fetchAccountPreviews, fetchAccounts, insertAccount } from '@/supabase/db-accounts';
+
+const toast = useToast();
 
 export const useAccountsStore = defineStore('accounts', () => {
   const accountPreviews: Ref<AccountPreview[]> = ref([]);
   async function getAccountPreviews() {
     const fetchedAccountPreviews = await fetchAccountPreviews();
-    fetchedAccountPreviews.forEach((fetchedAccountPreview) => {
-      if (
-        !accountPreviews.value.find(
-          (existingPreview) => existingPreview.id === fetchedAccountPreview.id
-        )
-      ) {
-        accountPreviews.value.push(fetchedAccountPreview);
-      }
-    });
+    if (fetchedAccountPreviews) {
+      fetchedAccountPreviews.forEach((fetchedAccountPreview) => {
+        if (
+          !accountPreviews.value.find(
+            (existingPreview) => existingPreview.id === fetchedAccountPreview.id
+          )
+        ) {
+          accountPreviews.value.push(fetchedAccountPreview);
+        }
+      });
+    }
   }
 
   const accounts: Ref<Accounts[]> = ref([]);
@@ -29,5 +35,17 @@ export const useAccountsStore = defineStore('accounts', () => {
       }
     });
   }
-  return { accountPreviews, getAccountPreviews, accounts, getAccounts };
+  async function addAccount(data: NewAccount): Promise<boolean> {
+    const newAccount = await insertAccount(data);
+    if (newAccount) {
+      accounts.value.push(newAccount);
+      toast.success('Account creation successful');
+      return true;
+    } else {
+      toast.error('Account creation failed');
+      return false;
+    }
+  }
+
+  return { accountPreviews, getAccountPreviews, accounts, getAccounts, addAccount };
 });

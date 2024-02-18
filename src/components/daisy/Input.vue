@@ -3,7 +3,7 @@
     :placeholder="placeholder"
     :type="type"
     :value="modelValue"
-    class="w-full max-w-xs input input-bordered"
+    class="w-full input input-bordered"
     @blur="$emit('blur')"
     @input="$emit('update:modelValue', $event.target.value)"
   />

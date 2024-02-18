@@ -1,5 +1,11 @@
 import type { Database } from './supabase';
 
+export const AccountTypes = {
+  CHECKING: 'Checking',
+  SAVINGS: 'Savings',
+  CREDIT_LINE: 'Credit Line'
+};
+
 export type Accounts = {
   account_type: Database['public']['Enums']['account_type'];
   balance: number;
