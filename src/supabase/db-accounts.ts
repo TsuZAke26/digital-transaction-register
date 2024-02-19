@@ -37,6 +37,22 @@ export async function fetchAccounts(): Promise<Accounts[]> {
   return result;
 }
 
+export async function fetchAccountById(id: number): Promise<Accounts | undefined> {
+  try {
+    const { data: accounts_data, error: accounts_error } = await anonClient
+      .from('accounts')
+      .select()
+      .eq('id', id)
+      .single();
+    if (accounts_error) {
+      throw accounts_error;
+    }
+    return accounts_data as Accounts;
+  } catch (error) {
+    console.error('Fetch Accounts Error: ', error);
+  }
+}
+
 export async function insertAccount(data: NewAccount): Promise<Accounts | undefined> {
   try {
     const userId = (await anonClient.auth.getSession()).data.session?.user.id;
