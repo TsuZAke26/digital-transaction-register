@@ -3,7 +3,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 import { anonClient } from '@/supabase/supabase-client';
 
 import AuthView from '@/views/AuthView.vue';
-import MainLayout from '@/views/MainLayout.vue';
+import MainLayout from '@/layouts/MainLayout.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),

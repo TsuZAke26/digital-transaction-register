@@ -1,5 +1,7 @@
 <template>
   <div class="space-y-4">
+    <NewAccount />
+
     <Suspense>
       <MyAccounts />
 
@@ -9,8 +11,6 @@
         </div>
       </template>
     </Suspense>
-
-    <NewAccount />
   </div>
 </template>
 

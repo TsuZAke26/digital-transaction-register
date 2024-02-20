@@ -9,7 +9,8 @@ import {
   fetchAccountById,
   fetchAccountPreviews,
   fetchAccounts,
-  insertAccount
+  insertAccount,
+  updateAccountBalance
 } from '@/supabase/db-accounts';
 
 const toast = useToast();
@@ -63,6 +64,18 @@ export const useAccountsStore = defineStore('accounts', () => {
       return false;
     }
   }
+  async function refreshAccountBalance(accountId: number) {
+    const updatedAccount = await updateAccountBalance(accountId);
+    if (updatedAccount) {
+      const accountIndex = accounts.value.findIndex(
+        (existingAccount) => accountId === existingAccount.id
+      );
+      if (accountIndex) {
+        console.log('refreshAccountBalance(): matching account found');
+        accounts.value[accountIndex].balance = updatedAccount.balance;
+      }
+    }
+  }
 
   return {
     accountPreviews,
@@ -71,6 +84,7 @@ export const useAccountsStore = defineStore('accounts', () => {
     findAccountInStore,
     getAccounts,
     getAccountById,
-    addAccount
+    addAccount,
+    refreshAccountBalance
   };
 });

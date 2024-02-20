@@ -107,7 +107,6 @@ const emit = defineEmits(['close']);
 const accountsStore = useAccountsStore();
 const { addAccount } = accountsStore;
 const handleNewAccount = async () => {
-  // TODO: turn on loading state
   const result = await addAccount({
     name: name.value as string,
     accountType: accountType.value as 'Checking' | 'Savings' | 'Credit Line',
@@ -116,6 +115,5 @@ const handleNewAccount = async () => {
   if (result === true) {
     emit('close');
   }
-  // TODO: turn off loading state
 };
 </script>

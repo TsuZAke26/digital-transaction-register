@@ -1,7 +1,6 @@
-export interface Transaction {
-  id: number;
-  accountId: number;
+export interface NewTransaction {
   name: string;
   date: string;
   amount: number;
+  accountId: number;
 }

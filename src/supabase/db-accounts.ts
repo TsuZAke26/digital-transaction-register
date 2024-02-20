@@ -57,7 +57,7 @@ export async function insertAccount(data: NewAccount): Promise<Accounts | undefi
   try {
     const userId = (await anonClient.auth.getSession()).data.session?.user.id;
     if (!userId) {
-      throw new Error('User is not authenticated, abort new account creartion');
+      throw new Error('User is not authenticated, abort new account creation');
     }
 
     const { data: accounts_data, error: accounts_error } = await anonClient
@@ -77,5 +77,42 @@ export async function insertAccount(data: NewAccount): Promise<Accounts | undefi
     return accounts_data[0] as Accounts;
   } catch (error) {
     console.error('Add Account Error: ', error);
+  }
+}
+
+export async function updateAccountBalance(accountId: number) {
+  try {
+    const userId = (await anonClient.auth.getSession()).data.session?.user.id;
+    if (!userId) {
+      throw new Error('User is not authenticated, abort account balance update');
+    }
+
+    const { data: transactions_data, error: transactions_error } = await anonClient
+      .from('transactions')
+      .select('amount')
+      .eq('account_id', accountId);
+    if (transactions_error) {
+      throw transactions_error;
+    }
+
+    const initialValue = 0.0;
+    const newBalance = transactions_data.reduce(
+      (accumulator, currentValue) => accumulator + currentValue.amount,
+      initialValue
+    );
+    const correctedBalance = newBalance.toFixed(2);
+
+    const { data: accounts_data, error: accounts_error } = await anonClient
+      .from('accounts')
+      .update({ balance: Number.parseFloat(correctedBalance) })
+      .eq('id', accountId)
+      .select();
+    if (accounts_error) {
+      throw accounts_error;
+    }
+
+    return accounts_data[0] as Accounts;
+  } catch (error) {
+    console.error('Update Account Balance Error: ', error);
   }
 }

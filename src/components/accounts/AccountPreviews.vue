@@ -8,7 +8,7 @@
       @click="handleAccountPreviewCardClick(preview.id)"
     >
       <template #body>
-        <div v-if="preview.transactions.length" class="flex flex-col gap-4">
+        <!-- <div v-if="preview.transactions.length" class="flex flex-col gap-4">
           <div
             v-for="transaction in preview.transactions"
             :key="transaction.id"
@@ -24,7 +24,8 @@
             </span>
           </div>
         </div>
-        <div v-else>No transactions yet</div>
+        <div v-else>No transactions yet</div> -->
+        <div class="text-4xl font-bold text-end">{{ formatBalance(preview.balance) }}</div>
       </template>
     </Card>
   </div>
@@ -35,7 +36,7 @@ import { useRouter } from 'vue-router';
 
 import { useAccountsStore } from '@/stores/accounts';
 
-import { formatDate, formatAmount } from '@/util/transaction-utils';
+import { formatBalance } from '@/util/account-utils';
 
 import Card from '@/components/daisy/Card.vue';
 
