@@ -1,4 +1,4 @@
-import { ref, type Ref } from 'vue';
+import { computed, ref, type Ref } from 'vue';
 import { defineStore } from 'pinia';
 import { useToast } from 'vue-toastification';
 
@@ -33,9 +33,9 @@ export const useAccountsStore = defineStore('accounts', () => {
   }
 
   const accounts: Ref<Accounts[]> = ref([]);
-  function findAccountInStore(id: number) {
-    return accounts.value.find((storeAccount) => id === storeAccount.id);
-  }
+  const findAccountInStore = computed(() => {
+    return (id: number) => accounts.value.find((storeAccount) => id === storeAccount.id);
+  });
   async function getAccounts() {
     const fetchedAccounts = await fetchAccounts();
     fetchedAccounts.forEach((fetchedAccount) => {
