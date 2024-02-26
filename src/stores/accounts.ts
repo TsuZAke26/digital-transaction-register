@@ -2,16 +2,14 @@ import { computed, ref, type Ref } from 'vue';
 import { defineStore } from 'pinia';
 import { useToast } from 'vue-toastification';
 
-import type { AccountPreview } from '@/types/ui/account-preview';
-import type { Accounts } from '@/types/supabase/db-tables';
-import type { NewAccount } from '@/types/ui/accounts';
+import type { AccountPreview, NewAccount } from '@/types/ui-types';
 import {
   fetchAccountById,
   fetchAccountPreviews,
   fetchAccounts,
-  insertAccount,
-  updateAccountBalance
+  insertAccount
 } from '@/supabase/db-accounts';
+import type { Database } from '@/types/supabase';
 
 const toast = useToast();
 
@@ -32,13 +30,13 @@ export const useAccountsStore = defineStore('accounts', () => {
     }
   }
 
-  const accounts: Ref<Accounts[]> = ref([]);
+  const accounts: Ref<Database['public']['Tables']['accounts']['Row'][]> = ref([]);
   const findAccountInStore = computed(() => {
     return (id: number) => accounts.value.find((storeAccount) => id === storeAccount.id);
   });
   async function getAccounts() {
     const fetchedAccounts = await fetchAccounts();
-    fetchedAccounts.forEach((fetchedAccount) => {
+    fetchedAccounts?.forEach((fetchedAccount) => {
       if (!accounts.value.find((existingAccount) => existingAccount.id === fetchedAccount.id)) {
         accounts.value.push(fetchedAccount);
       }
@@ -65,16 +63,7 @@ export const useAccountsStore = defineStore('accounts', () => {
     }
   }
   async function refreshAccountBalance(accountId: number) {
-    const updatedAccount = await updateAccountBalance(accountId);
-    if (updatedAccount) {
-      const accountIndex = accounts.value.findIndex(
-        (existingAccount) => accountId === existingAccount.id
-      );
-      if (accountIndex) {
-        console.log('refreshAccountBalance(): matching account found');
-        accounts.value[accountIndex].balance = updatedAccount.balance;
-      }
-    }
+    console.log('refreshAccountBalance()');
   }
 
   return {

@@ -2,7 +2,7 @@ import '@/assets/style.css';
 
 import { createApp } from 'vue';
 import { createPinia } from 'pinia';
-import { configure } from 'vee-validate';
+// import { configure } from 'vee-validate';
 import Toast, { POSITION, type PluginOptions } from 'vue-toastification';
 import 'vue-toastification/dist/index.css';
 
@@ -21,12 +21,12 @@ anonClient.auth.onAuthStateChange((event) => {
 });
 
 // vee-validate configuration
-configure({
-  validateOnBlur: true,
-  validateOnChange: true,
-  validateOnInput: false,
-  validateOnModelUpdate: false
-});
+// configure({
+//   validateOnBlur: true,
+//   validateOnChange: true,
+//   validateOnInput: false,
+//   validateOnModelUpdate: false
+// });
 
 // vue-toastification config
 const toastOptions: PluginOptions = {

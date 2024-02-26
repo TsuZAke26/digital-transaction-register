@@ -25,7 +25,7 @@
           </div>
         </div>
         <div v-else>No transactions yet</div> -->
-        <div class="text-4xl font-bold text-end">{{ formatBalance(preview.balance) }}</div>
+        <div class="text-4xl font-bold text-end">{{ formatCurrency(preview.balance) }}</div>
       </template>
     </Card>
   </div>
@@ -36,7 +36,7 @@ import { useRouter } from 'vue-router';
 
 import { useAccountsStore } from '@/stores/accounts';
 
-import { formatBalance } from '@/util/account-utils';
+import { formatCurrency } from '@/util/format-utils';
 
 import Card from '@/components/daisy/Card.vue';
 

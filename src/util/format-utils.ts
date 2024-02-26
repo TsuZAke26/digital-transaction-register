@@ -1,11 +1,13 @@
-export function formatDate(dateStr: string) {
+export function formatTransactionDate(dateStr: string) {
   const dateDelim = dateStr.split('-');
 
   return dateDelim[1].concat('/').concat(dateDelim[2]);
 }
 
-export function formatAmount(amount: number) {
-  const prefixChar = amount < 0 ? '-' : '+';
+export function formatCurrency(amount: number) {
+  if (amount === undefined) return 0;
+
+  const prefixChar = amount < 0 ? '-' : '';
 
   // Determine number of trailing zeros to add for rendering
   const amountDelim = amount.toString().split('.');

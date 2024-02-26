@@ -2,14 +2,14 @@ import { ref, type Ref } from 'vue';
 import { defineStore } from 'pinia';
 import { useToast } from 'vue-toastification';
 
-import type { Transactions } from '@/types/supabase/db-tables';
 import { fetchTransactionsByAccountId, insertTransaction } from '@/supabase/db-transactions';
-import type { NewTransaction } from '@/types/ui/transaction';
+import type { NewTransaction } from '@/types/ui-types';
+import type { Database } from '@/types/supabase';
 
 const toast = useToast();
 
 export const useTransactionsStore = defineStore('transactions', () => {
-  const transactions: Ref<Transactions[]> = ref([]);
+  const transactions: Ref<Database['public']['Tables']['transactions']['Row'][]> = ref([]);
   function transactionsByAccount(accountId: number) {
     return transactions.value
       .filter((storeTransaction) => accountId === storeTransaction.account_id)

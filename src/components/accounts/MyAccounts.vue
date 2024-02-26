@@ -18,7 +18,7 @@
             class="text-3xl font-bold text-right"
             :class="account.balance < 0 ? 'text-red-500' : null"
           >
-            {{ formatBalance(account.balance) }}
+            {{ formatCurrency(account.balance) }}
           </span>
         </div>
       </template>
@@ -31,7 +31,7 @@ import { useRouter } from 'vue-router';
 
 import { useAccountsStore } from '@/stores/accounts';
 
-import { formatBalance } from '@/util/account-utils';
+import { formatCurrency } from '@/util/format-utils';
 
 import Card from '@/components/daisy/Card.vue';
 

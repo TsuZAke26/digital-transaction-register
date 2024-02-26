@@ -12,7 +12,7 @@
 <script setup lang="ts">
 import { type Ref, ref } from 'vue';
 import { useAccountsStore } from '@/stores/accounts';
-import type { Accounts } from '@/types/supabase/db-tables';
+import type { Database } from '@/types/supabase';
 
 import Card from '../daisy/Card.vue';
 
@@ -28,7 +28,7 @@ const accountId = Number.parseInt(props.id);
 const accountsStore = useAccountsStore();
 const { getAccountById, findAccountInStore } = accountsStore;
 
-const account: Ref<Accounts | undefined> = ref(undefined);
+const account: Ref<Database['public']['Tables']['accounts']['Row'] | undefined> = ref(undefined);
 await getAccountById(accountId);
 account.value = findAccountInStore(accountId);
 </script>

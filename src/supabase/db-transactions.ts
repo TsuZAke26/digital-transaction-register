@@ -1,6 +1,5 @@
-import type { NewTransaction } from '@/types/ui/transaction';
 import { anonClient } from './supabase-client';
-import type { Transactions } from '@/types/supabase/db-tables';
+import type { NewTransaction } from '@/types/ui-types';
 
 export async function fetchTransactionsByAccountId(accountId: number) {
   try {
@@ -11,7 +10,7 @@ export async function fetchTransactionsByAccountId(accountId: number) {
     if (transactions_error) {
       throw transactions_error;
     }
-    return transactions_data as Transactions[];
+    return transactions_data;
   } catch (error) {
     console.error('Fetch Transactions Error: ', error);
   }
@@ -32,12 +31,13 @@ export async function insertTransaction(data: NewTransaction) {
         amount: data.amount,
         account_id: data.accountId
       })
-      .select();
+      .select()
+      .single();
     if (transactions_error) {
       throw transactions_error;
     }
 
-    return transactions_data[0] as Transactions;
+    return transactions_data;
   } catch (error) {
     console.error('Add Account Error: ', error);
   }
