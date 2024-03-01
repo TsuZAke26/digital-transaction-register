@@ -71,7 +71,7 @@ const validationSchema = toTypedSchema(
       .integer('Maximum balance cannot have a decimal')
       .positive('Maximum balance must be a positive value')
       .when('accountType', {
-        is: (accountType: string) => ACCOUNT_TYPES.includes(accountType),
+        is: (accountType: string) => 'Credit Line' === accountType,
         then: (validationSchema) =>
           validationSchema.required('Credit lines require a maximum balance')
       })

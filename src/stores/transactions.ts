@@ -1,5 +1,5 @@
 import { ref, type Ref } from 'vue';
-import { defineStore } from 'pinia';
+import { acceptHMRUpdate, defineStore } from 'pinia';
 import { useToast } from 'vue-toastification';
 
 import {
@@ -63,11 +63,20 @@ export const useTransactionsStore = defineStore('transactions', () => {
     }
   }
 
+  function resetState() {
+    transactions.value = [];
+  }
+
   return {
     transactions,
     transactionsByAccount,
     loadTransactionsByAccount,
     loadTransactionsByAccountForDateRange,
-    addTransaction
+    addTransaction,
+    resetState
   };
 });
+
+if (import.meta.hot) {
+  import.meta.hot.accept(acceptHMRUpdate(useTransactionsStore, import.meta.hot));
+}

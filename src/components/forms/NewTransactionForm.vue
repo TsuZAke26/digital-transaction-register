@@ -67,7 +67,7 @@ const [amount, amountAttrs] = defineField('amount');
 const transactionsStore = useTransactionsStore();
 const { addTransaction } = transactionsStore;
 const accountsStore = useAccountsStore();
-const { refreshAccountBalance } = accountsStore;
+const { loadAccountBalanceById } = accountsStore;
 const onSubmit = handleSubmit(async () => {
   const date = transactionDate.value?.toString();
   const accountId = Number.parseInt(props.accountId);
@@ -79,7 +79,7 @@ const onSubmit = handleSubmit(async () => {
     accountId: accountId
   });
   if (result === true) {
-    await refreshAccountBalance(accountId);
+    await loadAccountBalanceById(accountId);
     emit('close');
   }
 });

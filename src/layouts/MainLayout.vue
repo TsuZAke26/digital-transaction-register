@@ -68,6 +68,9 @@ import { RouterView, useRouter } from 'vue-router';
 
 import { anonClient } from '@/supabase/supabase-client';
 
+import { useAccountsStore } from '@/stores/accounts';
+import { useTransactionsStore } from '@/stores/transactions';
+
 import Navbar from '@/components/daisy/Navbar.vue';
 
 const router = useRouter();
@@ -78,12 +81,16 @@ function handleMenuItemClick(routeName: string) {
   drawerToggle.value?.click();
 }
 
+const accountsStore = useAccountsStore();
+const transactionsStore = useTransactionsStore();
 const handleSignOut = async () => {
   try {
     const { error: signOutError } = await anonClient.auth.signOut();
     if (signOutError) {
       throw signOutError;
     }
+    accountsStore.resetState();
+    transactionsStore.resetState();
   } catch (error) {
     console.error(error);
   }

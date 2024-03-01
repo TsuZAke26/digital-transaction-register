@@ -1,11 +1,12 @@
 import { computed, ref, type Ref } from 'vue';
-import { defineStore } from 'pinia';
+import { acceptHMRUpdate, defineStore } from 'pinia';
 import { useToast } from 'vue-toastification';
 
 import type { AccountSummary, NewAccount } from '@/types/ui-types';
 import {
   fetchAccountById,
   fetchAccountBalances,
+  fetchAccountBalanceById,
   fetchAccounts,
   insertAccount
 } from '@/supabase/db-accounts';
@@ -28,6 +29,19 @@ export const useAccountsStore = defineStore('accounts', () => {
           accountBalances.value.push(fetchedAccountPreview);
         }
       });
+    }
+  }
+  async function loadAccountBalanceById(accountId: number) {
+    const fetchedAccountBalance = await fetchAccountBalanceById(accountId);
+    if (fetchedAccountBalance) {
+      const accountBalanceIndex = accountBalances.value.findIndex(
+        (storeBalance) => fetchedAccountBalance.id === storeBalance.id
+      );
+      if (accountBalanceIndex > -1) {
+        accountBalances.value.splice(accountBalanceIndex, 1, fetchedAccountBalance);
+      } else {
+        accountBalances.value.push(fetchedAccountBalance);
+      }
     }
   }
 
@@ -63,18 +77,6 @@ export const useAccountsStore = defineStore('accounts', () => {
       return result;
     };
   });
-  // const accountSummaries = computed(() => {
-  //   const result: AccountSummary[] = [];
-
-  //   accounts.value.forEach((storeAccount) => {
-  //     const summary = getAccountSummary(storeAccount.id);
-  //     if (summary) {
-  //       result.push(summary);
-  //     }
-  //   });
-
-  //   return result;
-  // });
   async function loadAccounts() {
     const fetchedAccounts = await fetchAccounts();
     fetchedAccounts?.forEach((fetchedAccount) => {
@@ -85,11 +87,15 @@ export const useAccountsStore = defineStore('accounts', () => {
   }
   async function loadAccountById(id: number) {
     const fetchedAccount = await fetchAccountById(id);
-    if (
-      fetchedAccount &&
-      !accounts.value.find((existingAccount) => existingAccount.id === fetchedAccount.id)
-    ) {
-      accounts.value.push(fetchedAccount);
+    if (fetchedAccount) {
+      const existingAccountIndex = accounts.value.findIndex(
+        (existingAccount) => fetchedAccount.id === existingAccount.id
+      );
+      if (existingAccountIndex) {
+        accounts.value.splice(existingAccountIndex, 1, fetchedAccount);
+      } else {
+        accounts.value.push(fetchedAccount);
+      }
     }
   }
   async function addAccount(data: NewAccount): Promise<boolean> {
@@ -97,25 +103,33 @@ export const useAccountsStore = defineStore('accounts', () => {
     if (newAccount) {
       accounts.value.push(newAccount);
       toast.success('Account creation successful');
+      await loadAccounts();
       return true;
     } else {
       toast.error('Account creation failed');
       return false;
     }
   }
-  async function refreshAccountBalance(accountId: number) {
-    console.log('refreshAccountBalance()');
+
+  function resetState() {
+    accountBalances.value = [];
+    accounts.value = [];
   }
 
   return {
     accountBalances,
     loadAccountBalances,
+    loadAccountBalanceById,
     accounts,
     accountSummariesByType,
     getAccountSummary,
     loadAccounts,
     loadAccountById,
     addAccount,
-    refreshAccountBalance
+    resetState
   };
 });
+
+if (import.meta.hot) {
+  import.meta.hot.accept(acceptHMRUpdate(useAccountsStore, import.meta.hot));
+}
