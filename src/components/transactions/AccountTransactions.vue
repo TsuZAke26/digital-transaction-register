@@ -13,6 +13,8 @@
 <script setup lang="ts">
 import { useTransactionsStore } from '@/stores/transactions';
 
+import { getThirtyDaysAgo } from '@/util/date-utils';
+
 import TransactionRow from '@/components/transactions/TransactionRow.vue';
 
 const props = defineProps({
@@ -21,7 +23,9 @@ const props = defineProps({
 const accountId = Number.parseInt(props.id);
 
 const transactionsStore = useTransactionsStore();
-const { transactionsByAccount, getTransactionsByAccount } = transactionsStore;
+const { transactionsByAccount, loadTransactionsByAccountForDateRange } = transactionsStore;
 
-await getTransactionsByAccount(accountId);
+const today = new Date();
+const thirtyDaysAgo = getThirtyDaysAgo(today);
+await loadTransactionsByAccountForDateRange(accountId, thirtyDaysAgo, today);
 </script>

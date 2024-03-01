@@ -1,9 +1,10 @@
 <template>
   <div class="space-y-4">
-    <NewAccount />
-
     <Suspense>
-      <MyAccounts />
+      <div>
+        <div class="text-3xl font-bold text-center">My Accounts</div>
+        <MyAccounts />
+      </div>
 
       <template #fallback>
         <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -11,6 +12,8 @@
         </div>
       </template>
     </Suspense>
+
+    <NewAccount />
   </div>
 </template>
 

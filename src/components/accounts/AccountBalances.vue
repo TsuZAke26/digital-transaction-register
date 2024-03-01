@@ -1,11 +1,11 @@
 <template>
   <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
     <Card
-      v-for="preview in accountPreviews"
-      :key="preview.id"
-      :title="preview.name"
+      v-for="accountBalance in accountBalances"
+      :key="accountBalance.id as number"
+      :title="accountBalance.name as string"
       class="w-full border shadow-md cursor-pointer"
-      @click="handleAccountPreviewCardClick(preview.id)"
+      @click="handleAccountPreviewCardClick(accountBalance.id as number)"
     >
       <template #body>
         <!-- <div v-if="preview.transactions.length" class="flex flex-col gap-4">
@@ -25,7 +25,9 @@
           </div>
         </div>
         <div v-else>No transactions yet</div> -->
-        <div class="text-4xl font-bold text-end">{{ formatCurrency(preview.balance) }}</div>
+        <div class="text-4xl font-bold text-end">
+          {{ formatCurrency(accountBalance.balance as number) }}
+        </div>
       </template>
     </Card>
   </div>
@@ -41,9 +43,9 @@ import { formatCurrency } from '@/util/format-utils';
 import Card from '@/components/daisy/Card.vue';
 
 const accountsStore = useAccountsStore();
-const { accountPreviews, getAccountPreviews } = accountsStore;
+const { accountBalances, loadAccountBalances } = accountsStore;
 
-await getAccountPreviews();
+await loadAccountBalances();
 
 const router = useRouter();
 const handleAccountPreviewCardClick = (accountId: number) => {

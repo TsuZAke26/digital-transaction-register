@@ -2,7 +2,11 @@ import { ref, type Ref } from 'vue';
 import { defineStore } from 'pinia';
 import { useToast } from 'vue-toastification';
 
-import { fetchTransactionsByAccountId, insertTransaction } from '@/supabase/db-transactions';
+import {
+  fetchTransactionsByAccountId,
+  fetchTransactionsByAccountIdForDateRange,
+  insertTransaction
+} from '@/supabase/db-transactions';
 import type { NewTransaction } from '@/types/ui-types';
 import type { Database } from '@/types/supabase';
 
@@ -19,8 +23,22 @@ export const useTransactionsStore = defineStore('transactions', () => {
         return 0;
       });
   }
-  async function getTransactionsByAccount(accountId: number) {
+  async function loadTransactionsByAccount(accountId: number) {
     const fetchedTransactions = await fetchTransactionsByAccountId(accountId);
+    if (fetchedTransactions) {
+      fetchedTransactions.forEach((fetchedTransaction) => {
+        if (
+          !transactions.value.find(
+            (existingTransaction) => existingTransaction.id === fetchedTransaction.id
+          )
+        ) {
+          transactions.value.push(fetchedTransaction);
+        }
+      });
+    }
+  }
+  async function loadTransactionsByAccountForDateRange(accountId: number, from: Date, to: Date) {
+    const fetchedTransactions = await fetchTransactionsByAccountIdForDateRange(accountId, from, to);
     if (fetchedTransactions) {
       fetchedTransactions.forEach((fetchedTransaction) => {
         if (
@@ -45,5 +63,11 @@ export const useTransactionsStore = defineStore('transactions', () => {
     }
   }
 
-  return { transactions, transactionsByAccount, getTransactionsByAccount, addTransaction };
+  return {
+    transactions,
+    transactionsByAccount,
+    loadTransactionsByAccount,
+    loadTransactionsByAccountForDateRange,
+    addTransaction
+  };
 });

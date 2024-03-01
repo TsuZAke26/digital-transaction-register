@@ -1,6 +1,6 @@
 <template>
   <Suspense>
-    <AccountPreviews />
+    <div>Home Route</div>
 
     <template #fallback>
       <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -11,6 +11,5 @@
 </template>
 
 <script setup lang="ts">
-import AccountPreviews from '@/components/accounts/AccountPreviews.vue';
 import SkeletonCard from '@/components/app/SkeletonCard.vue';
 </script>

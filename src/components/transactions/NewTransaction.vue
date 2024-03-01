@@ -5,7 +5,7 @@
     </Button>
     <Card v-if="showForm" class="w-full border" title="Add New Transaction">
       <template #body>
-        <FormNewTransaction @close="showForm = false" :account-id="accountId" />
+        <NewTransactionForm @close="showForm = false" :account-id="accountId" />
       </template>
     </Card>
   </div>
@@ -14,9 +14,9 @@
 <script setup lang="ts">
 import { type Ref, ref } from 'vue';
 
-import Button from '../daisy/Button.vue';
-import Card from '../daisy/Card.vue';
-import FormNewTransaction from './FormNewTransaction.vue';
+import Button from '@/components/daisy/Button.vue';
+import Card from '@/components/daisy/Card.vue';
+import NewTransactionForm from '@/components/forms/NewTransactionForm.vue';
 
 defineProps({ accountId: { type: String, required: true } });
 

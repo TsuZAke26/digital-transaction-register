@@ -1,7 +1,7 @@
 import { anonClient } from './supabase-client';
-import type { AccountPreview, NewAccount } from '@/types/ui-types';
+import type { NewAccount } from '@/types/ui-types';
 
-export async function fetchAccountPreviews(): Promise<AccountPreview[] | undefined> {
+export async function fetchAccountBalances() {
   try {
     const { data: account_balance_data, error: account_balance_error } = await anonClient
       .from('account_balance')
@@ -10,9 +10,25 @@ export async function fetchAccountPreviews(): Promise<AccountPreview[] | undefin
       throw account_balance_error;
     }
 
-    return account_balance_data as AccountPreview[];
+    return account_balance_data;
   } catch (error) {
-    console.error(error);
+    console.error('Fetch Account Balances Error: ', error);
+  }
+}
+
+export async function fetchAccountBalanceById(id: number) {
+  try {
+    const { data: accounts_data, error: accounts_error } = await anonClient
+      .from('account_balance')
+      .select()
+      .eq('id', id)
+      .single();
+    if (accounts_error) {
+      throw accounts_error;
+    }
+    return accounts_data;
+  } catch (error) {
+    console.error('Fetch Account Balance by Id Error: ', error);
   }
 }
 

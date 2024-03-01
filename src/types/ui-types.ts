@@ -1,8 +1,11 @@
+import type { Database } from './supabase';
+
 export const ACCOUNT_TYPES = ['Checking', 'Savings', 'Credit Line'];
 
-export interface AccountPreview {
+export interface AccountSummary {
   id: number;
   name: string;
+  accountType: Database['public']['Enums']['account_type'];
   balance: number;
 }
 

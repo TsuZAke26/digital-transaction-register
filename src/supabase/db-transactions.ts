@@ -1,6 +1,27 @@
 import { anonClient } from './supabase-client';
 import type { NewTransaction } from '@/types/ui-types';
 
+export async function fetchTransactionsByAccountIdForDateRange(
+  accountId: number,
+  from: Date,
+  to: Date
+) {
+  try {
+    const { data: transactions_data, error: transactions_error } = await anonClient
+      .from('transactions')
+      .select()
+      .eq('account_id', accountId)
+      .gte('date', from.toISOString())
+      .lte('date', to.toISOString());
+    if (transactions_error) {
+      throw transactions_error;
+    }
+    return transactions_data;
+  } catch (error) {
+    console.error('Fetch Transactions by Date Range Error: ', error);
+  }
+}
+
 export async function fetchTransactionsByAccountId(accountId: number) {
   try {
     const { data: transactions_data, error: transactions_error } = await anonClient
@@ -39,6 +60,6 @@ export async function insertTransaction(data: NewTransaction) {
 
     return transactions_data;
   } catch (error) {
-    console.error('Add Account Error: ', error);
+    console.error('Add Transaction Error: ', error);
   }
 }

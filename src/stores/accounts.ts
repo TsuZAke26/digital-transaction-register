@@ -2,39 +2,80 @@ import { computed, ref, type Ref } from 'vue';
 import { defineStore } from 'pinia';
 import { useToast } from 'vue-toastification';
 
-import type { AccountPreview, NewAccount } from '@/types/ui-types';
+import type { AccountSummary, NewAccount } from '@/types/ui-types';
 import {
   fetchAccountById,
-  fetchAccountPreviews,
+  fetchAccountBalances,
   fetchAccounts,
   insertAccount
 } from '@/supabase/db-accounts';
 import type { Database } from '@/types/supabase';
+import { createAccountSummary } from '@/util/ui-utils';
 
 const toast = useToast();
 
 export const useAccountsStore = defineStore('accounts', () => {
-  const accountPreviews: Ref<AccountPreview[]> = ref([]);
-  async function getAccountPreviews() {
-    const fetchedAccountPreviews = await fetchAccountPreviews();
+  const accountBalances: Ref<Database['public']['Views']['account_balance']['Row'][]> = ref([]);
+  async function loadAccountBalances() {
+    const fetchedAccountPreviews = await fetchAccountBalances();
     if (fetchedAccountPreviews) {
       fetchedAccountPreviews.forEach((fetchedAccountPreview) => {
         if (
-          !accountPreviews.value.find(
+          !accountBalances.value.find(
             (existingPreview) => existingPreview.id === fetchedAccountPreview.id
           )
         ) {
-          accountPreviews.value.push(fetchedAccountPreview);
+          accountBalances.value.push(fetchedAccountPreview);
         }
       });
     }
   }
 
   const accounts: Ref<Database['public']['Tables']['accounts']['Row'][]> = ref([]);
-  const findAccountInStore = computed(() => {
-    return (id: number) => accounts.value.find((storeAccount) => id === storeAccount.id);
+  function _findAccount(accountId: number) {
+    return accounts.value.find((storeAccount) => storeAccount.id === accountId);
+  }
+  function _findMatchingAccountBalance(accountId: number) {
+    return accountBalances.value.find((storeBalance) => storeBalance.id === accountId);
+  }
+  function getAccountSummary(accountId: number) {
+    const account = _findAccount(accountId);
+    const accountBalance = _findMatchingAccountBalance(accountId);
+
+    if (account && accountBalance) {
+      return createAccountSummary(account, accountBalance);
+    }
+  }
+  const accountSummariesByType = computed(() => {
+    return (type: Database['public']['Enums']['account_type']) => {
+      const result: AccountSummary[] = [];
+
+      const filteredAccounts = accounts.value.filter(
+        (storeAccount) => type === storeAccount.account_type
+      );
+      filteredAccounts.forEach((filteredAccount) => {
+        const summary = getAccountSummary(filteredAccount.id);
+        if (summary) {
+          result.push(summary);
+        }
+      });
+
+      return result;
+    };
   });
-  async function getAccounts() {
+  // const accountSummaries = computed(() => {
+  //   const result: AccountSummary[] = [];
+
+  //   accounts.value.forEach((storeAccount) => {
+  //     const summary = getAccountSummary(storeAccount.id);
+  //     if (summary) {
+  //       result.push(summary);
+  //     }
+  //   });
+
+  //   return result;
+  // });
+  async function loadAccounts() {
     const fetchedAccounts = await fetchAccounts();
     fetchedAccounts?.forEach((fetchedAccount) => {
       if (!accounts.value.find((existingAccount) => existingAccount.id === fetchedAccount.id)) {
@@ -42,7 +83,7 @@ export const useAccountsStore = defineStore('accounts', () => {
       }
     });
   }
-  async function getAccountById(id: number) {
+  async function loadAccountById(id: number) {
     const fetchedAccount = await fetchAccountById(id);
     if (
       fetchedAccount &&
@@ -67,12 +108,13 @@ export const useAccountsStore = defineStore('accounts', () => {
   }
 
   return {
-    accountPreviews,
-    getAccountPreviews,
+    accountBalances,
+    loadAccountBalances,
     accounts,
-    findAccountInStore,
-    getAccounts,
-    getAccountById,
+    accountSummariesByType,
+    getAccountSummary,
+    loadAccounts,
+    loadAccountById,
     addAccount,
     refreshAccountBalance
   };

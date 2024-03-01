@@ -14,9 +14,27 @@ const router = createRouter({
       component: AuthView
     },
     {
-      path: '/',
+      path: '',
       component: MainLayout,
       children: [
+        {
+          path: '/accounts/:id',
+          name: 'account',
+          component: () => import('@/views/accounts/id/AccountView.vue'),
+          meta: {
+            auth: true
+          },
+          props: true
+        },
+        {
+          path: '/accounts',
+          name: 'accounts',
+          component: () => import('@/views/accounts/AccountsView.vue'),
+          meta: {
+            auth: true
+          }
+        },
+
         {
           path: '',
           name: 'home',
@@ -24,26 +42,10 @@ const router = createRouter({
           meta: {
             auth: true
           }
-        },
-        {
-          path: 'accounts',
-          name: 'accounts',
-          component: () => import('@/views/AccountsView.vue'),
-          meta: {
-            auth: true
-          }
-        },
-        {
-          path: 'accounts/:id',
-          name: 'account',
-          component: () => import('@/views/accounts/AccountView.vue'),
-          meta: {
-            auth: true
-          },
-          props: true
         }
       ]
-    }
+    },
+    { path: '/:pathMatch(.*)', component: () => import('@/views/NotFoundView.vue') }
   ]
 });
 

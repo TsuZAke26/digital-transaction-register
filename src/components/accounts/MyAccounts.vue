@@ -1,28 +1,33 @@
 <template>
-  <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-    <Card
-      v-for="account in accounts"
-      :key="account.id"
-      :title="account.name"
-      class="w-full border shadow-md cursor-pointer"
-      @click="handleAccountCardClick(account.id)"
-    >
-      <template #body>
-        <div class="flex flex-row items-start justify-between">
-          <!-- Account Type -->
-          <span class="text-sm font-light text-neutral-400">
-            {{ account.account_type }}
-          </span>
-          <!-- Current Balance -->
-          <span
-            class="text-3xl font-bold text-right"
-            :class="account.balance < 0 ? 'text-red-500' : null"
-          >
-            {{ formatCurrency(account.balance) }}
-          </span>
-        </div>
-      </template>
-    </Card>
+  <div class="space-y-8">
+    <div v-for="accountType in ACCOUNT_TYPES" :key="accountType">
+      <div class="text-2xl font-bold">{{ accountType }}</div>
+      <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <Card
+          v-for="account in accountSummariesByType(
+            accountType as Database['public']['Enums']['account_type']
+          )"
+          :key="account.id"
+          :title="account.name"
+          class="w-full border shadow-md cursor-pointer"
+          @click="handleAccountCardClick(account.id)"
+        >
+          <template #body>
+            <div class="flex flex-row items-start justify-between">
+              <!-- Account Type -->
+              <span class="text-sm font-light text-neutral-400">
+                {{ account.accountType }}
+              </span>
+
+              <!-- Current Balance -->
+              <div class="text-4xl font-bold text-end">
+                {{ formatCurrency(account.balance) }}
+              </div>
+            </div>
+          </template>
+        </Card>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -31,14 +36,18 @@ import { useRouter } from 'vue-router';
 
 import { useAccountsStore } from '@/stores/accounts';
 
+import type { Database } from '@/types/supabase';
+import { ACCOUNT_TYPES } from '@/types/ui-types';
+
 import { formatCurrency } from '@/util/format-utils';
 
 import Card from '@/components/daisy/Card.vue';
 
 const accountsStore = useAccountsStore();
-const { accounts, getAccounts } = accountsStore;
+const { loadAccounts, loadAccountBalances, accountSummariesByType } = accountsStore;
 
-await getAccounts();
+await loadAccounts();
+await loadAccountBalances();
 
 const router = useRouter();
 const handleAccountCardClick = (accountId: number) => {
