@@ -9,6 +9,7 @@ import {
 } from '@/supabase/db-transactions';
 import type { NewTransaction } from '@/types/ui-types';
 import type { Database } from '@/types/supabase';
+import { jsDateToSupabaseDate } from '@/util/date-utils';
 
 const toast = useToast();
 
@@ -22,6 +23,28 @@ export const useTransactionsStore = defineStore('transactions', () => {
         else if (a.date > b.date) return -1;
         return 0;
       });
+  }
+  function transactionsByAccountInDateRange(accountId: number, from: Date, to: Date) {
+    const transactionsInRangeFromStore = transactions.value.filter((storeTransaction) => {
+      const matchesAccount = accountId === storeTransaction.account_id;
+      const gteFromDate = storeTransaction.date >= jsDateToSupabaseDate(from);
+      const lteToDate = storeTransaction.date <= jsDateToSupabaseDate(to);
+
+      return matchesAccount && gteFromDate && lteToDate;
+    });
+
+    const transactionsInRangeFromDB: Database['public']['Tables']['transactions']['Row'][] = [];
+    if (!transactionsInRangeFromStore.length) {
+      fetchTransactionsByAccountIdForDateRange(accountId, from, to).then((result) => {
+        result?.forEach((fetchedTransaction) => transactionsInRangeFromDB.push(fetchedTransaction));
+      });
+    }
+
+    return transactionsInRangeFromStore.concat(transactionsInRangeFromDB).sort((a, b) => {
+      if (a.date < b.date) return 1;
+      else if (a.date > b.date) return -1;
+      return 0;
+    });
   }
   async function loadTransactionsByAccount(accountId: number) {
     const fetchedTransactions = await fetchTransactionsByAccountId(accountId);
@@ -70,6 +93,7 @@ export const useTransactionsStore = defineStore('transactions', () => {
   return {
     transactions,
     transactionsByAccount,
+    transactionsByAccountInDateRange,
     loadTransactionsByAccount,
     loadTransactionsByAccountForDateRange,
     addTransaction,

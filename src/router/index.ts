@@ -18,13 +18,20 @@ const router = createRouter({
       component: MainLayout,
       children: [
         {
+          path: '/accounts/:id/transactions',
+          name: 'account-transactions',
+          component: () => import('@/views/accounts/id/transactions/AccountTransactionsView.vue'),
+          meta: {
+            auth: true
+          }
+        },
+        {
           path: '/accounts/:id',
           name: 'account',
           component: () => import('@/views/accounts/id/AccountView.vue'),
           meta: {
             auth: true
-          },
-          props: true
+          }
         },
         {
           path: '/accounts',

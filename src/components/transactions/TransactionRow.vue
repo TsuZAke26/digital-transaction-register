@@ -1,8 +1,5 @@
 <template>
-  <div
-    :key="transaction.id"
-    class="flex flex-row items-center justify-between font-medium text-gray-500 text-md"
-  >
+  <div class="flex flex-row items-center justify-between font-medium text-gray-500 text-md">
     <div class="flex flex-row gap-2">
       <span>{{ formatTransactionDate(transaction.date) }}</span>
       <span>{{ transaction.name }}</span>
@@ -26,4 +23,3 @@ defineProps({
   }
 });
 </script>
-@/types/supabase

@@ -8,23 +8,6 @@
       @click="handleAccountPreviewCardClick(accountBalance.id as number)"
     >
       <template #body>
-        <!-- <div v-if="preview.transactions.length" class="flex flex-col gap-4">
-          <div
-            v-for="transaction in preview.transactions"
-            :key="transaction.id"
-            class="flex flex-row items-center justify-between font-medium text-gray-500 text-md"
-          >
-            <div class="flex flex-row gap-2">
-              <span>{{ formatDate(transaction.date) }}</span>
-              <span>{{ transaction.name }}</span>
-            </div>
-
-            <span :class="transaction.amount < 0 ? 'text-red-500' : 'text-green-500'">
-              {{ formatAmount(transaction.amount) }}
-            </span>
-          </div>
-        </div>
-        <div v-else>No transactions yet</div> -->
         <div class="text-4xl font-bold text-end">
           {{ formatCurrency(accountBalance.balance as number) }}
         </div>
