@@ -1,5 +1,5 @@
 <template>
-  <div class="drawer">
+  <div class="hidden sm:block drawer">
     <!-- Drawer toggle control -->
     <input ref="drawerToggle" id="app-drawer" type="checkbox" class="drawer-toggle" />
 
@@ -36,6 +36,7 @@
             <ul class="menu menu-horizontal">
               <!-- Navbar menu content here -->
               <li @click="router.push({ name: 'accounts' })"><a>My Accounts</a></li>
+              <li @click="router.push({ name: 'settings' })"><a>Settings</a></li>
               <li @click="handleSignOut"><a>Sign Out</a></li>
             </ul>
           </div>
@@ -56,9 +57,20 @@
         <li @click="handleMenuItemClick('home')"><a>Home</a></li>
         <li @click="handleMenuItemClick('accounts')"><a>My Accounts</a></li>
         <div class="w-full my-2 border border-neutral-300"></div>
+        <li @click="handleMenuItemClick('settings')"><a>Settings</a></li>
         <li @click="handleSignOut"><a>Sign Out</a></li>
       </ul>
     </div>
+  </div>
+
+  <div class="sm:hidden">
+    <!-- Page Content -->
+    <div class="container max-w-5xl p-4 mx-auto">
+      <RouterView />
+    </div>
+
+    <!-- Bottom Navigation -->
+    <BottomNavbar />
   </div>
 </template>
 
@@ -72,6 +84,7 @@ import { useAccountsStore } from '@/stores/accounts';
 import { useTransactionsStore } from '@/stores/transactions';
 
 import Navbar from '@/components/daisy/Navbar.vue';
+import BottomNavbar from '@/components/app/BottomNavbar.vue';
 
 const router = useRouter();
 
