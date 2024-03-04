@@ -1,15 +1,15 @@
 <template>
-  <div>
+  <div class="w-full space-y-2">
     <input
       :class="error ? 'input-error' : ''"
       :placeholder="placeholder"
       :type="type"
       :value="modelValue"
-      class="w-full input input-bordered"
+      class="input input-bordered"
       @blur="$emit('blur')"
       @input="$emit('update:modelValue', ($event.target as HTMLInputElement).value)"
     />
-    <span v-if="error" class="text-sm text-red-500">{{ error }}</span>
+    <div v-if="error" class="text-sm text-red-500">{{ error }}</div>
   </div>
 </template>
 

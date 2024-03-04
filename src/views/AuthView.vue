@@ -5,14 +5,14 @@
       <Card :title="cardTitle" class="border">
         <template #body>
           <div v-if="view === 'signin'" class="mt-4">
-            <FormSignIn />
+            <SignInForm />
             <div @click="view = 'signup'" class="mt-8 text-center link">
               Need an account? Register here
             </div>
           </div>
 
           <div v-else-if="view === 'signup'" class="mt-4">
-            <FormSignUp />
+            <SignUpForm />
             <div @click="view = 'signin'" class="mt-8 text-center link">
               Already resgistered? Sign in
             </div>
@@ -27,8 +27,8 @@
 import { computed, ref } from 'vue';
 
 import Card from '@/components/daisy/Card.vue';
-import FormSignIn from '@/components/auth/FormSignIn.vue';
-import FormSignUp from '@/components/auth/FormSignUp.vue';
+import SignInForm from '@/components/forms/SignInForm.vue';
+import SignUpForm from '@/components/forms/SignUpForm.vue';
 
 const view = ref('signin');
 const cardTitle = computed(() => {
