@@ -2,7 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 
 import { anonClient } from '@/supabase/supabase-client';
 
-import AuthView from '@/views/AuthView.vue';
+import AuthView from '@/views/auth/AuthView.vue';
 import MainLayout from '@/layouts/MainLayout.vue';
 
 const router = createRouter({
@@ -34,17 +34,17 @@ const router = createRouter({
           }
         },
         {
-          path: '/accounts',
-          name: 'accounts',
-          component: () => import('@/views/accounts/AccountsView.vue'),
+          path: '',
+          name: 'home',
+          component: () => import('@/views/HomeView.vue'),
           meta: {
             auth: true
           }
         },
         {
-          path: '',
-          name: 'home',
-          component: () => import('@/views/HomeView.vue'),
+          path: '/user-account',
+          name: 'user-account',
+          component: () => import('@/views/user-account/UserAccountView.vue'),
           meta: {
             auth: true
           }

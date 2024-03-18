@@ -95,15 +95,17 @@ function handleMenuItemClick(routeName: string) {
 }
 
 const accountsStore = useAccountsStore();
+const { resetState: accountsResetState } = accountsStore;
 const transactionsStore = useTransactionsStore();
+const { resetState: transactionsResetState } = transactionsStore;
 const handleSignOut = async () => {
   try {
     const { error: signOutError } = await anonClient.auth.signOut();
     if (signOutError) {
       throw signOutError;
     }
-    accountsStore.resetState();
-    transactionsStore.resetState();
+    accountsResetState();
+    transactionsResetState();
   } catch (error) {
     console.error(error);
   }

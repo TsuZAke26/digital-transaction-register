@@ -15,11 +15,17 @@ import { useRoute } from 'vue-router';
 const props = defineProps({
   label: { type: String, required: true },
   route: { type: String, required: true },
-  routeParams: Object
+  routeParams: Object,
+  altRouteMatch: { type: String, required: false }
 });
 
 const vueRoute = useRoute();
-const currentRouteMatches = computed(
-  () => vueRoute.name === props.route || vueRoute.path.startsWith(`/${props.route}/`)
-);
+const currentRouteMatches = computed(() => {
+  const exactMatch = vueRoute.name === props.route;
+  const routeStartsWith =
+    vueRoute.path.startsWith(`/${props.route}/`) ||
+    vueRoute.path.startsWith(`/${props.altRouteMatch}/`);
+
+  return exactMatch || routeStartsWith;
+});
 </script>
