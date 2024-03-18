@@ -11,7 +11,7 @@
       </template>
     </BottomNavbarButton>
 
-    <!-- Settings Route -->
+    <!-- User Account Route -->
     <BottomNavbarButton label="Me" route="user-account">
       <template #icon>
         <img

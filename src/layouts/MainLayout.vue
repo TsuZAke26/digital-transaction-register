@@ -32,13 +32,21 @@
           <span class="text-2xl font-bold">Checkbook</span>
         </template>
         <template #end>
-          <div class="flex-none hidden md:block">
+          <div class="hidden md:flex md:items-center md:justify-right">
             <ul class="menu menu-horizontal">
               <!-- Navbar menu content here -->
-              <li @click="router.push({ name: 'accounts' })"><a>My Accounts</a></li>
-              <li @click="router.push({ name: 'settings' })"><a>Settings</a></li>
-              <li @click="handleSignOut"><a>Sign Out</a></li>
+              <li @click="router.push({ name: 'home' })"><a>Accounts</a></li>
+              <li @click="router.push({ name: 'user-account' })"><a>User Settings</a></li>
+              <!-- <li @click="handleSignOut"><a>Sign Out</a></li> -->
             </ul>
+            <!-- <div>
+              <img
+                src="/src/assets/icons/google-material-icon-account-circle.svg"
+                alt="Account balance icon"
+                class="w-6 h-6"
+              />
+              <div class="text-xs text-center">Me</div>
+            </div> -->
           </div>
         </template>
       </Navbar>
@@ -54,10 +62,9 @@
       <label for="app-drawer" aria-label="close sidebar" class="drawer-overlay"></label>
       <ul class="min-h-full p-4 w-60 menu bg-base-200">
         <!-- Drawer content here -->
-        <li @click="handleMenuItemClick('home')"><a>Home</a></li>
-        <li @click="handleMenuItemClick('accounts')"><a>My Accounts</a></li>
+        <li @click="handleMenuItemClick('home')"><a>Accounts</a></li>
         <div class="w-full my-2 border border-neutral-300"></div>
-        <li @click="handleMenuItemClick('settings')"><a>Settings</a></li>
+        <li @click="handleMenuItemClick('user-account')"><a>User Settings</a></li>
         <li @click="handleSignOut"><a>Sign Out</a></li>
       </ul>
     </div>
