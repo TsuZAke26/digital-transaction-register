@@ -76,7 +76,7 @@ function handleAddCategory() {
     newCategory.value = '';
   }
 }
-function handleRemoveCategory(index: number) {
+function handleRemoveCategory(index: any) {
   console.log(`Category index to remove: ${index}`);
   removeCategory(index);
 }
