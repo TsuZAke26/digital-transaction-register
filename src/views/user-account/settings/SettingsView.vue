@@ -16,7 +16,7 @@
 
                 <!-- Remove Category button -->
                 <button
-                  @click="handleRemoveCategory(index as number)"
+                  @click="handleRemoveCategory(index)"
                   class="bg-red-500 btn btn-sm btn-circle"
                 >
                   <svg
