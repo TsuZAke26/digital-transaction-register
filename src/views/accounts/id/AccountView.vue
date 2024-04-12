@@ -1,15 +1,26 @@
 <template>
   <div class="flex flex-col gap-8">
     <!-- Account Info card -->
-    <Suspense>
-      <AccountData :id="accountId" />
+    <div class="text-3xl font-bold text-center">{{ accountSummary?.name }}</div>
 
-      <template #fallback>
-        <SkeletonCard class="h-32 border" />
+    <!-- Account Balance card -->
+    <Card class="w-full border shadow-md">
+      <template #body>
+        <div class="flex items-start justify-between">
+          <div class="text-xl font-semibold">Balance</div>
+          <div class="text-4xl font-semibold">${{ accountSummary?.balance }}</div>
+        </div>
       </template>
-    </Suspense>
+    </Card>
 
-    <!-- Account Transactions -->
+    <!-- Spend Breakdown card -->
+    <Card class="w-full border shadow-md">
+      <template #body>
+        <div class="text-lg font-semibold">Spend Graph for 2024-03</div>
+      </template>
+    </Card>
+
+    <!-- Account Transactions card -->
     <Card title="Transactions" class="w-full border shadow-md">
       <template #body>
         <div>
@@ -35,7 +46,10 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue';
 import { useRoute } from 'vue-router';
+
+import { useAccountsStore } from '@/stores/accounts';
 
 import Card from '@/components/daisy/Card.vue';
 import AccountData from '@/components/accounts/AccountData.vue';
@@ -45,4 +59,8 @@ import SkeletonCard from '@/components/app/SkeletonCard.vue';
 
 const route = useRoute();
 const accountId = route.params.id as string;
+
+const accountsStore = useAccountsStore();
+const { getAccountSummary } = accountsStore;
+const accountSummary = computed(() => getAccountSummary(Number.parseInt(accountId)));
 </script>

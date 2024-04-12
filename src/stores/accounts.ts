@@ -98,6 +98,9 @@ export const useAccountsStore = defineStore('accounts', () => {
       }
     }
   }
+  function getAccountFromStore(id: number) {
+    return _findAccount(id);
+  }
   async function addAccount(data: NewAccount): Promise<boolean> {
     const newAccount = await insertAccount(data);
     if (newAccount) {
@@ -125,6 +128,7 @@ export const useAccountsStore = defineStore('accounts', () => {
     getAccountSummary,
     loadAccounts,
     loadAccountById,
+    getAccountFromStore,
     addAccount,
     resetState
   };

@@ -50,9 +50,9 @@ const router = createRouter({
           }
         },
         {
-          path: '/settings',
+          path: '/user-account/settings',
           name: 'settings',
-          component: () => import('@/views/settings/SettingsView.vue'),
+          component: () => import('@/views/user-account/settings/SettingsView.vue'),
           meta: {
             auth: true
           }
