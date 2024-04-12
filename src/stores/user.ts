@@ -31,12 +31,12 @@ export const useUserStore = defineStore('user', () => {
       (appSettings.value['categories'] as string[]).push(category);
     }
   }
-  function updateCategory(index: number, category: string) {
-    const categories = appSettings.value['categories'] as string[];
-    if (categories) {
-      (appSettings.value['categories'] as string[]).splice(index, 1, category);
-    }
-  }
+  // function updateCategory(index: number, category: string) {
+  //   const categories = appSettings.value['categories'] as string[];
+  //   if (categories) {
+  //     (appSettings.value['categories'] as string[]).splice(index, 1, category);
+  //   }
+  // }
   function removeCategory(index: number) {
     const categories = appSettings.value['categories'] as string[];
     if (categories) {
