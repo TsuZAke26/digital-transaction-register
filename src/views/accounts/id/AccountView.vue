@@ -1,6 +1,6 @@
 <template>
   <div class="flex flex-col gap-8">
-    <!-- Account Info card -->
+    <!-- Account Name -->
     <div class="text-3xl font-bold text-center">{{ accountSummary?.name }}</div>
 
     <!-- Account Balance card -->
@@ -16,12 +16,13 @@
     <!-- Spend Breakdown card -->
     <Card class="w-full border shadow-md">
       <template #body>
-        <div class="text-lg font-semibold">Spend Graph for 2024-03</div>
+        <div class="text-lg font-semibold">Spend Breakdown</div>
+        <div ref="spendGraphPlotRef" class="w-full"></div>
       </template>
     </Card>
 
     <!-- Account Transactions card -->
-    <Card title="Transactions" class="w-full border shadow-md">
+    <Card title="Recent Transactions" class="w-full border shadow-md">
       <template #body>
         <div>
           <Suspense>
@@ -46,8 +47,9 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, onMounted, type Ref, ref } from 'vue';
 import { useRoute } from 'vue-router';
+import Plotly, { type Data, type Layout } from 'plotly.js-dist-min';
 
 import { useAccountsStore } from '@/stores/accounts';
 
@@ -63,4 +65,26 @@ const accountId = route.params.id as string;
 const accountsStore = useAccountsStore();
 const { getAccountSummary } = accountsStore;
 const accountSummary = computed(() => getAccountSummary(Number.parseInt(accountId)));
+
+const spendGraphPlotRef: Ref<HTMLElement | null> = ref(null);
+const data: Data[] = [
+  {
+    values: [19, 26, 55],
+    labels: ['Residential', 'Non-Residential', 'Utility'],
+    type: 'pie'
+  }
+];
+
+const layout = {
+  // title: 'Transactions for 2024-04',
+  showlegend: true
+};
+
+onMounted(() => {
+  Plotly.newPlot(spendGraphPlotRef.value as HTMLElement, data, layout, {
+    editable: false,
+    displayModeBar: false,
+    staticPlot: true
+  });
+});
 </script>

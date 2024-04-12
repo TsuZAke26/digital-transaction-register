@@ -14,12 +14,19 @@
 
           <!-- Transactions in Date Range -->
           <div>
-            <div v-if="!filteredTransactions.length" class="text-center">
+            <!-- <div v-if="!filteredTransactions.length" class="text-center">
               No transactions in range
+            </div> -->
+            <div v-if="filteredTransactions.length > 0" class="flex flex-col space-y-2">
+              <TransactionRow
+                v-for="transaction in filteredTransactions"
+                :transaction="transaction"
+                :key="transaction.id"
+              />
             </div>
             <div v-else class="flex flex-col space-y-2">
               <TransactionRow
-                v-for="transaction in filteredTransactions"
+                v-for="transaction in transactions"
                 :transaction="transaction"
                 :key="transaction.id"
               />
@@ -53,11 +60,10 @@ const route = useRoute();
 const accountId = route.params.id as string;
 
 const transactionsStore = useTransactionsStore();
-const { transactionsByAccountInDateRange } = transactionsStore;
+const { transactions, transactionsByAccountInDateRange } = transactionsStore;
 
-const today = jsDateToSupabaseDate(new Date());
 const fromDate = ref(jsDateToSupabaseDate(getThirtyDaysAgo(new Date())));
-const toDate = ref(today);
+const toDate = ref(jsDateToSupabaseDate(new Date()));
 
 const filteredTransactions: Ref<Database['public']['Tables']['transactions']['Row'][]> = ref([]);
 function reloadTransactionsInDateRange() {
@@ -69,5 +75,4 @@ function reloadTransactionsInDateRange() {
     toAsDate
   );
 }
-reloadTransactionsInDateRange();
 </script>

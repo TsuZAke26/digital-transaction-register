@@ -34,7 +34,7 @@ export const useTransactionsStore = defineStore('transactions', () => {
     });
 
     const transactionsInRangeFromDB: Database['public']['Tables']['transactions']['Row'][] = [];
-    if (!transactionsInRangeFromStore.length) {
+    if (transactionsInRangeFromStore.length === 0) {
       fetchTransactionsByAccountIdForDateRange(accountId, from, to).then((result) => {
         result?.forEach((fetchedTransaction) => transactionsInRangeFromDB.push(fetchedTransaction));
       });
@@ -48,7 +48,7 @@ export const useTransactionsStore = defineStore('transactions', () => {
   }
   async function loadTransactionsByAccount(accountId: number) {
     const fetchedTransactions = await fetchTransactionsByAccountId(accountId);
-    if (fetchedTransactions) {
+    if (fetchedTransactions && fetchedTransactions.length > 0) {
       fetchedTransactions.forEach((fetchedTransaction) => {
         if (
           !transactions.value.find(
@@ -61,9 +61,13 @@ export const useTransactionsStore = defineStore('transactions', () => {
     }
   }
   async function loadTransactionsByAccountForDateRange(accountId: number, from: Date, to: Date) {
-    const fetchedTransactions = await fetchTransactionsByAccountIdForDateRange(accountId, from, to);
-    if (fetchedTransactions) {
-      fetchedTransactions.forEach((fetchedTransaction) => {
+    const fetchedTransactionsForDateRange = await fetchTransactionsByAccountIdForDateRange(
+      accountId,
+      from,
+      to
+    );
+    if (fetchedTransactionsForDateRange && fetchedTransactionsForDateRange.length > 0) {
+      fetchedTransactionsForDateRange.forEach((fetchedTransaction) => {
         if (
           !transactions.value.find(
             (existingTransaction) => existingTransaction.id === fetchedTransaction.id
@@ -72,6 +76,8 @@ export const useTransactionsStore = defineStore('transactions', () => {
           transactions.value.push(fetchedTransaction);
         }
       });
+    } else {
+      await loadTransactionsByAccount(accountId);
     }
   }
   async function addTransaction(data: NewTransaction) {
