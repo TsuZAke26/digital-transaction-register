@@ -2,7 +2,6 @@ import '@/assets/style.css';
 
 import { createApp } from 'vue';
 import { createPinia } from 'pinia';
-// import { configure } from 'vee-validate';
 import Toast, { POSITION, type PluginOptions } from 'vue-toastification';
 import 'vue-toastification/dist/index.css';
 
@@ -10,7 +9,7 @@ import App from './App.vue';
 import router from './router';
 
 // Supabase init
-import { anonClient } from './supabase/supabase-client';
+import { anonClient } from './supabase/anon-client';
 anonClient.auth.onAuthStateChange((event) => {
   console.log(`Auth state: ${event}`);
   if (event === 'SIGNED_IN') {
@@ -20,17 +19,9 @@ anonClient.auth.onAuthStateChange((event) => {
   }
 });
 
-// vee-validate configuration
-// configure({
-//   validateOnBlur: true,
-//   validateOnChange: true,
-//   validateOnInput: false,
-//   validateOnModelUpdate: false
-// });
-
 // vue-toastification config
 const toastOptions: PluginOptions = {
-  position: POSITION.BOTTOM_RIGHT,
+  position: POSITION.TOP_RIGHT,
   timeout: 2000
 };
 

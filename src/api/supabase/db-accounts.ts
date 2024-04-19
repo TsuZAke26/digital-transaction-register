@@ -1,4 +1,4 @@
-import { anonClient } from './supabase-client';
+import { anonClient } from '../../supabase/anon-client';
 import type { NewAccount } from '@/types/ui-types';
 
 export async function fetchAccountBalances() {

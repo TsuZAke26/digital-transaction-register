@@ -6,7 +6,7 @@ import {
   fetchTransactionsByAccountId,
   fetchTransactionsByAccountIdForDateRange,
   insertTransaction
-} from '@/supabase/db-transactions';
+} from '@/api/supabase/db-transactions';
 import type { NewTransaction } from '@/types/ui-types';
 import type { Database } from '@/types/supabase';
 import { jsDateToSupabaseDate } from '@/util/date-utils';

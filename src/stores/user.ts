@@ -1,9 +1,9 @@
-import { ref, type Ref } from 'vue';
+import { computed, ref, type Ref } from 'vue';
 import { acceptHMRUpdate, defineStore } from 'pinia';
 
 import { useToast } from 'vue-toastification';
 
-import { fetchProfileData, updateDisplayName, updateAppSettings } from '@/supabase/db-profiles';
+import { fetchProfileData, updateDisplayName, updateAppSettings } from '@/api/supabase/db-profiles';
 
 const toast = useToast();
 
@@ -25,6 +25,9 @@ export const useUserStore = defineStore('user', () => {
     }
   }
 
+  const categories = computed(() => {
+    return appSettings.value['categories'] as string[];
+  });
   function addCategory(category: string) {
     const categories = appSettings.value['categories'] as string[];
     if (categories && categories.length < 8) {
@@ -59,6 +62,7 @@ export const useUserStore = defineStore('user', () => {
     displayName,
     appSettings,
     loadProfileData,
+    categories,
     addCategory,
     removeCategory,
     saveAppSettings

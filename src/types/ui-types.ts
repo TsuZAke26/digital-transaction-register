@@ -19,5 +19,6 @@ export interface NewTransaction {
   name: string;
   date: string;
   amount: number;
+  category?: string;
   accountId: number;
 }

@@ -1,4 +1,4 @@
-import { anonClient } from './supabase-client';
+import { anonClient } from '../../supabase/anon-client';
 
 export async function fetchProfileData() {
   try {

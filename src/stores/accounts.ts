@@ -9,7 +9,7 @@ import {
   fetchAccountBalanceById,
   fetchAccounts,
   insertAccount
-} from '@/supabase/db-accounts';
+} from '@/api/supabase/db-accounts';
 import type { Database } from '@/types/supabase';
 import { createAccountSummary } from '@/util/ui-utils';
 

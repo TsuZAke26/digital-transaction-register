@@ -23,3 +23,9 @@ export function formatCurrency(amount: number) {
 
   return prefixChar.concat('$').concat(Math.abs(amount).toString()).concat(zeroPadding);
 }
+
+export function styleCurrency(amount: number) {
+  const textColor = amount < 0 ? 'text-red-500' : 'text-black';
+
+  return textColor;
+}
