@@ -7,8 +7,8 @@
     <div class="flex flex-col drawer-content">
       <!-- Navbar -->
       <div class="hidden border-b-2 bg-base-100 navbar sm:block">
-        <!-- Menu Button -->
-        <div class="flex-none">
+        <div class="flex items-center space-x-2">
+          <!-- Menu Button -->
           <button @click="drawerToggleRef?.click()" class="btn btn-square btn-ghost">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -24,10 +24,9 @@
               ></path>
             </svg>
           </button>
-        </div>
-        <!-- Navbar Title -->
-        <div class="flex-1">
-          <a class="text-xl btn btn-ghost">Transaction Tracker</a>
+
+          <!-- Navbar Title -->
+          <div class="text-xl font-semibold">Transaction Tracker</div>
         </div>
       </div>
 
@@ -39,7 +38,7 @@
     <div class="drawer-side">
       <label for="app-drawer" aria-label="close sidebar" class="drawer-overlay"></label>
       <!-- Drawer Menu & Items -->
-      <ul class="min-h-full p-4 menu w-60 bg-base-200 text-base-content">
+      <ul class="min-h-full p-4 w-60 menu bg-base-200 text-base-content">
         <li @click="handleMenuItemClick('home')"><a>Home</a></li>
         <li><a>Transactions</a></li>
         <li><a>Reports</a></li>
