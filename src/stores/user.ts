@@ -16,6 +16,13 @@ export const useUserStore = defineStore('user', () => {
     if (profileData) {
       displayName.value = profileData.display_name;
       appSettings.value = profileData.app_settings as Record<string, number | string | string[]>;
+
+      // Set up default categories if not currently persisted
+      if (!appSettings.value) {
+        appSettings.value = {
+          categories: ['Housing', 'Bills', 'Groceries', 'Utilities', 'Miscellaneous']
+        };
+      }
     }
   }
   async function modifyDisplayName(newDisplayName: string) {

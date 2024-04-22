@@ -9,15 +9,15 @@ import App from './App.vue';
 import router from './router';
 
 // Supabase init
-import { anonClient } from './supabase/anon-client';
-anonClient.auth.onAuthStateChange((event) => {
-  console.log(`Auth state: ${event}`);
-  if (event === 'SIGNED_IN') {
-    router.push({ name: 'home' });
-  } else if (event === 'SIGNED_OUT') {
-    router.push({ name: 'auth' });
-  }
-});
+// import { anonClient } from './supabase/anon-client';
+// anonClient.auth.onAuthStateChange((event) => {
+//   console.log(`Auth state: ${event}`);
+//   if (event === 'SIGNED_IN') {
+//     router.push({ name: 'home' });
+//   } else if (event === 'SIGNED_OUT') {
+//     router.push({ name: 'auth' });
+//   }
+// });
 
 // vue-toastification config
 const toastOptions: PluginOptions = {
