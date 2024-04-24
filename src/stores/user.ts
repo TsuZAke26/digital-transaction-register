@@ -1,11 +1,7 @@
 import { computed, ref, type Ref } from 'vue';
 import { acceptHMRUpdate, defineStore } from 'pinia';
 
-import { useToast } from 'vue-toastification';
-
 import { fetchProfileData, updateDisplayName, updateAppSettings } from '@/api/supabase/db-profiles';
-
-const toast = useToast();
 
 export const useUserStore = defineStore('user', () => {
   const displayName = ref('');
@@ -17,7 +13,7 @@ export const useUserStore = defineStore('user', () => {
       displayName.value = profileData.display_name;
       appSettings.value = profileData.app_settings as Record<string, number | string | string[]>;
 
-      // Set up default categories if not currently persisted
+      // Set up default application settings if not currently persisted
       if (!appSettings.value) {
         appSettings.value = {
           categories: ['Housing', 'Bills', 'Groceries', 'Utilities', 'Miscellaneous']
@@ -25,6 +21,7 @@ export const useUserStore = defineStore('user', () => {
       }
     }
   }
+
   async function modifyDisplayName(newDisplayName: string) {
     const updatedProfileData = await updateDisplayName(newDisplayName);
     if (updatedProfileData) {
@@ -55,14 +52,7 @@ export const useUserStore = defineStore('user', () => {
   }
 
   async function saveAppSettings() {
-    console.log('Current Settings: ', appSettings);
-    const result = await updateAppSettings(appSettings.value);
-    if (result) {
-      toast.success('Settings saved successfully');
-      // console.log('Saved Settings: ', result);
-    } else {
-      toast.error('Settings save failed');
-    }
+    await updateAppSettings(appSettings.value);
   }
 
   return {

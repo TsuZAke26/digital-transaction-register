@@ -15,7 +15,7 @@ const router = createRouter({
       component: () => import('@/components/layouts/MainLayout.vue'),
       children: [
         {
-          path: '/',
+          path: '',
           name: 'home',
           component: () => import('@/views/HomeView.vue'),
           meta: {
@@ -23,7 +23,7 @@ const router = createRouter({
           }
         },
         {
-          path: '/profile',
+          path: 'profile',
           name: 'profile',
           component: () => import('@/views/profile/ProfileView.vue'),
           meta: {

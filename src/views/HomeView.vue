@@ -41,12 +41,12 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
-
+import { onMounted } from 'vue';
+import { storeToRefs } from 'pinia';
 import { useUserStore } from '@/stores/user';
 
 const userStore = useUserStore();
-const { displayName } = userStore;
+const { displayName } = storeToRefs(userStore);
 
 let addTransactionDialogEl: HTMLElement | null;
 function handleShowAddTransactionModal() {
@@ -67,5 +67,3 @@ onMounted(() => {
   addAccountDialogEl = document.getElementById('modal-add-account');
 });
 </script>
-
-<style scoped></style>
