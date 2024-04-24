@@ -3,22 +3,28 @@
 </template>
 
 <script setup lang="ts">
-import { useRouter, RouterView } from 'vue-router';
+import { onMounted } from 'vue';
+import { useRoute, useRouter, RouterView } from 'vue-router';
 import { anonClient } from './supabase/anon-client';
 
 import { useUserStore } from './stores/user';
 
+const route = useRoute();
 const router = useRouter();
+
 const userStore = useUserStore();
+const { loadProfileData } = userStore;
 
 anonClient.auth.onAuthStateChange((event) => {
   console.log(`Auth state: ${event}`);
-  if (event === 'SIGNED_IN') {
-    userStore.loadProfileData().then(() => {
-      router.push({ name: 'home' });
-    });
+  if (event === 'SIGNED_IN' && route.path === '/auth') {
+    router.push({ name: 'home' });
   } else if (event === 'SIGNED_OUT') {
     router.push({ name: 'auth' });
   }
+});
+
+onMounted(async () => {
+  await loadProfileData();
 });
 </script>
