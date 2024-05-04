@@ -5,6 +5,7 @@
 <script setup lang="ts">
 import { onMounted } from 'vue';
 import { useRoute, useRouter, RouterView } from 'vue-router';
+
 import { anonClient } from './supabase/anon-client';
 
 import { useUserStore } from './stores/user';
@@ -25,6 +26,9 @@ anonClient.auth.onAuthStateChange((event) => {
 });
 
 onMounted(async () => {
-  await loadProfileData();
+  const isSignedIn = (await anonClient.auth.getSession()).data.session;
+  if (isSignedIn) {
+    await loadProfileData();
+  }
 });
 </script>

@@ -32,9 +32,14 @@ import { useToast } from 'vue-toastification';
 
 import { anonClient } from '@/supabase/anon-client';
 
+import { useUserStore } from '@/stores/user';
+
 defineEmits(['auth-view']);
 
 const toast = useToast();
+
+const userStore = useUserStore();
+const { loadProfileData } = userStore;
 
 const email = ref('');
 const password = ref('');
@@ -54,6 +59,7 @@ async function handleSubmit() {
       if (error) {
         throw error;
       }
+      await loadProfileData();
       toast.success('Sign in successful!');
     } catch (error) {
       toast.error('Sign in failed!');
