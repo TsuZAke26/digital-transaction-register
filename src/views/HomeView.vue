@@ -7,16 +7,10 @@
       <div class="space-y-2 card-body">
         <div class="card-title">Accounts</div>
 
-        <div class="space-y-4">
-          <div class="flex items-center justify-between px-4 py-2 border rounded-md cursor-pointer">
-            <div>Account Name</div>
-            <div>$123.45</div>
-          </div>
-          <div class="flex items-center justify-between px-4 py-2 border rounded-md cursor-pointer">
-            <div>Account Name</div>
-            <div class="text-red-500">-$34.76</div>
-          </div>
-        </div>
+        <Suspense>
+          <HomeAccountsCardBalancesList />
+          <template #fallback> Loading accounts... </template>
+        </Suspense>
 
         <div class="justify-end card-actions">
           <button
@@ -40,6 +34,7 @@ import { storeToRefs } from 'pinia';
 import { useUserStore } from '@/stores/user';
 
 import AddAccountModal from '@/components/modals/AddAccountModal.vue';
+import HomeAccountsCardBalancesList from '@/components/views/home/HomeAccountsCardBalancesList.vue';
 
 const userStore = useUserStore();
 const { displayName } = storeToRefs(userStore);

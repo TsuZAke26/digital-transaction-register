@@ -65,7 +65,6 @@ function handleAddCategory() {
     }
   }
 }
-
 async function handleSaveCategories() {
   try {
     await saveAppSettings();

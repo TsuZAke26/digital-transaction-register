@@ -17,15 +17,23 @@ const toast = useToast();
 
 export const useAccountsStore = defineStore('accounts', () => {
   const accountBalances: Ref<Database['public']['Views']['account_balance']['Row'][]> = ref([]);
+  function _findMatchingAccountBalance(accountId: number) {
+    return accountBalances.value.find((storeBalance) => storeBalance.id === accountId);
+  }
   async function loadAccountBalances() {
     const fetchedAccountPreviews = await fetchAccountBalances();
     if (fetchedAccountPreviews) {
       fetchedAccountPreviews.forEach((fetchedAccountPreview) => {
-        if (
-          !accountBalances.value.find(
-            (existingPreview) => existingPreview.id === fetchedAccountPreview.id
-          )
-        ) {
+        const fetchedAccountInStoreIndex = accountBalances.value.findIndex(
+          (existingPreview) => existingPreview.id === fetchedAccountPreview.id
+        );
+
+        // Replace existing account balance with that fetched from database if already present
+        if (fetchedAccountInStoreIndex > -1) {
+          accountBalances.value.splice(fetchedAccountInStoreIndex, 1, fetchedAccountPreview);
+        }
+        // Otherwise, simply add it to the account balances in the store
+        else {
           accountBalances.value.push(fetchedAccountPreview);
         }
       });
@@ -49,34 +57,6 @@ export const useAccountsStore = defineStore('accounts', () => {
   function _findAccount(accountId: number) {
     return accounts.value.find((storeAccount) => storeAccount.id === accountId);
   }
-  function _findMatchingAccountBalance(accountId: number) {
-    return accountBalances.value.find((storeBalance) => storeBalance.id === accountId);
-  }
-  function getAccountSummary(accountId: number) {
-    const account = _findAccount(accountId);
-    const accountBalance = _findMatchingAccountBalance(accountId);
-
-    if (account && accountBalance) {
-      return createAccountSummary(account, accountBalance);
-    }
-  }
-  const accountSummariesByType = computed(() => {
-    return (type: Database['public']['Enums']['account_type']) => {
-      const result: AccountSummary[] = [];
-
-      const filteredAccounts = accounts.value.filter(
-        (storeAccount) => type === storeAccount.account_type
-      );
-      filteredAccounts.forEach((filteredAccount) => {
-        const summary = getAccountSummary(filteredAccount.id);
-        if (summary) {
-          result.push(summary);
-        }
-      });
-
-      return result;
-    };
-  });
   async function loadAccounts() {
     const fetchedAccounts = await fetchAccounts();
     fetchedAccounts?.forEach((fetchedAccount) => {
@@ -113,6 +93,32 @@ export const useAccountsStore = defineStore('accounts', () => {
       return false;
     }
   }
+
+  function getAccountSummary(accountId: number) {
+    const account = _findAccount(accountId);
+    const accountBalance = _findMatchingAccountBalance(accountId);
+
+    if (account && accountBalance) {
+      return createAccountSummary(account, accountBalance);
+    }
+  }
+  const accountSummariesByType = computed(() => {
+    return (type: Database['public']['Enums']['account_type']) => {
+      const result: AccountSummary[] = [];
+
+      const filteredAccounts = accounts.value.filter(
+        (storeAccount) => type === storeAccount.account_type
+      );
+      filteredAccounts.forEach((filteredAccount) => {
+        const summary = getAccountSummary(filteredAccount.id);
+        if (summary) {
+          result.push(summary);
+        }
+      });
+
+      return result;
+    };
+  });
 
   function resetState() {
     accountBalances.value = [];

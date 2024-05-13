@@ -16,6 +16,7 @@
           <input
             v-model="name"
             class="w-full input input-bordered"
+            maxlength="50"
             placeholder="Name"
             type="text"
             required
@@ -38,7 +39,7 @@
           <!-- Close modal -->
           <form method="dialog">
             <!-- if there is a button in form, it will close the modal -->
-            <button class="btn btn-neutral">Close</button>
+            <button class="btn">Close</button>
           </form>
 
           <!-- Submit form -->
