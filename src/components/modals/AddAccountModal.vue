@@ -6,7 +6,7 @@
 
       <!-- New Account form -->
       <form @submit.prevent="handleAddAccount" class="space-y-4">
-        <div class="flex gap-4">
+        <div class="flex flex-col gap-4 sm:flex-row">
           <!-- Account Type -->
           <select v-model="accountType" class="select select-bordered" required>
             <option v-for="(type, index) in ACCOUNT_TYPES" :key="index">{{ type }}</option>
@@ -47,29 +47,61 @@
         </div>
       </form>
     </div>
-
-    <!-- Modal closer -->
-    <!-- <form method="dialog" class="modal-backdrop">
-      <button>close</button>
-    </form> -->
   </dialog>
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, computed, type Ref, onMounted } from 'vue';
+import { useToast } from 'vue-toastification';
 
-import { ACCOUNT_TYPES } from '@/types/ui-types';
+import { useAccountsStore } from '@/stores/accounts';
+
+import type { Database } from '@/types/supabase';
+import { ACCOUNT_TYPES, type NewAccount } from '@/types/ui-types';
+
+const toast = useToast();
+
+const accountsStore = useAccountsStore();
+const { addAccount, loadAccountBalances } = accountsStore;
 
 const name = ref('');
-const accountType = ref('Checking');
-const maxBalance = ref(null);
+const accountType: Ref<Database['public']['Enums']['account_type']> = ref('Checking');
+const maxBalance = ref(undefined);
 
 const accountTypesNeedingMaxBal = ['Credit Line'];
 const maxBalancePlaceholder = computed(() => {
   return 'Credit Limit';
 });
 
-function handleAddAccount() {
-  console.log('Add account');
+async function handleAddAccount() {
+  try {
+    const newAccountData: NewAccount = {
+      name: name.value,
+      accountType: accountType.value,
+      maxBalance: maxBalance.value
+    };
+    await addAccount(newAccountData);
+
+    // Closes the add account modal
+    if (addAccountDialogEl instanceof HTMLDialogElement) {
+      addAccountDialogEl.close();
+    }
+
+    await loadAccountBalances();
+
+    toast.success('Account creation successful');
+
+    // Reset form values
+    name.value = '';
+    accountType.value = 'Checking';
+    maxBalance.value = undefined;
+  } catch (error) {
+    toast.error('Account creation failed');
+  }
 }
+
+let addAccountDialogEl: HTMLElement | null;
+onMounted(() => {
+  addAccountDialogEl = document.getElementById('modal-add-account');
+});
 </script>

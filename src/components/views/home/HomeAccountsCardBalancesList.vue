@@ -1,29 +1,66 @@
 <template>
   <div class="space-y-4">
-    <div v-if="loaded && accountBalances.length === 0">No accounts found</div>
-    <div v-else>
-      <AccountBalanceSmall
-        v-for="accountBalance in accountBalances"
-        :key="accountBalance.id as number"
-        :name="accountBalance.name as string"
-        :balance="accountBalance.balance as number"
-      />
+    <div v-if="loaded && accounts.length === 0">No accounts found</div>
+    <div v-else class="space-y-8">
+      <!-- Checking account summaries -->
+      <div v-if="accountSummariesByType('Checking').length > 0" class="space-y-2">
+        <div class="font-semibold text-md">Checking</div>
+        <div
+          v-for="accountSummary in accountSummariesByType('Checking')"
+          :key="accountSummary.id as number"
+        >
+          <AccountBalanceSmall
+            :name="accountSummary.name as string"
+            :balance="accountSummary.balance as number"
+          />
+        </div>
+      </div>
+
+      <!-- Savings account summaries -->
+      <div v-if="accountSummariesByType('Savings').length > 0" class="space-y-2">
+        <div class="font-semibold text-md">Savings</div>
+        <div
+          v-for="accountSummary in accountSummariesByType('Savings')"
+          :key="accountSummary.id as number"
+        >
+          <AccountBalanceSmall
+            :name="accountSummary.name as string"
+            :balance="accountSummary.balance as number"
+          />
+        </div>
+      </div>
+
+      <!-- Credit Line account summaries -->
+      <div v-if="accountSummariesByType('Credit Line').length > 0" class="space-y-2">
+        <div class="font-semibold text-md">Credit Line</div>
+        <div
+          v-for="accountSummary in accountSummariesByType('Credit Line')"
+          :key="accountSummary.id as number"
+        >
+          <AccountBalanceSmall
+            :name="accountSummary.name as string"
+            :balance="accountSummary.balance as number"
+          />
+        </div>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue';
+import { storeToRefs } from 'pinia';
 import { useAccountsStore } from '@/stores/accounts';
 
 import AccountBalanceSmall from '@/components/views/home/AccountBalanceSmall.vue';
 
 const accountsStore = useAccountsStore();
-const { accountBalances, loadAccountBalances } = accountsStore;
+const { accounts, accountSummariesByType } = storeToRefs(accountsStore);
+const { loadAccounts, loadAccountBalances } = accountsStore;
 
 const loaded = ref(false);
+await loadAccounts();
 await loadAccountBalances().then(() => {
   loaded.value = true;
-  console.log('Account loading completed');
 });
 </script>

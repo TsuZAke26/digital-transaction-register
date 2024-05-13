@@ -44,7 +44,7 @@
           <details>
             <summary>Accounts</summary>
             <ul>
-              <li><a>+ Add Account</a></li>
+              <li @click="handleShowAddAccountModal"><a>+ Add Account</a></li>
             </ul>
           </details>
         </li>
@@ -58,7 +58,7 @@
 </template>
 
 <script setup lang="ts">
-import { type Ref, ref } from 'vue';
+import { type Ref, ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 
 import { anonClient } from '@/supabase/anon-client';
@@ -79,6 +79,14 @@ function handleMenuItemClick(routeName: string) {
   drawerToggleRef.value?.click();
 }
 
+let addAccountDialogEl: HTMLElement | null;
+function handleShowAddAccountModal() {
+  if (addAccountDialogEl instanceof HTMLDialogElement) {
+    addAccountDialogEl.showModal();
+    drawerToggleRef.value?.click();
+  }
+}
+
 const handleSignOut = async () => {
   try {
     const { error: signOutError } = await anonClient.auth.signOut();
@@ -91,4 +99,8 @@ const handleSignOut = async () => {
     console.error(error);
   }
 };
+
+onMounted(() => {
+  addAccountDialogEl = document.getElementById('modal-add-account');
+});
 </script>

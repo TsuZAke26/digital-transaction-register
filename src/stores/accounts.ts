@@ -1,8 +1,6 @@
 import { computed, ref, type Ref } from 'vue';
 import { acceptHMRUpdate, defineStore } from 'pinia';
-import { useToast } from 'vue-toastification';
 
-import type { AccountSummary, NewAccount } from '@/types/ui-types';
 import {
   fetchAccountById,
   fetchAccountBalances,
@@ -10,10 +8,11 @@ import {
   fetchAccounts,
   insertAccount
 } from '@/api/supabase/db-accounts';
-import type { Database } from '@/types/supabase';
-import { createAccountSummary } from '@/util/ui-utils';
 
-const toast = useToast();
+import type { AccountSummary, NewAccount } from '@/types/ui-types';
+import type { Database } from '@/types/supabase';
+
+import { createAccountSummary } from '@/util/ui-utils';
 
 export const useAccountsStore = defineStore('accounts', () => {
   const accountBalances: Ref<Database['public']['Views']['account_balance']['Row'][]> = ref([]);
@@ -21,20 +20,20 @@ export const useAccountsStore = defineStore('accounts', () => {
     return accountBalances.value.find((storeBalance) => storeBalance.id === accountId);
   }
   async function loadAccountBalances() {
-    const fetchedAccountPreviews = await fetchAccountBalances();
-    if (fetchedAccountPreviews) {
-      fetchedAccountPreviews.forEach((fetchedAccountPreview) => {
-        const fetchedAccountInStoreIndex = accountBalances.value.findIndex(
-          (existingPreview) => existingPreview.id === fetchedAccountPreview.id
+    const fetchedAccountBalances = await fetchAccountBalances();
+    if (fetchedAccountBalances) {
+      fetchedAccountBalances.forEach((fetchedAccountBalance) => {
+        const fetchedAccountBalanceStoreIndex = accountBalances.value.findIndex(
+          (storeAccountBalance) => storeAccountBalance.id === fetchedAccountBalance.id
         );
 
         // Replace existing account balance with that fetched from database if already present
-        if (fetchedAccountInStoreIndex > -1) {
-          accountBalances.value.splice(fetchedAccountInStoreIndex, 1, fetchedAccountPreview);
+        if (fetchedAccountBalanceStoreIndex > -1) {
+          accountBalances.value.splice(fetchedAccountBalanceStoreIndex, 1, fetchedAccountBalance);
         }
         // Otherwise, simply add it to the account balances in the store
         else {
-          accountBalances.value.push(fetchedAccountPreview);
+          accountBalances.value.push(fetchedAccountBalance);
         }
       });
     }
@@ -59,11 +58,9 @@ export const useAccountsStore = defineStore('accounts', () => {
   }
   async function loadAccounts() {
     const fetchedAccounts = await fetchAccounts();
-    fetchedAccounts?.forEach((fetchedAccount) => {
-      if (!accounts.value.find((existingAccount) => existingAccount.id === fetchedAccount.id)) {
-        accounts.value.push(fetchedAccount);
-      }
-    });
+    if (fetchedAccounts) {
+      accounts.value = fetchedAccounts;
+    }
   }
   async function loadAccountById(id: number) {
     const fetchedAccount = await fetchAccountById(id);
@@ -81,16 +78,10 @@ export const useAccountsStore = defineStore('accounts', () => {
   function getAccountFromStore(id: number) {
     return _findAccount(id);
   }
-  async function addAccount(data: NewAccount): Promise<boolean> {
+  async function addAccount(data: NewAccount) {
     const newAccount = await insertAccount(data);
     if (newAccount) {
       accounts.value.push(newAccount);
-      toast.success('Account creation successful');
-      await loadAccounts();
-      return true;
-    } else {
-      toast.error('Account creation failed');
-      return false;
     }
   }
 

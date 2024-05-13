@@ -23,8 +23,6 @@
         </div>
       </div>
     </div>
-
-    <AddAccountModal />
   </div>
 </template>
 
@@ -33,7 +31,6 @@ import { onMounted } from 'vue';
 import { storeToRefs } from 'pinia';
 import { useUserStore } from '@/stores/user';
 
-import AddAccountModal from '@/components/modals/AddAccountModal.vue';
 import HomeAccountsCardBalancesList from '@/components/views/home/HomeAccountsCardBalancesList.vue';
 
 const userStore = useUserStore();
