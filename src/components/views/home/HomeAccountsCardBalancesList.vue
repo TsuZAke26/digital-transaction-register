@@ -12,6 +12,7 @@
           <AccountBalanceSmall
             :name="accountSummary.name as string"
             :balance="accountSummary.balance as number"
+            :id="accountSummary.id"
           />
         </div>
       </div>
@@ -26,6 +27,7 @@
           <AccountBalanceSmall
             :name="accountSummary.name as string"
             :balance="accountSummary.balance as number"
+            :id="accountSummary.id"
           />
         </div>
       </div>
@@ -40,6 +42,7 @@
           <AccountBalanceSmall
             :name="accountSummary.name as string"
             :balance="accountSummary.balance as number"
+            :id="accountSummary.id"
           />
         </div>
       </div>

@@ -23,6 +23,15 @@ const router = createRouter({
           }
         },
         {
+          path: '/accounts/:id',
+          name: 'account',
+          component: () => import('@/views/accounts/id/AccountIdView.vue'),
+          props: true,
+          meta: {
+            auth: true
+          }
+        },
+        {
           path: 'profile',
           name: 'profile',
           component: () => import('@/views/profile/ProfileView.vue'),

@@ -1,5 +1,5 @@
 <template>
-  <div class="container max-w-3xl p-4 mx-auto">
+  <div class="container max-w-5xl p-4 mx-auto">
     <div class="text-xl font-bold text-center">Welcome, {{ displayName }}</div>
 
     <!-- Accounts List -->
