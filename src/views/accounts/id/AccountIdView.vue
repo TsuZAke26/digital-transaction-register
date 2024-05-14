@@ -1,7 +1,7 @@
 <template>
   <div class="container max-w-5xl p-4 mx-auto">
-    <div v-if="!accountSummary">Loading...</div>
-    <AccountSummaryCard v-else :summary="accountSummary" />
+    <div v-if="accountSummary === undefined">Loading...</div>
+    <AccountSummaryCard v-else :summary="accountSummary as AccountSummary" />
 
     <div class="my-4" />
 
@@ -30,6 +30,7 @@ import { ref } from 'vue';
 import { useAccountsStore } from '@/stores/accounts';
 
 import type { Database } from '@/types/supabase';
+import type { AccountSummary } from '@/types/ui-types';
 
 import AccountSummaryCard from '@/components/views/accounts/id/AccountSummaryCard.vue';
 import TransactionsListMobile from '@/components/views/accounts/id/TransactionsListMobile.vue';
@@ -43,7 +44,7 @@ const idAsNumber = Number.parseInt(props.id);
 const accountsStore = useAccountsStore();
 const { loadAccountById, loadAccountBalanceById, getAccountSummary } = accountsStore;
 
-const accountSummary = ref(undefined);
+const accountSummary: AccountSummary | undefined = ref(undefined);
 loadAccountById(idAsNumber)
   .then(() => loadAccountBalanceById(idAsNumber))
   .then(() => {

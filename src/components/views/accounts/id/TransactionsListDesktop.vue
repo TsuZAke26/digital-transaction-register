@@ -27,6 +27,8 @@
 </template>
 
 <script setup lang="ts">
+import type { PropType } from 'vue';
+
 import type { Database } from '@/types/supabase';
 
 import { formatTransactionDate, formatAmount, styleAmount } from '@/util/format-utils';
