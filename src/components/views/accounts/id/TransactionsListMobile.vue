@@ -7,16 +7,16 @@
     >
       <!-- Name & amount -->
       <div class="flex items-start justify-between">
-        <div class="text-sm font-semibold">{{ transaction.name }}</div>
-        <div class="text-lg font-bold" :class="styleAmount(transaction.amount)">
+        <div class="text-sm font-medium truncate">{{ transaction.name }}</div>
+        <div class="font-bold text-md" :class="styleAmount(transaction.amount)">
           {{ formatAmount(transaction.amount) }}
         </div>
       </div>
 
       <!-- Date & category -->
       <div class="flex items-center justify-between">
-        <div class="text-sm badge badge-accent">{{ transaction.category }}</div>
-        <div class="text-sm font-semibold">{{ formatTransactionDate(transaction.date) }}</div>
+        <div class="text-sm badge badge-secondary">{{ transaction.category }}</div>
+        <div class="text-sm font-medium">{{ formatTransactionDate(transaction.date) }}</div>
       </div>
     </div>
   </div>

@@ -1,6 +1,5 @@
 import { ref, type Ref } from 'vue';
 import { acceptHMRUpdate, defineStore } from 'pinia';
-import { useToast } from 'vue-toastification';
 
 import {
   fetchTransactionsByAccountId,
@@ -10,8 +9,6 @@ import {
 import type { NewTransaction } from '@/types/ui-types';
 import type { Database } from '@/types/supabase';
 import { jsDateToSupabaseDate } from '@/util/date-utils';
-
-const toast = useToast();
 
 export const useTransactionsStore = defineStore('transactions', () => {
   const transactions: Ref<Database['public']['Tables']['transactions']['Row'][]> = ref([]);
@@ -84,10 +81,10 @@ export const useTransactionsStore = defineStore('transactions', () => {
     const newTransaction = await insertTransaction(data);
     if (newTransaction) {
       transactions.value.push(newTransaction);
-      toast.success('Transaction creation successful');
+      // toast.success('Transaction creation successful');
       return true;
     } else {
-      toast.error('Transaction creation failed');
+      // toast.error('Transaction creation failed');
       return false;
     }
   }

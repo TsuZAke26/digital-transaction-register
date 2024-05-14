@@ -1,13 +1,13 @@
 <template>
   <div class="border card">
     <div class="card-body">
-      <div class="flex justify-between">
+      <div class="flex flex-wrap justify-between">
         <div>
-          <div class="font-bold">{{ summary?.name }}</div>
+          <div class="font-semibold">{{ summary?.name }}</div>
           <div class="text-sm">{{ summary?.accountType }}</div>
         </div>
 
-        <div :class="styleAmount(summary?.balance)" class="text-2xl">
+        <div :class="styleAmount(summary?.balance)" class="text-2xl font-semibold">
           {{ formatAmount(summary.balance) }}
         </div>
       </div>
