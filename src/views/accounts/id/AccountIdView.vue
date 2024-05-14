@@ -26,7 +26,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, type Ref } from 'vue';
 import { useAccountsStore } from '@/stores/accounts';
 
 import type { Database } from '@/types/supabase';
@@ -39,16 +39,16 @@ import TransactionsListDesktop from '@/components/views/accounts/id/Transactions
 const props = defineProps({
   id: String
 });
-const idAsNumber = Number.parseInt(props.id);
+const idAsNumber = Number.parseInt(props.id as string);
 
 const accountsStore = useAccountsStore();
 const { loadAccountById, loadAccountBalanceById, getAccountSummary } = accountsStore;
 
-const accountSummary: AccountSummary | undefined = ref(undefined);
+const summary: Ref<AccountSummary | undefined> = ref(undefined);
 loadAccountById(idAsNumber)
   .then(() => loadAccountBalanceById(idAsNumber))
   .then(() => {
-    accountSummary.value = getAccountSummary(idAsNumber);
+    summary.value = getAccountSummary(idAsNumber);
   });
 
 const sampleTransactions: Database['public']['Tables']['transactions']['Row'][] = [
