@@ -1,7 +1,7 @@
 <template>
   <div class="container max-w-5xl p-4 mx-auto">
-    <div v-if="accountSummary === undefined">Loading...</div>
-    <AccountSummaryCard v-else :summary="accountSummary as AccountSummary" />
+    <div v-if="summary === undefined">Loading...</div>
+    <AccountSummaryCard v-else :summary="summary as AccountSummary" />
 
     <div class="my-4" />
 

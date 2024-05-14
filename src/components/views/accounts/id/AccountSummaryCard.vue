@@ -16,9 +16,11 @@
 </template>
 
 <script setup lang="ts">
-import { formatAmount, styleAmount } from '@/util/format-utils';
+import type { PropType } from 'vue';
 
 import type { AccountSummary } from '@/types/ui-types';
+
+import { formatAmount, styleAmount } from '@/util/format-utils';
 
 defineProps({
   summary: {
