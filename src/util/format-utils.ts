@@ -4,7 +4,7 @@ export function formatTransactionDate(dateStr: string) {
   return dateDelim[1].concat('/').concat(dateDelim[2]);
 }
 
-export function formatCurrency(amount: number) {
+export function formatAmount(amount: number) {
   if (amount === undefined) return 0;
 
   const prefixChar = amount < 0 ? '-' : '';
@@ -24,8 +24,8 @@ export function formatCurrency(amount: number) {
   return prefixChar.concat('$').concat(Math.abs(amount).toString()).concat(zeroPadding);
 }
 
-export function styleCurrency(amount: number) {
-  const textColor = amount < 0 ? 'text-red-500' : 'text-black';
+export function styleAmount(amount: number) {
+  const textColor = amount < 0 ? 'text-red-500' : 'text-black dark:text-white';
 
   return textColor;
 }

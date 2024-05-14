@@ -4,14 +4,14 @@
     class="flex items-center justify-between px-4 py-2 border rounded-md cursor-pointer"
   >
     <div>{{ name }}</div>
-    <div :class="styleCurrency(balance)">{{ formatCurrency(balance) }}</div>
+    <div :class="styleAmount(balance)">{{ formatAmount(balance) }}</div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { useRouter } from 'vue-router';
 
-import { formatCurrency, styleCurrency } from '@/util/format-utils';
+import { formatAmount, styleAmount } from '@/util/format-utils';
 
 const props = defineProps({
   name: {
@@ -39,5 +39,3 @@ function handleNavigateToAccountRoute() {
   });
 }
 </script>
-
-<style scoped></style>

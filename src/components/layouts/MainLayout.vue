@@ -6,7 +6,7 @@
     <!-- Drawer "Content" -->
     <div class="flex flex-col drawer-content">
       <!-- Navbar -->
-      <div class="border-b-2 bg-base-100 navbar">
+      <div class="sticky top-0 z-10 border-b-2 bg-base-100 navbar">
         <div class="flex items-center space-x-2">
           <!-- Menu Button -->
           <button @click="drawerToggleRef?.click()" class="btn btn-square btn-ghost">
@@ -35,7 +35,7 @@
     </div>
 
     <!-- Drawer Side -->
-    <div class="drawer-side">
+    <div class="z-20 drawer-side">
       <label for="app-drawer" aria-label="close sidebar" class="drawer-overlay"></label>
       <!-- Drawer Menu & Items -->
       <ul class="min-h-full p-4 w-60 menu bg-base-100 text-base-content">
