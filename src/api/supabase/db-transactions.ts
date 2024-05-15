@@ -1,18 +1,19 @@
 import { anonClient } from '../../supabase/anon-client';
+
 import type { NewTransaction } from '@/types/ui-types';
 
 export async function fetchTransactionsByAccountIdForDateRange(
   accountId: number,
-  from: Date,
-  to: Date
+  from: String,
+  to: String
 ) {
   try {
     const { data: transactions_data, error: transactions_error } = await anonClient
       .from('transactions')
       .select()
       .eq('account_id', accountId)
-      .gte('date', from.toISOString())
-      .lte('date', to.toISOString());
+      .gte('date', from)
+      .lte('date', to);
     if (transactions_error) {
       throw transactions_error;
     }

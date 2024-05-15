@@ -1,6 +1,7 @@
 <template>
   <RouterView />
   <AddAccountModal />
+  <AddTransactionModal />
 </template>
 
 <script setup lang="ts">
@@ -12,6 +13,7 @@ import { anonClient } from './supabase/anon-client';
 import { useUserStore } from './stores/user';
 
 import AddAccountModal from '@/components/modals/AddAccountModal.vue';
+import AddTransactionModal from '@/components/modals/AddTransactionModal.vue';
 
 const route = useRoute();
 const router = useRouter();
