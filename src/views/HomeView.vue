@@ -8,8 +8,8 @@
         <div class="card-title">Accounts</div>
 
         <Suspense>
-          <HomeAccountsCardBalancesList />
-          <template #fallback> Loading accounts... </template>
+          <AccountSummaryListsRenderer />
+          <template #fallback><div>Loading accounts...</div></template>
         </Suspense>
 
         <div class="justify-end card-actions">
@@ -31,7 +31,7 @@ import { onMounted } from 'vue';
 import { storeToRefs } from 'pinia';
 import { useUserStore } from '@/stores/user';
 
-import HomeAccountsCardBalancesList from '@/components/views/home/HomeAccountsCardBalancesList.vue';
+import AccountSummaryListsRenderer from '@/components/views/home/AccountSummaryListsRenderer.vue';
 
 const userStore = useUserStore();
 const { displayName } = storeToRefs(userStore);

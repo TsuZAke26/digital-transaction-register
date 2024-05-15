@@ -5,13 +5,10 @@
       <!-- Checking account summaries -->
       <div v-if="accountSummariesByType('Checking').length > 0" class="space-y-2">
         <div class="font-semibold text-md">Checking</div>
-        <div
-          v-for="accountSummary in accountSummariesByType('Checking')"
-          :key="accountSummary.id as number"
-        >
-          <AccountBalanceSmall
-            :name="accountSummary.name as string"
-            :balance="accountSummary.balance as number"
+        <div v-for="accountSummary in accountSummariesByType('Checking')" :key="accountSummary.id">
+          <AccountSummarySmall
+            :name="accountSummary.name"
+            :balance="accountSummary.balance"
             :id="accountSummary.id"
           />
         </div>
@@ -20,13 +17,10 @@
       <!-- Savings account summaries -->
       <div v-if="accountSummariesByType('Savings').length > 0" class="space-y-2">
         <div class="font-semibold text-md">Savings</div>
-        <div
-          v-for="accountSummary in accountSummariesByType('Savings')"
-          :key="accountSummary.id as number"
-        >
-          <AccountBalanceSmall
-            :name="accountSummary.name as string"
-            :balance="accountSummary.balance as number"
+        <div v-for="accountSummary in accountSummariesByType('Savings')" :key="accountSummary.id">
+          <AccountSummarySmall
+            :name="accountSummary.name"
+            :balance="accountSummary.balance"
             :id="accountSummary.id"
           />
         </div>
@@ -37,11 +31,11 @@
         <div class="font-semibold text-md">Credit Line</div>
         <div
           v-for="accountSummary in accountSummariesByType('Credit Line')"
-          :key="accountSummary.id as number"
+          :key="accountSummary.id"
         >
-          <AccountBalanceSmall
-            :name="accountSummary.name as string"
-            :balance="accountSummary.balance as number"
+          <AccountSummarySmall
+            :name="accountSummary.name"
+            :balance="accountSummary.balance"
             :id="accountSummary.id"
           />
         </div>
@@ -55,7 +49,7 @@ import { ref } from 'vue';
 import { storeToRefs } from 'pinia';
 import { useAccountsStore } from '@/stores/accounts';
 
-import AccountBalanceSmall from '@/components/views/home/AccountBalanceSmall.vue';
+import AccountSummarySmall from '@/components/views/home/AccountSummarySmall.vue';
 
 const accountsStore = useAccountsStore();
 const { accounts, accountSummariesByType } = storeToRefs(accountsStore);
