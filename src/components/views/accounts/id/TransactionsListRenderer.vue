@@ -34,18 +34,19 @@ const props = defineProps({
 const idAsNumber = Number.parseInt(toRef(props, 'id').value);
 
 const transactionsStore = useTransactionsStore();
-const { loadTransactionsByAccountInDateRange } = transactionsStore;
+const { loadTransactionsByAccountInDateRange, transactionsByAccountInDateRange } =
+  transactionsStore;
 
 const loaded = ref(false);
 
 const localTransactions: Ref<Database['public']['Tables']['transactions']['Row'][]> = ref([]);
 const now = new Date();
-await loadTransactionsByAccountInDateRange(idAsNumber, getThirtyDaysAgo(now), now).then(
-  (fetchedTransactions) => {
-    if (fetchedTransactions) {
-      localTransactions.value = fetchedTransactions;
-    }
-    loaded.value = true;
-  }
-);
+await loadTransactionsByAccountInDateRange(idAsNumber, getThirtyDaysAgo(now), now).then(() => {
+  localTransactions.value = transactionsByAccountInDateRange(
+    idAsNumber,
+    getThirtyDaysAgo(now),
+    now
+  );
+  loaded.value = true;
+});
 </script>
