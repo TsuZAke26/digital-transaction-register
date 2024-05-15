@@ -1,7 +1,5 @@
 <template>
-  <div v-if="loaded && (!localTransactions || localTransactions?.length === 0)">
-    No transactions found
-  </div>
+  <div v-if="loaded && localTransactions?.length === 0">No transactions found</div>
   <div v-else>
     <!-- Mobile transaction list -->
     <div class="sm:hidden">
@@ -42,10 +40,12 @@ const loaded = ref(false);
 
 const localTransactions: Ref<Database['public']['Tables']['transactions']['Row'][]> = ref([]);
 const now = new Date();
-localTransactions.value = await loadTransactionsByAccountInDateRange(
-  idAsNumber,
-  getThirtyDaysAgo(now),
-  now
+await loadTransactionsByAccountInDateRange(idAsNumber, getThirtyDaysAgo(now), now).then(
+  (fetchedTransactions) => {
+    if (fetchedTransactions) {
+      localTransactions.value = fetchedTransactions;
+    }
+    loaded.value = true;
+  }
 );
-loaded.value = true;
 </script>
