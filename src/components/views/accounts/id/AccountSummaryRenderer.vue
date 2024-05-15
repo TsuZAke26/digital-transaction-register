@@ -1,11 +1,11 @@
 <template>
-  <div class="flex flex-wrap justify-between">
+  <div v-if="summary" class="flex flex-wrap justify-between">
     <div>
-      <div class="font-semibold">{{ summary?.name }}</div>
-      <div class="text-sm">{{ summary?.accountType }}</div>
+      <div class="font-semibold">{{ summary.name }}</div>
+      <div class="text-sm">{{ summary.accountType }}</div>
     </div>
 
-    <div :class="styleAmount(summary?.balance)" class="text-2xl font-semibold">
+    <div :class="styleAmount(summary.balance)" class="text-2xl font-semibold">
       {{ formatAmount(summary.balance) }}
     </div>
   </div>
