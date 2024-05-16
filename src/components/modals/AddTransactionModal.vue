@@ -74,7 +74,7 @@ import { useUserStore } from '@/stores/user';
 import { useAccountsStore } from '@/stores/accounts';
 import { useTransactionsStore } from '@/stores/transactions';
 
-import type NewTransaction from '@/types/ui-types';
+import type { NewTransaction } from '@/types/ui-types';
 
 import { jsDateToSupabaseDate } from '@/util/date-utils';
 import { REGEX_AMOUNT_STRING } from '@/util/regex';
@@ -100,10 +100,10 @@ const { addTransaction } = transactionsStore;
 const transactionCategory = ref('');
 const name = ref('');
 const date = ref(jsDateToSupabaseDate(new Date()));
-const amount: Ref<Number | undefined> = ref(undefined);
+const amount: Ref<String | undefined> = ref(undefined);
 function formatAmountValue(event: FocusEvent) {
   console.log(`Event type: ${event}`, event);
-  const newAmount = Number.parseFloat(event.target.value).toFixed(2);
+  const newAmount = Number.parseFloat(event.target?.value).toFixed(2);
   amount.value = newAmount;
 }
 
@@ -115,7 +115,7 @@ async function handleAddTransaction() {
       category: transactionCategory.value,
       name: name.value,
       date: date.value,
-      amount: amount.value as number
+      amount: Number.parseFloat(amount.value)
     };
     await addTransaction(newTransactionData);
 
