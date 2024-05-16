@@ -19,7 +19,7 @@
 </template>
 
 <script setup lang="ts">
-import { type, onMounted } from 'vue';
+import { type PropType, onMounted } from 'vue';
 
 import type { Database } from '@/types/supabase';
 

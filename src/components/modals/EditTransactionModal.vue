@@ -70,7 +70,7 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, onMounted } from 'vue';
+import { reactive, onMounted, type PropType } from 'vue';
 import { storeToRefs } from 'pinia';
 import { useToast } from 'vue-toastification';
 
@@ -110,7 +110,7 @@ const localTransaction: Database['public']['Tables']['transactions']['Row'] = re
 function formatAmountValue(event: any) {
   console.log(`Event type: ${event}`, event);
   const newAmount = Number.parseFloat(event.target?.value).toFixed(2);
-  localTransaction.amount = newAmount;
+  localTransaction.amount = Number.parseFloat(newAmount);
 }
 
 async function handleEditTransaction() {
