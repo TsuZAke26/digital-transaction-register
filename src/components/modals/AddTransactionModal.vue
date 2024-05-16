@@ -101,7 +101,7 @@ const transactionCategory = ref('');
 const name = ref('');
 const date = ref(jsDateToSupabaseDate(new Date()));
 const amount: Ref<String | undefined> = ref(undefined);
-function formatAmountValue(event: FocusEvent) {
+function formatAmountValue(event: any) {
   console.log(`Event type: ${event}`, event);
   const newAmount = Number.parseFloat(event.target?.value).toFixed(2);
   amount.value = newAmount;
@@ -115,7 +115,7 @@ async function handleAddTransaction() {
       category: transactionCategory.value,
       name: name.value,
       date: date.value,
-      amount: Number.parseFloat(amount.value)
+      amount: Number.parseFloat(amount.value as string)
     };
     await addTransaction(newTransactionData);
 
