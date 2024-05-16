@@ -1,4 +1,4 @@
-import { ref, type Ref } from 'vue';
+import { computed, ref, type Ref } from 'vue';
 import { acceptHMRUpdate, defineStore } from 'pinia';
 
 import {
@@ -35,6 +35,9 @@ export const useTransactionsStore = defineStore('transactions', () => {
   //     created_at: '2024-05-01'
   //   }
   // ]);
+  const latestTransactions = computed(() => {
+    return transactions.value.sort(sortTransactionsDesc).slice(0, 5);
+  });
   function transactionsByAccountInDateRange(accountId: number, from: Date, to: Date) {
     const transactionsInRangeFromStore = transactions.value.filter((storeTransaction) => {
       const matchesAccount = accountId === storeTransaction.account_id;
@@ -84,10 +87,8 @@ export const useTransactionsStore = defineStore('transactions', () => {
     const newTransaction = await insertTransaction(data);
     if (newTransaction) {
       transactions.value.push(newTransaction);
-      // toast.success('Transaction creation successful');
       return true;
     } else {
-      // toast.error('Transaction creation failed');
       return false;
     }
   }
@@ -98,6 +99,7 @@ export const useTransactionsStore = defineStore('transactions', () => {
 
   return {
     transactions,
+    latestTransactions,
     transactionsByAccountInDateRange,
     loadTransactionsByAccount,
     loadTransactionsByAccountInDateRange,

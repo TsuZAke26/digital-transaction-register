@@ -51,6 +51,7 @@ export async function insertTransaction(data: NewTransaction) {
         name: data.name,
         date: data.date,
         amount: data.amount,
+        category: data.category,
         account_id: data.accountId
       })
       .select()

@@ -35,6 +35,7 @@
       </div>
     </div>
   </div>
+  <AddTransactionModal :account-id="id" />
 </template>
 
 <script setup lang="ts">
@@ -42,6 +43,7 @@ import { onBeforeMount, onMounted } from 'vue';
 
 import { useTransactionsStore } from '@/stores/transactions';
 
+import AddTransactionModal from '@/components/modals/AddTransactionModal.vue';
 import AccountSummaryRenderer from '@/components/views/accounts/id/AccountSummaryRenderer.vue';
 import TransactionsListRenderer from '@/components/views/accounts/id/TransactionsListRenderer.vue';
 
