@@ -12,7 +12,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, toRef } from 'vue';
+import { computed, type ComputedRef, toRef } from 'vue';
 import { useAccountsStore } from '@/stores/accounts';
 
 import { formatAmount, styleAmount } from '@/util/format-utils';

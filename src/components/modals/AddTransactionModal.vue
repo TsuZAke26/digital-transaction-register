@@ -43,7 +43,7 @@
             class="w-full text-right"
             type="number"
             step="0.01"
-            :pattern="AMOUNT"
+            :pattern="REGEX_AMOUNT_STRING"
             required
             @blur="formatAmountValue"
           />
@@ -66,7 +66,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, toRef, onMounted } from 'vue';
+import { ref, type Ref, toRef, onMounted } from 'vue';
 import { storeToRefs } from 'pinia';
 import { useToast } from 'vue-toastification';
 
@@ -77,7 +77,7 @@ import { useTransactionsStore } from '@/stores/transactions';
 import type NewTransaction from '@/types/ui-types';
 
 import { jsDateToSupabaseDate } from '@/util/date-utils';
-import { AMOUNT } from '@/util/regex';
+import { REGEX_AMOUNT_STRING } from '@/util/regex';
 
 const props = defineProps({
   accountId: {
@@ -101,9 +101,9 @@ const transactionCategory = ref('');
 const name = ref('');
 const date = ref(jsDateToSupabaseDate(new Date()));
 const amount: Ref<Number | undefined> = ref(undefined);
-function formatAmountValue(event) {
+function formatAmountValue(event: FocusEvent) {
+  console.log(`Event type: ${event}`, event);
   const newAmount = Number.parseFloat(event.target.value).toFixed(2);
-  console.log(`Formatted amount: ${newAmount}`);
   amount.value = newAmount;
 }
 
@@ -129,7 +129,7 @@ async function handleAddTransaction() {
     // Reset form values
     transactionCategory.value = '';
     date.value = jsDateToSupabaseDate(new Date());
-    name.value - '';
+    name.value = '';
     amount.value = undefined;
 
     await loadAccountBalances();
