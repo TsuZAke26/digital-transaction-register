@@ -4,7 +4,8 @@ import { acceptHMRUpdate, defineStore } from 'pinia';
 import {
   fetchTransactionsByAccountId,
   fetchTransactionsByAccountIdForDateRange,
-  insertTransaction
+  insertTransaction,
+  updateTransaction
 } from '@/api/supabase/db-transactions';
 
 import type { NewTransaction } from '@/types/ui-types';
@@ -92,6 +93,15 @@ export const useTransactionsStore = defineStore('transactions', () => {
       return false;
     }
   }
+  async function editTransaction(data: Database['public']['Tables']['transactions']['Row']) {
+    const updatedTransaction = await updateTransaction(data);
+    if (updatedTransaction) {
+      const txIndex = transactions.value.findIndex(
+        (transaction) => transaction.id === updatedTransaction.id
+      );
+      transactions.value.splice(txIndex, 1, updatedTransaction);
+    }
+  }
 
   function resetState() {
     transactions.value = [];
@@ -104,6 +114,7 @@ export const useTransactionsStore = defineStore('transactions', () => {
     loadTransactionsByAccount,
     loadTransactionsByAccountInDateRange,
     addTransaction,
+    editTransaction,
     resetState
   };
 });

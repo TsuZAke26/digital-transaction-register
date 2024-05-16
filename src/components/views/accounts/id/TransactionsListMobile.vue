@@ -1,24 +1,10 @@
 <template>
   <div class="space-y-2">
-    <div
+    <TransactionsListMobileItem
       v-for="transaction in transactions"
       :key="transaction.id"
-      class="px-4 py-2 space-y-2 border rounded-lg"
-    >
-      <!-- Name & amount -->
-      <div class="flex items-start justify-between">
-        <div class="text-sm font-medium truncate">{{ transaction.name }}</div>
-        <div class="font-bold text-md" :class="styleAmount(transaction.amount)">
-          {{ formatAmount(transaction.amount) }}
-        </div>
-      </div>
-
-      <!-- Date & category -->
-      <div class="flex items-center justify-between">
-        <div class="text-sm badge badge-secondary">{{ transaction.category }}</div>
-        <div class="text-sm font-medium">{{ formatTransactionDate(transaction.date) }}</div>
-      </div>
-    </div>
+      :transaction="transaction"
+    />
   </div>
 </template>
 
@@ -27,7 +13,7 @@ import type { PropType } from 'vue';
 
 import type { Database } from '@/types/supabase';
 
-import { formatTransactionDate, formatAmount, styleAmount } from '@/util/format-utils';
+import TransactionsListMobileItem from '@/components/views/accounts/id/TransactionsListMobileItem.vue';
 
 defineProps({
   transactions: {

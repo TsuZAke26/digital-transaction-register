@@ -1,5 +1,6 @@
 import { anonClient } from '../../supabase/anon-client';
 
+import type { Database } from '@/types/supabase';
 import type { NewTransaction } from '@/types/ui-types';
 
 export async function fetchTransactionsByAccountIdForDateRange(
@@ -63,5 +64,28 @@ export async function insertTransaction(data: NewTransaction) {
     return transactions_data;
   } catch (error) {
     console.error('Add Transaction Error: ', error);
+  }
+}
+
+export async function updateTransaction(data: Database['public']['Tables']['transactions']['Row']) {
+  try {
+    const userId = (await anonClient.auth.getSession()).data.session?.user.id;
+    if (!userId) {
+      throw new Error('User is not authenticated, abort update transaction');
+    }
+
+    const { data: transactions_data, error: transactions_error } = await anonClient
+      .from('transactions')
+      .update(data)
+      .eq('id', data.id)
+      .select()
+      .single();
+    if (transactions_error) {
+      throw transactions_error;
+    }
+
+    return transactions_data;
+  } catch (error) {
+    console.error('Update Transaction Error: ', error);
   }
 }
