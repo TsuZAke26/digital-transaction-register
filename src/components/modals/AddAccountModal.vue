@@ -1,7 +1,7 @@
 <template>
   <dialog id="modal-add-account" class="modal">
     <!-- Modal content -->
-    <div class="space-y-4 modal-box">
+    <div class="space-y-4 border modal-box">
       <!-- Modal Title -->
       <h3 class="text-xl font-bold">Add Account</h3>
 

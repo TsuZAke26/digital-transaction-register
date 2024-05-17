@@ -2,6 +2,7 @@ import { computed, ref, type Ref } from 'vue';
 import { acceptHMRUpdate, defineStore } from 'pinia';
 
 import {
+  deleteTransaction,
   fetchTransactionsByAccountId,
   fetchTransactionsByAccountIdForDateRange,
   insertTransaction,
@@ -16,29 +17,14 @@ import { sortTransactionsDesc } from '@/util/sort-utils';
 
 export const useTransactionsStore = defineStore('transactions', () => {
   const transactions: Ref<Database['public']['Tables']['transactions']['Row'][]> = ref([]);
-  // const transactions: Ref<Database['public']['Tables']['transactions']['Row'][]> = ref([
-  //   {
-  //     id: 1,
-  //     account_id: 1,
-  //     name: 'Mortgage payment',
-  //     amount: -1531.24,
-  //     category: 'Housing',
-  //     date: '2024-05-01',
-  //     created_at: '2024-05-01'
-  //   },
-  //   {
-  //     id: 2,
-  //     account_id: 1,
-  //     name: 'IHDA Down Payment Assistance',
-  //     amount: -83.33,
-  //     category: 'Housing',
-  //     date: '2024-05-03',
-  //     created_at: '2024-05-01'
-  //   }
-  // ]);
   const latestTransactions = computed(() => {
     return transactions.value.sort(sortTransactionsDesc).slice(0, 5);
   });
+
+  function _transactionIndexInStore(id: number) {
+    return transactions.value.findIndex((storeTranasction) => storeTranasction.id === id);
+  }
+
   function transactionsByAccountInDateRange(accountId: number, from: Date, to: Date) {
     const transactionsInRangeFromStore = transactions.value.filter((storeTransaction) => {
       const matchesAccount = accountId === storeTransaction.account_id;
@@ -50,6 +36,7 @@ export const useTransactionsStore = defineStore('transactions', () => {
 
     return transactionsInRangeFromStore.sort(sortTransactionsDesc);
   }
+
   async function loadTransactionsByAccount(accountId: number) {
     const fetchedTransactions = await fetchTransactionsByAccountId(accountId);
     if (fetchedTransactions && fetchedTransactions.length > 0) {
@@ -84,23 +71,35 @@ export const useTransactionsStore = defineStore('transactions', () => {
       await loadTransactionsByAccount(accountId);
     }
   }
+
   async function addTransaction(data: NewTransaction) {
     const newTransaction = await insertTransaction(data);
     if (newTransaction) {
       transactions.value.push(newTransaction);
-      return true;
-    } else {
-      return false;
     }
   }
-  async function editTransaction(data: Database['public']['Tables']['transactions']['Row']) {
-    const updatedTransaction = await updateTransaction(data);
-    if (updatedTransaction) {
-      const txIndex = transactions.value.findIndex(
-        (transaction) => transaction.id === updatedTransaction.id
-      );
-      transactions.value.splice(txIndex, 1, updatedTransaction);
+  async function editTransaction(
+    id: number,
+    data: Database['public']['Tables']['transactions']['Update']
+  ) {
+    const storeIndex = _transactionIndexInStore(id);
+    if (storeIndex === -1) {
+      throw new Error('Transaction not found in store');
     }
+
+    const updatedTransaction = await updateTransaction(id, data);
+    if (updatedTransaction) {
+      transactions.value.splice(storeIndex, 1, updatedTransaction);
+    }
+  }
+  async function removeTransaction(id: number) {
+    const storeIndex = _transactionIndexInStore(id);
+    if (storeIndex === -1) {
+      throw new Error('Transaction not found in store');
+    }
+
+    await deleteTransaction(id);
+    transactions.value.splice(storeIndex, 1);
   }
 
   function resetState() {
@@ -115,6 +114,7 @@ export const useTransactionsStore = defineStore('transactions', () => {
     loadTransactionsByAccountInDateRange,
     addTransaction,
     editTransaction,
+    removeTransaction,
     resetState
   };
 });

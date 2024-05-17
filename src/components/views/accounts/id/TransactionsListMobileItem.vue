@@ -35,7 +35,7 @@ const props = defineProps({
 });
 
 let editTransactionDialogEl: HTMLElement | null;
-function handleTransactionClick(event: any) {
+function handleTransactionClick() {
   if (editTransactionDialogEl instanceof HTMLDialogElement) {
     editTransactionDialogEl.showModal();
   }

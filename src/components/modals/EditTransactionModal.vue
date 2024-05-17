@@ -1,9 +1,9 @@
 <template>
   <dialog :id="`modal-edit-transaction-${transaction.id}`" class="modal">
     <!-- Modal content -->
-    <div class="space-y-4 modal-box">
+    <div class="space-y-4 border modal-box">
       <!-- Modal Title -->
-      <h3 class="text-lg font-bold">Add Transaction</h3>
+      <h3 class="text-lg font-bold">Edit Transaction</h3>
 
       <!-- New Transaction form -->
       <form @submit.prevent="handleEditTransaction" class="space-y-4">
@@ -55,10 +55,17 @@
 
         <!-- Modal actions-->
         <div class="space-x-4 modal-action">
+          <!-- Delete Transaction -->
+          <button @click="handleDeleteTransaction" type="button" class="btn btn-error">
+            Delete
+          </button>
+
+          <div class="w-full"></div>
+
           <!-- Close modal -->
           <form method="dialog">
             <!-- if there is a button in form, it will close the modal -->
-            <button class="btn">Close</button>
+            <button class="btn btn-ghost">Close</button>
           </form>
 
           <!-- Submit form -->
@@ -98,26 +105,33 @@ const accountsStore = useAccountsStore();
 const { loadAccountBalances } = accountsStore;
 
 const transactionsStore = useTransactionsStore();
-const { editTransaction } = transactionsStore;
+const { editTransaction, removeTransaction } = transactionsStore;
 
-const localTransaction: Database['public']['Tables']['transactions']['Row'] = reactive(
-  props.transaction
-);
-// const transactionCategory = ref(props.transaction.category);
-// const name = ref(props.transaction.name);
-// const date = ref(prosp.transaction.date);
-// const amount = ref(props.transaction.amount);
+const localTransaction = reactive({
+  id: props.transaction.id,
+  name: props.transaction.name,
+  date: props.transaction.date,
+  category: props.transaction.category,
+  amount: props.transaction.amount.toFixed(2).toString(),
+  accountId: props.transaction.account_id
+});
 function formatAmountValue(event: any) {
-  console.log(`Event type: ${event}`, event);
   const newAmount = Number.parseFloat(event.target?.value).toFixed(2);
-  localTransaction.amount = Number.parseFloat(newAmount);
+  localTransaction.amount = newAmount;
 }
 
 async function handleEditTransaction() {
   try {
-    await editTransaction(localTransaction);
+    const updateData: Database['public']['Tables']['transactions']['Update'] = {
+      account_id: localTransaction.accountId,
+      category: localTransaction.category,
+      date: localTransaction.date,
+      name: localTransaction.name,
+      amount: Number.parseFloat(localTransaction.amount)
+    };
+    await editTransaction(localTransaction.id, updateData);
 
-    // Closes the add transaction modal
+    // Closes the edit transaction modal
     if (editTransactionDialogEl instanceof HTMLDialogElement) {
       editTransactionDialogEl.close();
     }
@@ -128,6 +142,24 @@ async function handleEditTransaction() {
   } catch (error) {
     console.error(error);
     toast.error('Transaction update failed');
+  }
+}
+
+async function handleDeleteTransaction() {
+  try {
+    await removeTransaction(localTransaction);
+
+    // Closes the edit transaction modal
+    if (editTransactionDialogEl instanceof HTMLDialogElement) {
+      editTransactionDialogEl.close();
+    }
+
+    toast.success('Transaction delete successful');
+
+    await loadAccountBalances();
+  } catch (error) {
+    console.error(error);
+    toast.error('Transaction delete failed');
   }
 }
 

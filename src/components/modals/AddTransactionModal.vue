@@ -1,7 +1,7 @@
 <template>
   <dialog id="modal-add-transaction" class="modal">
     <!-- Modal content -->
-    <div class="space-y-4 modal-box">
+    <div class="space-y-4 border modal-box">
       <!-- Modal Title -->
       <h3 class="text-lg font-bold">Add Transaction</h3>
 
@@ -102,7 +102,6 @@ const name = ref('');
 const date = ref(jsDateToSupabaseDate(new Date()));
 const amount: Ref<String | undefined> = ref(undefined);
 function formatAmountValue(event: any) {
-  console.log(`Event type: ${event}`, event);
   const newAmount = Number.parseFloat(event.target?.value).toFixed(2);
   amount.value = newAmount;
 }
@@ -134,6 +133,7 @@ async function handleAddTransaction() {
 
     await loadAccountBalances();
   } catch (error) {
+    console.error(error);
     toast.error('Transaction creation failed');
   }
 }
