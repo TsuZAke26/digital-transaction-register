@@ -147,7 +147,7 @@ async function handleEditTransaction() {
 
 async function handleDeleteTransaction() {
   try {
-    await removeTransaction(localTransaction);
+    await removeTransaction(localTransaction.id);
 
     // Closes the edit transaction modal
     if (editTransactionDialogEl instanceof HTMLDialogElement) {
