@@ -126,7 +126,7 @@ function formatAmountValue(event: any) {
 
 function close() {
   const editTransactionDialogEl: HTMLElement | null = document.getElementById(
-    `modal-edit-transaction-${props.transaction.id}`
+    `modal-edit-transaction-${props.formFactor}-${props.transaction.id}`
   );
   if (editTransactionDialogEl instanceof HTMLDialogElement) {
     editTransactionDialogEl.close();
