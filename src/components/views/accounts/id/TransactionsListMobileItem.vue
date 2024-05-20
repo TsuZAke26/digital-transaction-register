@@ -43,7 +43,7 @@ function handleTransactionClick() {
 
 onMounted(() => {
   editTransactionDialogEl = document.getElementById(
-    `modal-edit-transaction-${props.transaction.id}`
+    `modal-edit-transaction-mobile-${props.transaction.id}`
   );
 });
 </script>

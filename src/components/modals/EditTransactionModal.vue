@@ -1,5 +1,5 @@
 <template>
-  <dialog :id="`modal-edit-transaction-${transaction.id}`" class="modal">
+  <dialog :id="`modal-edit-transaction-${formFactor}-${transaction.id}`" class="modal">
     <!-- Modal content -->
     <div class="space-y-4 border modal-box">
       <!-- Modal Title -->
@@ -77,7 +77,7 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, onMounted, type PropType } from 'vue';
+import { reactive, type PropType } from 'vue';
 import { storeToRefs } from 'pinia';
 import { useToast } from 'vue-toastification';
 
@@ -93,6 +93,10 @@ const props = defineProps({
   transaction: {
     type: Object as PropType<Database['public']['Tables']['transactions']['Row']>,
     required: true
+  },
+  formFactor: {
+    type: String,
+    default: 'mobile'
   }
 });
 
