@@ -1,5 +1,5 @@
 <template>
-  <tr v-for="transaction in transactions" :key="transaction.id" class="hover">
+  <tr class="hover">
     <td>{{ transaction.category }}</td>
     <td>{{ formatTransactionDate(transaction.date) }}</td>
     <td>{{ transaction.name }}</td>
@@ -38,11 +38,13 @@
 </template>
 
 <script setup lang="ts">
+import type { PropType } from 'vue';
+
 import type { Database } from '@/types/supabase';
 
 import { formatTransactionDate, formatAmount, styleAmount } from '@/util/format-utils';
 
-const props = defineProps({
+defineProps({
   transaction: {
     type: Object as PropType<Database['public']['Tables']['transactions']['Row']>,
     required: true
