@@ -6,7 +6,8 @@ import {
   fetchAccountBalances,
   fetchAccountBalanceById,
   fetchAccounts,
-  insertAccount
+  insertAccount,
+  updateAccount
 } from '@/api/supabase/db-accounts';
 
 import type { AccountSummary, NewAccount } from '@/types/ui-types';
@@ -56,6 +57,9 @@ export const useAccountsStore = defineStore('accounts', () => {
   function _findAccount(accountId: number) {
     return accounts.value.find((storeAccount) => storeAccount.id === accountId);
   }
+  function _accountIndexInStore(id: number) {
+    return accounts.value.findIndex((storeAccount) => storeAccount.id === id);
+  }
   async function loadAccounts() {
     const fetchedAccounts = await fetchAccounts();
     if (fetchedAccounts) {
@@ -75,13 +79,27 @@ export const useAccountsStore = defineStore('accounts', () => {
       }
     }
   }
-  function getAccountFromStore(id: number) {
+  async function getAccountFromStore(id: number) {
+    if (!_findAccount(id)) {
+      await loadAccountById(id);
+    }
     return _findAccount(id);
   }
   async function addAccount(data: NewAccount) {
     const newAccount = await insertAccount(data);
     if (newAccount) {
       accounts.value.push(newAccount);
+    }
+  }
+  async function editAccount(id: number, data: Database['public']['Tables']['accounts']['Update']) {
+    const storeIndex = _accountIndexInStore(id);
+    if (storeIndex === -1) {
+      throw new Error('Account not found in store');
+    }
+
+    const updatedAccount = await updateAccount(id, data);
+    if (updatedAccount) {
+      accounts.value.splice(storeIndex, 1, updatedAccount);
     }
   }
 
@@ -127,6 +145,7 @@ export const useAccountsStore = defineStore('accounts', () => {
     loadAccountById,
     getAccountFromStore,
     addAccount,
+    editAccount,
     resetState
   };
 });

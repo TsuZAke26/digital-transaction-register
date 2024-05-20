@@ -2,7 +2,7 @@
   <div class="container max-w-5xl p-4 mx-auto">
     <div class="space-y-4">
       <!-- Account Summary card -->
-      <div class="border card">
+      <div v-if="account" class="border card">
         <div class="card-body">
           <Suspense>
             <AccountSummaryRenderer :id="id" />
@@ -11,6 +11,17 @@
               <div>Loading account summary...</div>
             </template>
           </Suspense>
+
+          <div class="justify-end card-actions">
+            <button
+              :disabled="!account"
+              @click="handleShowEditAccountModal"
+              type="button"
+              class="btn btn-sm btn-primary"
+            >
+              Edit Account
+            </button>
+          </div>
         </div>
       </div>
 
@@ -25,7 +36,7 @@
           </div>
 
           <Suspense>
-            <TransactionsListRenderer :id="id" />
+            <TransactionsListRenderer :account-id="id" />
 
             <template #fallback>
               <div>Loading recent transactions...</div>
@@ -35,38 +46,54 @@
       </div>
     </div>
   </div>
+
+  <!-- Modals -->
   <AddTransactionModal :account-id="id" />
+  <EditAccountModal v-if="account" :account="account" />
 </template>
 
 <script setup lang="ts">
-import { onBeforeMount, onMounted } from 'vue';
+import { ref, onBeforeMount } from 'vue';
 
+import { useAccountsStore } from '@/stores/accounts';
 import { useTransactionsStore } from '@/stores/transactions';
 
 import AddTransactionModal from '@/components/modals/AddTransactionModal.vue';
+import EditAccountModal from '@/components/modals/EditAccountModal.vue';
+
 import AccountSummaryRenderer from '@/components/views/accounts/id/AccountSummaryRenderer.vue';
 import TransactionsListRenderer from '@/components/views/accounts/id/TransactionsListRenderer.vue';
 
-defineProps({
+const props = defineProps({
   id: {
     type: String,
     required: true
   }
 });
 
+const accountsStore = useAccountsStore();
+const { getAccountFromStore } = accountsStore;
+
 const transactionsStore = useTransactionsStore();
 const { resetState } = transactionsStore;
 
-let addTransactionDialogEl: HTMLElement | null;
+const account = ref();
+getAccountFromStore(Number.parseInt(props.id)).then((data) => (account.value = data));
+
 function handleShowAddTransactionModal() {
+  const addTransactionDialogEl: HTMLElement | null =
+    document.getElementById('modal-add-transaction');
   if (addTransactionDialogEl instanceof HTMLDialogElement) {
     addTransactionDialogEl.showModal();
   }
 }
 
-onBeforeMount(() => resetState());
+function handleShowEditAccountModal() {
+  const editAccountDialogEl: HTMLElement | null = document.getElementById('modal-edit-account');
+  if (editAccountDialogEl instanceof HTMLDialogElement) {
+    editAccountDialogEl.showModal();
+  }
+}
 
-onMounted(() => {
-  addTransactionDialogEl = document.getElementById('modal-add-transaction');
-});
+onBeforeMount(() => resetState());
 </script>

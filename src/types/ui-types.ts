@@ -1,6 +1,7 @@
 import type { Database } from './supabase';
 
 export const ACCOUNT_TYPES = ['Checking', 'Savings', 'Credit Line'];
+export const ACCOUNT_TYPES_MAX_BALANCE_REQUIRED = ['Credit Line'];
 
 export interface AccountSummary {
   id: number;

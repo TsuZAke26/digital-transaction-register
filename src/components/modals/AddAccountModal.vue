@@ -26,9 +26,9 @@
 
         <!-- Maximum Balance -->
         <input
-          v-if="accountTypesNeedingMaxBal.includes(accountType)"
+          v-if="ACCOUNT_TYPES_MAX_BALANCE_REQUIRED.includes(accountType)"
           v-model="maxBalance"
-          :placeholder="maxBalancePlaceholder"
+          :placeholder="accountType"
           class="w-full input input-bordered"
           min="1"
           type="number"
@@ -52,13 +52,17 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, type Ref, onMounted } from 'vue';
+import { ref, type Ref, onMounted } from 'vue';
 import { useToast } from 'vue-toastification';
 
 import { useAccountsStore } from '@/stores/accounts';
 
 import type { Database } from '@/types/supabase';
-import { ACCOUNT_TYPES, type NewAccount } from '@/types/ui-types';
+import {
+  ACCOUNT_TYPES,
+  ACCOUNT_TYPES_MAX_BALANCE_REQUIRED,
+  type NewAccount
+} from '@/types/ui-types';
 
 const toast = useToast();
 
@@ -68,11 +72,6 @@ const { addAccount, loadAccountBalances } = accountsStore;
 const name = ref('');
 const accountType: Ref<Database['public']['Enums']['account_type']> = ref('Checking');
 const maxBalance = ref(undefined);
-
-const accountTypesNeedingMaxBal = ['Credit Line'];
-const maxBalancePlaceholder = computed(() => {
-  return 'Credit Limit';
-});
 
 async function handleAddAccount() {
   try {

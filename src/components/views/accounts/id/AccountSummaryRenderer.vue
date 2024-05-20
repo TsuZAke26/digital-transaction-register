@@ -1,5 +1,5 @@
 <template>
-  <div v-if="summary" class="flex flex-wrap justify-between">
+  <div v-if="summary" id="account-summary-renderer" class="flex flex-wrap justify-between">
     <div>
       <div class="font-semibold">{{ summary.name }}</div>
       <div class="text-sm">{{ summary.accountType }}</div>

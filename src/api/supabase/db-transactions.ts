@@ -1,4 +1,4 @@
-import { anonClient } from '../../supabase/anon-client';
+import { anonClient } from '@/supabase/anon-client';
 
 import type { Database } from '@/types/supabase';
 import type { NewTransaction } from '@/types/ui-types';

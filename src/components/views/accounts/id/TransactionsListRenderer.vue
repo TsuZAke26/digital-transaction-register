@@ -25,12 +25,12 @@ import TransactionsListMobile from '@/components/views/accounts/id/TransactionsL
 import TransactionsListDesktop from '@/components/views/accounts/id/TransactionsListDesktop.vue';
 
 const props = defineProps({
-  id: {
+  accountId: {
     type: String,
     required: true
   }
 });
-const idAsNumber = Number.parseInt(toRef(props, 'id').value);
+const idAsNumber = Number.parseInt(toRef(props, 'accountId').value);
 
 const transactionsStore = useTransactionsStore();
 const { latestTransactions } = storeToRefs(transactionsStore);

@@ -120,6 +120,15 @@ function formatAmountValue(event: any) {
   localTransaction.amount = newAmount;
 }
 
+function close() {
+  const editTransactionDialogEl: HTMLElement | null = document.getElementById(
+    `modal-edit-transaction-${props.transaction.id}`
+  );
+  if (editTransactionDialogEl instanceof HTMLDialogElement) {
+    editTransactionDialogEl.close();
+  }
+}
+
 async function handleEditTransaction() {
   try {
     const updateData: Database['public']['Tables']['transactions']['Update'] = {
@@ -131,10 +140,7 @@ async function handleEditTransaction() {
     };
     await editTransaction(localTransaction.id, updateData);
 
-    // Closes the edit transaction modal
-    if (editTransactionDialogEl instanceof HTMLDialogElement) {
-      editTransactionDialogEl.close();
-    }
+    close();
 
     toast.success('Transaction update successful');
 
@@ -149,10 +155,7 @@ async function handleDeleteTransaction() {
   try {
     await removeTransaction(localTransaction.id);
 
-    // Closes the edit transaction modal
-    if (editTransactionDialogEl instanceof HTMLDialogElement) {
-      editTransactionDialogEl.close();
-    }
+    close();
 
     toast.success('Transaction delete successful');
 
@@ -162,11 +165,4 @@ async function handleDeleteTransaction() {
     toast.error('Transaction delete failed');
   }
 }
-
-let editTransactionDialogEl: HTMLElement | null;
-onMounted(() => {
-  editTransactionDialogEl = document.getElementById(
-    `modal-edit-transaction-${props.transaction.id}`
-  );
-});
 </script>

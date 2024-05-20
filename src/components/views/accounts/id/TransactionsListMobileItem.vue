@@ -1,5 +1,5 @@
 <template>
-  <div class="px-4 py-2 space-y-2 border rounded-lg" @click="handleTransactionClick">
+  <div class="px-4 py-2 space-y-2 border rounded-lg cursor-pointer" @click="handleTransactionClick">
     <!-- Name & amount -->
     <div class="flex items-start justify-between">
       <div class="text-sm font-medium truncate">{{ transaction.name }}</div>
@@ -40,6 +40,7 @@ function handleTransactionClick() {
     editTransactionDialogEl.showModal();
   }
 }
+
 onMounted(() => {
   editTransactionDialogEl = document.getElementById(
     `modal-edit-transaction-${props.transaction.id}`
