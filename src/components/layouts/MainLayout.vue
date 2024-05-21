@@ -45,7 +45,7 @@
             <summary>Accounts</summary>
             <ul>
               <li
-                v-for="account in accounts.slice(0, 4)"
+                v-for="account in accountsForMenu"
                 :key="account.id"
                 @click="handleAccountMenuItemClick(account.id)"
               >
@@ -65,7 +65,7 @@
 </template>
 
 <script setup lang="ts">
-import { type Ref, ref } from 'vue';
+import { type Ref, ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { storeToRefs } from 'pinia';
 
@@ -88,6 +88,11 @@ function handleMenuItemClick(routeName: string) {
   router.push({ name: routeName });
   drawerToggleRef.value?.click();
 }
+
+const accountsForMenu = computed(() => {
+  const endIndex = accounts.value.length < 4 ? accounts.value.length : 4;
+  return accounts.value.slice(0, endIndex);
+});
 function handleAccountMenuItemClick(accountId: number) {
   router.push({ name: 'account', params: { id: accountId } });
   drawerToggleRef.value?.click();
