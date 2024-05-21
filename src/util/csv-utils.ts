@@ -1,6 +1,8 @@
 // @ts-nocheck
 import Papa from 'papaparse';
 
+export const TRANSACTION_IMPORT_COLUMN_HEADERS = ['category', 'date', 'name', 'amount'];
+
 // https://stackoverflow.com/questions/31375531/how-to-use-promises-with-papaparse
 export async function importTransactionCSV(
   file: File
@@ -9,10 +11,14 @@ export async function importTransactionCSV(
     Papa.parse(file, {
       worker: true,
       header: true,
-      columns: ['category', 'date', 'name', 'amount'],
+      columns: TRANSACTION_IMPORT_COLUMN_HEADERS,
       dynamicTyping: true,
       complete,
       error
     });
   });
+}
+
+export function generateImportTemplate() {
+  return Papa.unparse({ fields: TRANSACTION_IMPORT_COLUMN_HEADERS });
 }
