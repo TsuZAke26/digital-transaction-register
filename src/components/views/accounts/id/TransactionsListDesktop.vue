@@ -23,7 +23,11 @@
           </td>
           <!-- Edit Transaction -->
           <td>
-            <button @click="handleEditTransaction(transaction.id)" type="button" class="btn btn-xs">
+            <button
+              @click="handleEditTransaction(transaction)"
+              type="button"
+              class="btn dark:btn-outline btn-xs"
+            >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 -960 960 960"
@@ -35,8 +39,6 @@
               </svg>
             </button>
           </td>
-
-          <EditTransactionModal :transaction="transaction" form-factor="desktop" />
         </tr>
       </tbody>
     </table>
@@ -44,13 +46,11 @@
 </template>
 
 <script setup lang="ts">
-import { type PropType, ref } from 'vue';
+import { type PropType } from 'vue';
 
 import type { Database } from '@/types/supabase';
 
 import { formatTransactionDate, formatAmount, styleAmount } from '@/util/format-utils';
-
-import EditTransactionModal from '@/components/modals/EditTransactionModal.vue';
 
 defineProps({
   transactions: {
@@ -59,11 +59,11 @@ defineProps({
   }
 });
 
-function handleEditTransaction(id: number) {
-  const editTransactionDialogEl = document.getElementById(`modal-edit-transaction-desktop-${id}`);
+const emit = defineEmits<{
+  edit: [transaction: Database['public']['Tables']['transactions']['Row']];
+}>();
 
-  if (editTransactionDialogEl instanceof HTMLDialogElement) {
-    editTransactionDialogEl.showModal();
-  }
+function handleEditTransaction(transaction: Database['public']['Tables']['transactions']['Row']) {
+  emit('edit', transaction);
 }
 </script>

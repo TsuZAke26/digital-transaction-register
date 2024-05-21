@@ -1,5 +1,5 @@
 <template>
-  <dialog :id="`modal-edit-transaction-${formFactor}-${transaction.id}`" class="modal">
+  <dialog id="modal-edit-transaction" class="modal">
     <!-- Modal content -->
     <div class="space-y-4 border modal-box">
       <!-- Modal Title -->
@@ -77,7 +77,7 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, type PropType } from 'vue';
+import { reactive, type PropType, toRef, watch } from 'vue';
 import { storeToRefs } from 'pinia';
 import { useToast } from 'vue-toastification';
 
@@ -92,11 +92,16 @@ import { REGEX_AMOUNT_STRING } from '@/util/regex';
 const props = defineProps({
   transaction: {
     type: Object as PropType<Database['public']['Tables']['transactions']['Row']>,
-    required: true
-  },
-  formFactor: {
-    type: String,
-    default: 'mobile'
+    default: () => {
+      return {
+        id: -1,
+        name: '',
+        date: '',
+        category: '',
+        amount: 0,
+        accountId: -1
+      };
+    }
   }
 });
 
@@ -111,23 +116,33 @@ const { loadAccountBalances } = accountsStore;
 const transactionsStore = useTransactionsStore();
 const { editTransaction, removeTransaction } = transactionsStore;
 
-const localTransaction = reactive({
-  id: props.transaction.id,
-  name: props.transaction.name,
-  date: props.transaction.date,
-  category: props.transaction.category,
-  amount: props.transaction.amount.toFixed(2).toString(),
-  accountId: props.transaction.account_id
+const localTransaction: Database['public']['Tables']['transactions']['Row'] = reactive({
+  id: -1,
+  name: '',
+  date: '',
+  category: '',
+  amount: 0,
+  accountId: -1
 });
+watch(
+  () => toRef(props, 'transaction'),
+  (newValue, oldValue) => {
+    localTransaction.id = newValue.value.id;
+    localTransaction.name = newValue.value.name;
+    localTransaction.date = newValue.value.date;
+    localTransaction.category = newValue.value.category;
+    localTransaction.amount = newValue.value.amount;
+    localTransaction.accountId = newValue.value.account_id;
+  }
+);
 function formatAmountValue(event: any) {
   const newAmount = Number.parseFloat(event.target?.value).toFixed(2);
   localTransaction.amount = newAmount;
 }
 
 function close() {
-  const editTransactionDialogEl: HTMLElement | null = document.getElementById(
-    `modal-edit-transaction-${props.formFactor}-${props.transaction.id}`
-  );
+  const editTransactionDialogEl: HTMLElement | null =
+    document.getElementById('modal-edit-transaction');
   if (editTransactionDialogEl instanceof HTMLDialogElement) {
     editTransactionDialogEl.close();
   }

@@ -4,6 +4,7 @@
       v-for="transaction in transactions"
       :key="transaction.id"
       :transaction="transaction"
+      @edit="$emit('edit', $event)"
     />
   </div>
 </template>
@@ -21,4 +22,8 @@ defineProps({
     default: () => []
   }
 });
+
+defineEmits<{
+  edit: [transaction: Database['public']['Tables']['transactions']['Row']];
+}>();
 </script>
