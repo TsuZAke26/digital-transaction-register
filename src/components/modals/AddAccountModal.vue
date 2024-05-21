@@ -25,15 +25,18 @@
         </div>
 
         <!-- Maximum Balance -->
-        <input
-          v-if="ACCOUNT_TYPES_MAX_BALANCE_REQUIRED.includes(accountType)"
-          v-model="maxBalance"
-          :placeholder="accountType"
-          class="w-full input input-bordered"
-          min="1"
-          type="number"
-          required
-        />
+        <label class="flex items-center input input-bordered">
+          $
+          <input
+            v-if="ACCOUNT_TYPES_MAX_BALANCE_REQUIRED.includes(accountType)"
+            v-model="maxBalance"
+            :placeholder="accountType"
+            class="w-full text-right"
+            min="1"
+            type="number"
+            required
+          />
+        </label>
 
         <!-- Modal actions-->
         <div class="space-x-4 modal-action">

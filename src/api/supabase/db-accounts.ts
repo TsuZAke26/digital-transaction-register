@@ -100,3 +100,15 @@ export async function updateAccount(
 
   return accounts_data;
 }
+
+export async function deleteAccount(id: number) {
+  const userId = (await anonClient.auth.getSession()).data.session?.user.id;
+  if (!userId) {
+    throw new Error('User is not authenticated, abort delete account');
+  }
+
+  const { error: accounts_error } = await anonClient.from('accounts').delete().eq('id', id);
+  if (accounts_error) {
+    throw accounts_error;
+  }
+}

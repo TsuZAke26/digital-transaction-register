@@ -25,18 +25,26 @@
         </div>
 
         <!-- Maximum Balance -->
-        <input
-          v-if="ACCOUNT_TYPES_MAX_BALANCE_REQUIRED.includes(localAccount.accountType)"
-          v-model="localAccount.maxBalance"
-          :placeholder="localAccount.accountType"
-          class="w-full input input-bordered"
-          min="1"
-          type="number"
-          required
-        />
+        <label class="flex items-center input input-bordered">
+          $
+          <input
+            v-if="ACCOUNT_TYPES_MAX_BALANCE_REQUIRED.includes(localAccount.accountType)"
+            v-model="localAccount.maxBalance"
+            :placeholder="localAccount.accountType"
+            class="w-full text-right"
+            min="1"
+            type="number"
+            required
+          />
+        </label>
 
         <!-- Modal actions-->
         <div class="space-x-4 modal-action">
+          <!-- Delete Transaction -->
+          <button @click="handleDeleteAccount" type="button" class="btn btn-error">Delete</button>
+
+          <div class="w-full"></div>
+
           <!-- Close modal -->
           <form method="dialog">
             <!-- if there is a button in form, it will close the modal -->
@@ -53,6 +61,7 @@
 
 <script setup lang="ts">
 import { type PropType, reactive } from 'vue';
+import { useRouter } from 'vue-router';
 import { useToast } from 'vue-toastification';
 
 import { useAccountsStore } from '@/stores/accounts';
@@ -67,10 +76,11 @@ const props = defineProps({
   }
 });
 
+const router = useRouter();
 const toast = useToast();
 
 const accountsStore = useAccountsStore();
-const { editAccount } = accountsStore;
+const { editAccount, removeAccount } = accountsStore;
 
 const localAccount = reactive({
   id: props.account.id,
@@ -78,6 +88,13 @@ const localAccount = reactive({
   accountType: props.account.account_type as Database['public']['Enums']['account_type'],
   maxBalance: props.account.max_balance
 });
+
+function close() {
+  const editAccountDialogEl: HTMLElement | null = document.getElementById('modal-edit-account');
+  if (editAccountDialogEl instanceof HTMLDialogElement) {
+    editAccountDialogEl.close();
+  }
+}
 
 async function handleEditAccount() {
   try {
@@ -88,16 +105,27 @@ async function handleEditAccount() {
     };
     await editAccount(localAccount.id, updateData);
 
-    // Closes the edit transaction modal
-    const editAccountDialogEl: HTMLElement | null = document.getElementById('modal-edit-account');
-    if (editAccountDialogEl instanceof HTMLDialogElement) {
-      editAccountDialogEl.close();
-    }
+    close();
 
     toast.success('Account update successful');
   } catch (error) {
     console.error('Update Account Error: ', error);
     toast.error('Account update failed');
+  }
+}
+
+async function handleDeleteAccount() {
+  try {
+    await removeAccount(localAccount.id);
+
+    close();
+
+    toast.success('Account delete successful');
+
+    router.push({ name: 'home' });
+  } catch (error) {
+    console.error(error);
+    toast.error('Account delete failed');
   }
 }
 </script>

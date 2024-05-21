@@ -7,7 +7,8 @@ import {
   fetchAccountBalanceById,
   fetchAccounts,
   insertAccount,
-  updateAccount
+  updateAccount,
+  deleteAccount
 } from '@/api/supabase/db-accounts';
 
 import type { AccountSummary, NewAccount } from '@/types/ui-types';
@@ -102,6 +103,15 @@ export const useAccountsStore = defineStore('accounts', () => {
       accounts.value.splice(storeIndex, 1, updatedAccount);
     }
   }
+  async function removeAccount(id: number) {
+    const storeIndex = _accountIndexInStore(id);
+    if (storeIndex === -1) {
+      throw new Error('Account not found in store');
+    }
+
+    await deleteAccount(id);
+    accounts.value.splice(storeIndex, 1);
+  }
 
   function getAccountSummary(accountId: number) {
     const account = _findAccount(accountId);
@@ -146,6 +156,7 @@ export const useAccountsStore = defineStore('accounts', () => {
     getAccountFromStore,
     addAccount,
     editAccount,
+    removeAccount,
     resetState
   };
 });
