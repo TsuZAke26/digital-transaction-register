@@ -10,7 +10,6 @@ import {
   updateTransaction
 } from '@/api/supabase/db-transactions';
 
-import type { NewTransaction } from '@/types/ui-types';
 import type { Database } from '@/types/supabase';
 
 import { jsDateToSupabaseDate } from '@/util/date-utils';
@@ -73,7 +72,7 @@ export const useTransactionsStore = defineStore('transactions', () => {
     }
   }
 
-  async function addTransaction(data: NewTransaction) {
+  async function addTransaction(data: Database['public']['Tables']['transactions']['Insert']) {
     const newTransaction = await insertTransaction(data);
     if (newTransaction) {
       transactions.value.push(newTransaction);

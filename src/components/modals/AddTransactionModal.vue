@@ -74,7 +74,7 @@ import { useUserStore } from '@/stores/user';
 import { useAccountsStore } from '@/stores/accounts';
 import { useTransactionsStore } from '@/stores/transactions';
 
-import type { NewTransaction } from '@/types/ui-types';
+import type { Database } from '@/types/supabase';
 
 import { jsDateToSupabaseDate } from '@/util/date-utils';
 import { REGEX_AMOUNT_STRING } from '@/util/regex';
@@ -109,8 +109,8 @@ function formatAmountValue(event: any) {
 async function handleAddTransaction() {
   try {
     const accountIdAsNumber = Number.parseInt(toRef(props, 'accountId').value);
-    const newTransactionData: NewTransaction = {
-      accountId: accountIdAsNumber,
+    const newTransactionData: Database['public']['Tables']['transactions']['Insert'] = {
+      account_id: accountIdAsNumber,
       category: transactionCategory.value,
       name: name.value,
       date: date.value,

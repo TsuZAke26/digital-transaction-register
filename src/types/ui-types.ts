@@ -15,11 +15,3 @@ export interface NewAccount {
   accountType: 'Checking' | 'Savings' | 'Credit Line';
   maxBalance?: number;
 }
-
-export interface NewTransaction {
-  name: string;
-  date: string;
-  amount: number;
-  category?: string;
-  accountId: number;
-}
