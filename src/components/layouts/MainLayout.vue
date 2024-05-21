@@ -31,7 +31,7 @@
       </div>
 
       <!-- Page Content -->
-      <RouterView />
+      <RouterView :key="$route.path" />
     </div>
 
     <!-- Drawer Side -->
