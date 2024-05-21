@@ -30,18 +30,30 @@
         <div class="card-body">
           <div class="flex justify-between card-title">
             Transactions
-            <button @click="handleShowAddTransactionModal" class="btn btn-sm btn-primary">
+            <!-- <button @click="handleShowAddTransactionModal" class="btn btn-sm btn-primary">
               Add Transaction
-            </button>
+            </button> -->
           </div>
 
           <Suspense>
-            <TransactionsListRenderer :account-id="id" />
+            <LatestTransactions :account-id="id" />
 
             <template #fallback>
               <div>Loading recent transactions...</div>
             </template>
           </Suspense>
+
+          <div class="justify-end card-actions">
+            <button @click="handleShowAddTransactionModal" class="btn btn-sm btn-primary">
+              Add Transaction
+            </button>
+            <button
+              @click="$router.push({ name: 'account-transactions' })"
+              class="btn btn-primary btn-sm"
+            >
+              View All
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -62,7 +74,7 @@ import AddTransactionModal from '@/components/modals/AddTransactionModal.vue';
 import EditAccountModal from '@/components/modals/EditAccountModal.vue';
 
 import AccountSummaryRenderer from '@/components/views/accounts/id/AccountSummaryRenderer.vue';
-import TransactionsListRenderer from '@/components/views/accounts/id/TransactionsListRenderer.vue';
+import LatestTransactions from '@/components/views/accounts/id/LatestTransactions.vue';
 
 const props = defineProps({
   id: {

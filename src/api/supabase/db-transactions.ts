@@ -55,6 +55,25 @@ export async function insertTransaction(data: NewTransaction) {
   return transactions_data;
 }
 
+export async function insertTransactions(
+  data: Database['public']['Tables']['transactions']['Insert'][]
+) {
+  const userId = (await anonClient.auth.getSession()).data.session?.user.id;
+  if (!userId) {
+    throw new Error('User is not authenticated, abort bulk transaction creation');
+  }
+
+  const { data: transactions_data, error: transactions_error } = await anonClient
+    .from('transactions')
+    .insert(data)
+    .select();
+  if (transactions_error) {
+    throw transactions_error;
+  }
+
+  return transactions_data;
+}
+
 export async function updateTransaction(
   id: number,
   data: Database['public']['Tables']['transactions']['Update']

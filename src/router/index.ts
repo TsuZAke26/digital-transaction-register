@@ -23,6 +23,15 @@ const router = createRouter({
           }
         },
         {
+          path: '/accounts/:id/transactions',
+          name: 'account-transactions',
+          component: () => import('@/views/accounts/id/transactions/AccountIdTransactionsView.vue'),
+          props: true,
+          meta: {
+            auth: true
+          }
+        },
+        {
           path: '/accounts/:id',
           name: 'account',
           component: () => import('@/views/accounts/id/AccountIdView.vue'),
@@ -31,6 +40,7 @@ const router = createRouter({
             auth: true
           }
         },
+
         {
           path: 'profile',
           name: 'profile',

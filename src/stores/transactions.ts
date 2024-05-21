@@ -6,6 +6,7 @@ import {
   fetchTransactionsByAccountId,
   fetchTransactionsByAccountIdForDateRange,
   insertTransaction,
+  insertTransactions,
   updateTransaction
 } from '@/api/supabase/db-transactions';
 
@@ -78,6 +79,14 @@ export const useTransactionsStore = defineStore('transactions', () => {
       transactions.value.push(newTransaction);
     }
   }
+  async function addTransactions(data: Database['public']['Tables']['transactions']['Insert'][]) {
+    const newTransactions = await insertTransactions(data);
+    if (newTransactions) {
+      newTransactions.forEach((newTransaction) => {
+        transactions.value.push(newTransaction);
+      });
+    }
+  }
   async function editTransaction(
     id: number,
     data: Database['public']['Tables']['transactions']['Update']
@@ -113,6 +122,7 @@ export const useTransactionsStore = defineStore('transactions', () => {
     loadTransactionsByAccount,
     loadTransactionsByAccountInDateRange,
     addTransaction,
+    addTransactions,
     editTransaction,
     removeTransaction,
     resetState
