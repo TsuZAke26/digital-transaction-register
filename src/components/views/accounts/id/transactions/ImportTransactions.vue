@@ -107,8 +107,15 @@ async function handleImport() {
         transformedTransaction.account_id = props.id;
         return transformedTransaction;
       });
-
     await addTransactions(transactionsToImport);
+    // const transactionsToImportNew: NewTransaction[] = transactionsJSON.map((transaction: any) => {
+    //   const transformedTransaction = { ...transaction };
+    //   transformedTransaction.accountId = props.id;
+    //   return transformedTransaction;
+    // });
+    // transactionsToImportNew.forEach(async (importTransaction) => {
+    //   await addTransaction(importTransaction);
+    // });
 
     toast.success('Transactions imported successfully!');
 

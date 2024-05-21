@@ -73,17 +73,15 @@ export const useAccountsStore = defineStore('accounts', () => {
       const existingAccountIndex = accounts.value.findIndex(
         (existingAccount) => fetchedAccount.id === existingAccount.id
       );
-      if (existingAccountIndex) {
+
+      if (existingAccountIndex > -1) {
         accounts.value.splice(existingAccountIndex, 1, fetchedAccount);
       } else {
         accounts.value.push(fetchedAccount);
       }
     }
   }
-  async function getAccountFromStore(id: number) {
-    if (!_findAccount(id)) {
-      await loadAccountById(id);
-    }
+  function getAccountFromStore(id: number) {
     return _findAccount(id);
   }
   async function addAccount(data: NewAccount) {
