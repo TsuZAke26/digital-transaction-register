@@ -30,9 +30,15 @@
         <div class="card-body">
           <div class="flex justify-between card-title">
             Transactions
-            <!-- <button @click="handleShowAddTransactionModal" class="btn btn-sm btn-primary">
-              Add Transaction
-            </button> -->
+            <div
+              class="flex items-center text-sm cursor-pointer"
+              @click="$router.push({ name: 'account-transactions' })"
+            >
+              View All
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" class="w-6 h-6">
+                <path d="M504-480 320-664l56-56 240 240-240 240-56-56 184-184Z" />
+              </svg>
+            </div>
           </div>
 
           <Suspense>
@@ -46,12 +52,6 @@
           <div class="justify-end card-actions">
             <button @click="handleShowAddTransactionModal" class="btn btn-sm btn-primary">
               Add Transaction
-            </button>
-            <button
-              @click="$router.push({ name: 'account-transactions' })"
-              class="btn btn-primary btn-sm"
-            >
-              View All
             </button>
           </div>
         </div>

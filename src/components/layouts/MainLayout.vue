@@ -44,6 +44,13 @@
           <details>
             <summary>Accounts</summary>
             <ul>
+              <li
+                v-for="account in accounts.slice(0, 4)"
+                :key="account.id"
+                @click="handleAccountMenuItemClick(account.id)"
+              >
+                <a class="truncate">{{ account.name }}</a>
+              </li>
               <li @click="handleShowAddAccountModal"><a>+ Add Account</a></li>
             </ul>
           </details>
@@ -58,8 +65,9 @@
 </template>
 
 <script setup lang="ts">
-import { type Ref, ref, onMounted } from 'vue';
+import { type Ref, ref } from 'vue';
 import { useRouter } from 'vue-router';
+import { storeToRefs } from 'pinia';
 
 import { anonClient } from '@/supabase/anon-client';
 
@@ -69,7 +77,9 @@ import { useTransactionsStore } from '@/stores/transactions';
 const router = useRouter();
 
 const accountsStore = useAccountsStore();
+const { accounts } = storeToRefs(accountsStore);
 const { resetState: accountsResetState } = accountsStore;
+
 const transactionsStore = useTransactionsStore();
 const { resetState: transactionsResetState } = transactionsStore;
 
@@ -78,9 +88,13 @@ function handleMenuItemClick(routeName: string) {
   router.push({ name: routeName });
   drawerToggleRef.value?.click();
 }
+function handleAccountMenuItemClick(accountId: number) {
+  router.push({ name: 'account', params: { id: accountId } });
+  drawerToggleRef.value?.click();
+}
 
-let addAccountDialogEl: HTMLElement | null;
 function handleShowAddAccountModal() {
+  const addAccountDialogEl: HTMLElement | null = document.getElementById('modal-add-account');
   if (addAccountDialogEl instanceof HTMLDialogElement) {
     addAccountDialogEl.showModal();
     drawerToggleRef.value?.click();
@@ -99,8 +113,4 @@ const handleSignOut = async () => {
     console.error(error);
   }
 };
-
-onMounted(() => {
-  addAccountDialogEl = document.getElementById('modal-add-account');
-});
 </script>
