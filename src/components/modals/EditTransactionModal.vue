@@ -131,7 +131,7 @@ watch(
     localTransaction.name = newValue.value.name;
     localTransaction.date = newValue.value.date;
     localTransaction.category = newValue.value.category as string;
-    localTransaction.amount = Number.parseFloat(newValue.value.amount).toFixed(2).toString();
+    localTransaction.amount = newValue.value.amount.toFixed(2).toString();
     localTransaction.accountId = newValue.value.account_id;
   }
 );

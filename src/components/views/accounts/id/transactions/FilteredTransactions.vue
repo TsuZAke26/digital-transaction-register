@@ -26,10 +26,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, type Ref, type ComputedRef, computed } from 'vue';
 import { storeToRefs } from 'pinia';
 
 import { useTransactionsStore } from '@/stores/transactions';
+
+import type { Database } from '@/types/supabase';
 
 import { sortTransactionsDesc } from '@/util/sort-utils';
 
@@ -47,23 +49,23 @@ const transactionsStore = useTransactionsStore();
 const { transactions } = storeToRefs(transactionsStore);
 const { loadTransactionsByAccount } = transactionsStore;
 
-const filteredTransactions = ref([]);
-const currentPage = ref(1);
-const totalPages = ref(1);
-const perPage = 5;
-
-const filteredTransactionsPaginated = computed(() => {
+const filteredTransactions: Ref<Database['public']['Tables']['transactions']['Row'][]> = ref([]);
+const filteredTransactionsPaginated: ComputedRef<
+  Database['public']['Tables']['transactions']['Row'][]
+> = computed(() => {
   const startIndex = perPage * currentPage.value - perPage;
   const endIndex =
     perPage * currentPage.value > filteredTransactions.value.length
       ? filteredTransactions.value.length
       : perPage * currentPage.value;
 
-  return filteredTransactions.value.slice(startIndex, endIndex);
+  return filteredTransactions.value.slice(startIndex, endIndex).sort(sortTransactionsDesc);
 });
+const perPage = 5;
+const currentPage = ref(1);
+const totalPages = computed(() => Math.ceil(filteredTransactions.value.length / perPage));
 
 await loadTransactionsByAccount(accountIdAsNumber).then(() => {
   filteredTransactions.value = transactions.value.sort(sortTransactionsDesc);
-  totalPages.value = Math.ceil(filteredTransactions.value.length / perPage);
 });
 </script>

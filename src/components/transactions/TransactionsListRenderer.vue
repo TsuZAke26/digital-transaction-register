@@ -16,7 +16,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, type Ref } from 'vue';
+import { ref, type Ref, type PropType } from 'vue';
 
 import type { Database } from '@/types/supabase';
 

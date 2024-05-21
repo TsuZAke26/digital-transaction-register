@@ -2,19 +2,21 @@
   <div class="border card">
     <div class="card-body">
       <div class="card-title">Import Transactions</div>
-      <div class="flex items-center gap-4">
+      <div class="flex flex-col gap-4 sm:flex-row">
         <input
           id="import-transactions-file-input"
-          class="flex-auto file-input file-input-neutral file-input-bordered file-input-sm"
-          @change="file = $event.target.files[0]"
+          class="flex-auto w-full file-input file-input-neutral file-input-bordered file-input-sm sm:w-auto"
+          @change="handleFileSelect"
           accept="text/csv"
           type="file"
         />
 
-        <button @click="handleImport" :disabled="!file" class="btn btn-secondary btn-sm">
-          Import
-        </button>
-        <button @click="handleClear" :disabled="!file" class="btn btn-outline btn-sm">Clear</button>
+        <div class="flex gap-4">
+          <button @click="handleClear" :disabled="!file" class="flex-1 btn btn-sm">Clear</button>
+          <button @click="handleImport" :disabled="!file" class="flex-1 btn btn-secondary btn-sm">
+            Import
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -27,7 +29,7 @@ import { useToast } from 'vue-toastification';
 import { useAccountsStore } from '@/stores/accounts';
 import { useTransactionsStore } from '@/stores/transactions';
 
-import type { Database } from '@/types/suapbase';
+import type { Database } from '@/types/supabase';
 
 import { importTransactionCSV } from '@/util/csv-utils';
 
@@ -47,16 +49,23 @@ const transactionsStore = useTransactionsStore();
 const { addTransactions } = transactionsStore;
 
 const file: Ref<File | null> = ref(null);
+function handleFileSelect(event: any) {
+  file.value = event.target.files[0];
+}
 async function handleImport() {
   try {
-    if (file.value.type !== 'text/csv') {
+    if (!file.value) {
+      throw new Error('No file selected');
+    }
+
+    if (file.value?.type !== 'text/csv') {
       throw new Error('Not a CSV file');
     }
 
     const transactionsJSON = (await importTransactionCSV(file.value)).data;
 
     const transactionsToImport: Database['public']['Tables']['transactions']['Insert'][] =
-      transactionsJSON.map((transaction) => {
+      transactionsJSON.map((transaction: any) => {
         const transformedTransaction = { ...transaction };
         transformedTransaction.account_id = props.id;
         return transformedTransaction;
@@ -77,7 +86,7 @@ function handleClear() {
     'import-transactions-file-input'
   );
   if (importTransactionsFileInput instanceof HTMLInputElement) {
-    importTransactionsFileInput.value = null;
+    importTransactionsFileInput.value = '';
     file.value = null;
   }
 }
