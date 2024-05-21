@@ -55,7 +55,8 @@ const transactionToEdit: Ref<Database['public']['Tables']['transactions']['Row']
   date: '',
   category: '',
   amount: 0,
-  accountId: -1
+  account_id: -1,
+  created_at: ''
 });
 
 const now = new Date();

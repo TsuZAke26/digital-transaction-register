@@ -116,12 +116,12 @@ const { loadAccountBalances } = accountsStore;
 const transactionsStore = useTransactionsStore();
 const { editTransaction, removeTransaction } = transactionsStore;
 
-const localTransaction: Database['public']['Tables']['transactions']['Row'] = reactive({
+const localTransaction = reactive({
   id: -1,
   name: '',
   date: '',
   category: '',
-  amount: 0,
+  amount: '',
   accountId: -1
 });
 watch(
@@ -130,8 +130,8 @@ watch(
     localTransaction.id = newValue.value.id;
     localTransaction.name = newValue.value.name;
     localTransaction.date = newValue.value.date;
-    localTransaction.category = newValue.value.category;
-    localTransaction.amount = newValue.value.amount;
+    localTransaction.category = newValue.value.category as string;
+    localTransaction.amount = newValue.value.amount.toString();
     localTransaction.accountId = newValue.value.account_id;
   }
 );
