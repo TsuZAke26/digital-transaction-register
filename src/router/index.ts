@@ -40,7 +40,15 @@ const router = createRouter({
             auth: true
           }
         },
-
+        {
+          path: '/accounts',
+          name: 'accounts',
+          component: () => import('@/views/accounts/AccountsView.vue'),
+          props: true,
+          meta: {
+            auth: true
+          }
+        },
         {
           path: 'profile',
           name: 'profile',

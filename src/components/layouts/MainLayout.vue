@@ -40,21 +40,7 @@
       <!-- Drawer Menu & Items -->
       <ul class="min-h-full p-4 w-60 menu bg-base-100 text-base-content">
         <li @click="handleMenuItemClick('home')"><a>Home</a></li>
-        <li>
-          <details>
-            <summary>Accounts</summary>
-            <ul>
-              <li
-                v-for="account in accountsForMenu"
-                :key="account.id"
-                @click="handleAccountMenuItemClick(account.id)"
-              >
-                <a class="truncate">{{ account.name }}</a>
-              </li>
-              <li @click="handleShowAddAccountModal"><a>+ Add Account</a></li>
-            </ul>
-          </details>
-        </li>
+        <li @click="handleMenuItemClick('accounts')"><a>Accounts</a></li>
         <li><a>Reports</a></li>
         <div class="w-full my-2 border border-neutral-300"></div>
         <li @click="handleMenuItemClick('profile')"><a>Profile</a></li>
@@ -65,9 +51,8 @@
 </template>
 
 <script setup lang="ts">
-import { type Ref, ref, computed } from 'vue';
+import { type Ref, ref } from 'vue';
 import { useRouter } from 'vue-router';
-import { storeToRefs } from 'pinia';
 
 import { anonClient } from '@/supabase/anon-client';
 
@@ -77,7 +62,6 @@ import { useTransactionsStore } from '@/stores/transactions';
 const router = useRouter();
 
 const accountsStore = useAccountsStore();
-const { accounts } = storeToRefs(accountsStore);
 const { resetState: accountsResetState } = accountsStore;
 
 const transactionsStore = useTransactionsStore();
@@ -87,23 +71,6 @@ const drawerToggleRef: Ref<HTMLInputElement | null> = ref(null);
 function handleMenuItemClick(routeName: string) {
   router.push({ name: routeName });
   drawerToggleRef.value?.click();
-}
-
-const accountsForMenu = computed(() => {
-  const endIndex = accounts.value.length < 4 ? accounts.value.length : 4;
-  return accounts.value.slice(0, endIndex);
-});
-function handleAccountMenuItemClick(accountId: number) {
-  router.push({ name: 'account', params: { id: accountId } });
-  drawerToggleRef.value?.click();
-}
-
-function handleShowAddAccountModal() {
-  const addAccountDialogEl: HTMLElement | null = document.getElementById('modal-add-account');
-  if (addAccountDialogEl instanceof HTMLDialogElement) {
-    addAccountDialogEl.showModal();
-    drawerToggleRef.value?.click();
-  }
 }
 
 const handleSignOut = async () => {

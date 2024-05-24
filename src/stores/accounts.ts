@@ -119,6 +119,9 @@ export const useAccountsStore = defineStore('accounts', () => {
       return createAccountSummary(account, accountBalance);
     }
   }
+  const accountSummaries = computed(() => {
+    return accounts.value.map((account) => getAccountSummary(account.id));
+  });
   const accountSummariesByType = computed(() => {
     return (type: Database['public']['Enums']['account_type']) => {
       const result: AccountSummary[] = [];
@@ -147,6 +150,7 @@ export const useAccountsStore = defineStore('accounts', () => {
     loadAccountBalances,
     loadAccountBalanceById,
     accounts,
+    accountSummaries,
     accountSummariesByType,
     getAccountSummary,
     loadAccounts,
