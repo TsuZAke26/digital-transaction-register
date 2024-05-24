@@ -50,7 +50,7 @@ const { transactions } = storeToRefs(transactionsStore);
 const { loadTransactionsByAccount } = transactionsStore;
 
 watch(transactions, (newValue) => {
-  filteredTransactions.value = newValue;
+  filteredTransactions.value = newValue.sort(sortTransactionsDesc);
 });
 const filteredTransactions: Ref<Database['public']['Tables']['transactions']['Row'][]> = ref([]);
 const filteredTransactionsPaginated: ComputedRef<
@@ -62,7 +62,7 @@ const filteredTransactionsPaginated: ComputedRef<
       ? filteredTransactions.value.length
       : perPage * currentPage.value;
 
-  return filteredTransactions.value.slice(startIndex, endIndex).sort(sortTransactionsDesc);
+  return filteredTransactions.value.slice(startIndex, endIndex);
 });
 const perPage = 8;
 const currentPage = ref(1);
