@@ -16,7 +16,7 @@
         </li>
 
         <!-- Add Category list item -->
-        <li v-if="categories.length < 8" class="flex items-center justify-between gap-4">
+        <li class="flex items-center justify-between gap-4">
           <input
             v-model="newCategory"
             placeholder="New Category"

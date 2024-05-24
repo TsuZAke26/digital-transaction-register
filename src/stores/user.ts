@@ -34,7 +34,8 @@ export const useUserStore = defineStore('user', () => {
   });
   function addCategory(category: string) {
     const categories = appSettings.value['categories'] as string[];
-    if (categories && categories.length < 8) {
+    const existingCategoryIndex = categories.findIndex((existing) => existing === category);
+    if (categories && existingCategoryIndex === -1) {
       (appSettings.value['categories'] as string[]).push(category);
     }
   }
