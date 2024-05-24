@@ -1,7 +1,6 @@
 <template>
   <div class="space-y-4">
-    <div v-if="loaded && accounts.length === 0">No accounts found</div>
-    <div v-else class="space-y-2">
+    <div v-if="loaded && accountSummaries.length > 0" class="space-y-2">
       <div v-for="accountSummary in accountSummaries.slice(0, 4)" :key="accountSummary.id">
         <AccountSummarySmall
           :name="accountSummary.name"
@@ -10,43 +9,8 @@
         />
       </div>
     </div>
-    <!-- <div v-else class="space-y-8">
-      <div v-if="accountSummariesByType('Checking').length > 0" class="space-y-2">
-        <div class="font-semibold text-md">Checking</div>
-        <div v-for="accountSummary in accountSummariesByType('Checking')" :key="accountSummary.id">
-          <AccountSummarySmall
-            :name="accountSummary.name"
-            :balance="accountSummary.balance"
-            :id="accountSummary.id"
-          />
-        </div>
-      </div>
-
-      <div v-if="accountSummariesByType('Savings').length > 0" class="space-y-2">
-        <div class="font-semibold text-md">Savings</div>
-        <div v-for="accountSummary in accountSummariesByType('Savings')" :key="accountSummary.id">
-          <AccountSummarySmall
-            :name="accountSummary.name"
-            :balance="accountSummary.balance"
-            :id="accountSummary.id"
-          />
-        </div>
-      </div>
-
-      <div v-if="accountSummariesByType('Credit Line').length > 0" class="space-y-2">
-        <div class="font-semibold text-md">Credit Line</div>
-        <div
-          v-for="accountSummary in accountSummariesByType('Credit Line')"
-          :key="accountSummary.id"
-        >
-          <AccountSummarySmall
-            :name="accountSummary.name"
-            :balance="accountSummary.balance"
-            :id="accountSummary.id"
-          />
-        </div>
-      </div>
-    </div> -->
+    <div v-else-if="loaded && accountSummaries.length === 0"></div>
+    <div v-else>No accounts found</div>
   </div>
 </template>
 
@@ -59,7 +23,7 @@ import { useAccountsStore } from '@/stores/accounts';
 import AccountSummarySmall from '@/components/views/home/AccountSummarySmall.vue';
 
 const accountsStore = useAccountsStore();
-const { accounts, accountSummaries } = storeToRefs(accountsStore);
+const { accountSummaries } = storeToRefs(accountsStore);
 const { loadAccounts, loadAccountBalances } = accountsStore;
 
 const loaded = ref(false);
