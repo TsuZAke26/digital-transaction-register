@@ -13,7 +13,7 @@
 
         <div class="flex gap-4 md:w-1/2">
           <button @click="handleClear" :disabled="!file" class="flex-1 btn btn-sm">Clear</button>
-          <button @click="handleDownloadTempalte" class="flex-1 btn btn-secondary btn-sm">
+          <button @click="handleDownloadTemplate" class="flex-1 btn btn-secondary btn-sm">
             <!-- <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 -960 960 960"
@@ -38,6 +38,7 @@
 import { ref, type Ref } from 'vue';
 import { useToast } from 'vue-toastification';
 
+import { useUserStore } from '@/stores/user';
 import { useAccountsStore } from '@/stores/accounts';
 import { useTransactionsStore } from '@/stores/transactions';
 
@@ -53,6 +54,9 @@ const props = defineProps({
 });
 
 const toast = useToast();
+
+const userStore = useUserStore();
+const { addCategory, saveAppSettings } = userStore;
 
 const accountsStore = useAccountsStore();
 const { loadAccountBalances } = accountsStore;
@@ -73,7 +77,7 @@ function handleClear() {
     file.value = null;
   }
 }
-function handleDownloadTempalte() {
+function handleDownloadTemplate() {
   const template = new Blob([generateImportTemplate()], { type: 'text/csv' });
 
   // https://www.geeksforgeeks.org/how-to-export-html-table-to-csv-using-javascript/
@@ -103,10 +107,15 @@ async function handleImport() {
 
     const transactionsToImport: Database['public']['Tables']['transactions']['Insert'][] =
       transactionsJSON.map((transaction: any) => {
+        addCategory(transaction.category);
+
         const transformedTransaction = { ...transaction };
         transformedTransaction.account_id = props.id;
+
         return transformedTransaction;
       });
+    await saveAppSettings();
+
     await addTransactions(transactionsToImport);
     // const transactionsToImportNew: NewTransaction[] = transactionsJSON.map((transaction: any) => {
     //   const transformedTransaction = { ...transaction };
@@ -120,6 +129,8 @@ async function handleImport() {
     toast.success('Transactions imported successfully!');
 
     await loadAccountBalances();
+
+    handleClear();
   } catch (error) {
     toast.error('Error importing transactions');
   }

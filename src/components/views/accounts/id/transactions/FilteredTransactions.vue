@@ -26,7 +26,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, type Ref, type ComputedRef, computed } from 'vue';
+import { ref, type Ref, type ComputedRef, computed, watch } from 'vue';
 import { storeToRefs } from 'pinia';
 
 import { useTransactionsStore } from '@/stores/transactions';
@@ -49,6 +49,9 @@ const transactionsStore = useTransactionsStore();
 const { transactions } = storeToRefs(transactionsStore);
 const { loadTransactionsByAccount } = transactionsStore;
 
+watch(transactions, (newValue) => {
+  filteredTransactions.value = newValue;
+});
 const filteredTransactions: Ref<Database['public']['Tables']['transactions']['Row'][]> = ref([]);
 const filteredTransactionsPaginated: ComputedRef<
   Database['public']['Tables']['transactions']['Row'][]
@@ -61,7 +64,7 @@ const filteredTransactionsPaginated: ComputedRef<
 
   return filteredTransactions.value.slice(startIndex, endIndex).sort(sortTransactionsDesc);
 });
-const perPage = 5;
+const perPage = 8;
 const currentPage = ref(1);
 const totalPages = computed(() => Math.ceil(filteredTransactions.value.length / perPage));
 
