@@ -13,22 +13,22 @@
       </div>
 
       <!-- Checking -->
-      <CollapsibleAccountBalances
-        :balances="accountSummariesByType('Checking')"
+      <CollapsibleAccountSummaries
+        :summaries="accountSummariesByType('Checking')"
         :loaded="loaded"
         title="Checking"
       />
 
       <!-- Savings -->
-      <CollapsibleAccountBalances
-        :balances="accountSummariesByType('Savings')"
+      <CollapsibleAccountSummaries
+        :summaries="accountSummariesByType('Savings')"
         :loaded="loaded"
         title="Savings"
       />
 
       <!-- Credit Line -->
-      <CollapsibleAccountBalances
-        :balances="accountSummariesByType('Credit Line')"
+      <CollapsibleAccountSummaries
+        :summaries="accountSummariesByType('Credit Line')"
         :loaded="loaded"
         title="Credit Line"
       />
@@ -42,7 +42,7 @@ import { storeToRefs } from 'pinia';
 
 import { useAccountsStore } from '@/stores/accounts';
 
-import CollapsibleAccountBalances from '@/components/views/accounts/CollapsibleAccountBalances.vue';
+import CollapsibleAccountSummaries from '@/components/views/accounts/CollapsibleAccountSummaries.vue';
 
 const accountsStore = useAccountsStore();
 const { accountSummariesByType } = storeToRefs(accountsStore);

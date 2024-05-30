@@ -1,11 +1,11 @@
 <template>
   <div
-    :id="`accounts-collapsible-${title.toLowerCase().replaceAll(' ', '-')}`"
+    :id="`accounts-collapsible-${title.toLowerCase().replace(' ', '-')}`"
     class="border bg-slate-300 collapse collapse-arrow"
   >
     <input
       type="checkbox"
-      :id="`accounts-collapsible-${title.toLowerCase().replaceAll(' ', '-')}-checkbox`"
+      :id="`accounts-collapsible-${title.toLowerCase().replace(' ', '-')}-checkbox`"
     />
 
     <!-- Collapsible title -->
@@ -14,18 +14,18 @@
     <!-- Collapsible content -->
     <div class="collapse-content">
       <!-- Loaded & has summaries to render -->
-      <div v-if="loaded && balances.length > 0" class="space-y-2">
-        <div v-for="accountBalance in balances" :key="accountBalance.id">
+      <div v-if="loaded && summaries.length > 0" class="space-y-2">
+        <div v-for="accountSummary in summaries" :key="accountSummary.id">
           <AccountSummarySmall
-            :name="accountBalance.name"
-            :balance="accountBalance.balance"
-            :id="accountBalance.id"
+            :name="accountSummary.name"
+            :balance="accountSummary.balance"
+            :id="accountSummary.id"
             class="bg-white"
           />
         </div>
       </div>
       <!-- Loaded & doesn't have summaries to render -->
-      <div v-else-if="loaded && balances.length === 0">
+      <div v-else-if="loaded && summaries.length === 0">
         No {{ title.toLowerCase() }} accounts found
       </div>
       <!-- Loading state -->
@@ -35,7 +35,8 @@
 </template>
 
 <script setup lang="ts">
-import { Database } from '@/types/supabase';
+import { type PropType } from 'vue';
+import type { AccountSummary } from '@/types/ui-types';
 
 import AccountSummarySmall from '@/components/views/home/AccountSummarySmall.vue';
 
@@ -44,9 +45,9 @@ defineProps({
     type: String,
     required: true
   },
-  balances: {
-    type: Array as PropType<Array<Database['public']['Views']['account_balance']['Row']>>,
-    default: () => []
+  summaries: {
+    type: Array as PropType<Array<AccountSummary>>,
+    required: true
   },
   loaded: {
     type: Boolean,

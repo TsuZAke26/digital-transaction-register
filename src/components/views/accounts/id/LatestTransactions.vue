@@ -21,10 +21,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, type Ref } from 'vue';
 import { storeToRefs } from 'pinia';
 
 import { useTransactionsStore } from '@/stores/transactions';
+
+import type { Database } from '@/types/supabase';
 
 import { getThirtyDaysAgo } from '@/util/date-utils';
 
