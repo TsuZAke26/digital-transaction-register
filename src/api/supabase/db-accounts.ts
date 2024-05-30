@@ -1,7 +1,6 @@
 import { anonClient } from '@/supabase/anon-client';
 
 import type { Database } from '@/types/supabase';
-import type { NewAccount } from '@/types/ui-types';
 
 export async function fetchAccountBalances() {
   const { data: accounts_data, error: accounts_error } = await anonClient
@@ -56,7 +55,7 @@ export async function fetchAccountById(id: number) {
   return accounts_data;
 }
 
-export async function insertAccount(data: NewAccount) {
+export async function insertAccount(data: Database['public']['Tables']['accounts']['Insert']) {
   const userId = (await anonClient.auth.getSession()).data.session?.user.id;
   if (!userId) {
     throw new Error('User is not authenticated, abort new account creation');
@@ -66,8 +65,8 @@ export async function insertAccount(data: NewAccount) {
     .from('accounts')
     .insert({
       name: data.name,
-      account_type: data.accountType,
-      max_balance: data.maxBalance,
+      account_type: data.account_type,
+      max_balance: data.max_balance,
       user_id: userId
     })
     .select()

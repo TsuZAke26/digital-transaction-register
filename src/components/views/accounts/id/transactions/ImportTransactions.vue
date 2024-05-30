@@ -3,27 +3,22 @@
     <div class="card-body">
       <div class="card-title">Import Transactions</div>
       <div class="flex flex-col gap-4 md:flex-row">
-        <input
-          id="import-transactions-file-input"
-          class="w-full md:w-1/2 file-input file-input-neutral file-input-bordered file-input-sm sm:w-auto"
-          @change="handleFileSelect"
-          accept="text/csv"
-          type="file"
-        />
+        <div class="grid w-full grid-cols-8 gap-4 md:w-2/3">
+          <input
+            id="import-transactions-file-input"
+            class="col-span-6 file-input file-input-neutral file-input-bordered file-input-sm"
+            @change="handleFileSelect"
+            accept="text/csv"
+            type="file"
+          />
+          <button @click="handleClear" :disabled="!file" class="col-span-2 btn btn-sm">
+            Clear
+          </button>
+        </div>
 
-        <div class="flex gap-4 md:w-1/2">
-          <button @click="handleClear" :disabled="!file" class="flex-1 btn btn-sm">Clear</button>
+        <div class="flex gap-4 md:w-1/3">
           <button @click="handleDownloadTemplate" class="flex-1 btn btn-secondary btn-sm">
-            <!-- <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 -960 960 960"
-              class="w-6 h-6 fill-inherit"
-            >
-              <path
-                d="M480-320 280-520l56-58 104 104v-326h80v326l104-104 56 58-200 200ZM240-160q-33 0-56.5-23.5T160-240v-120h80v120h480v-120h80v120q0 33-23.5 56.5T720-160H240Z"
-              />
-            </svg> -->
-            Template
+            Download Template
           </button>
           <button @click="handleImport" :disabled="!file" class="flex-1 btn btn-primary btn-sm">
             Import

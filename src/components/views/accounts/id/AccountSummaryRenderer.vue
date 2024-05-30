@@ -17,7 +17,7 @@
           :disabled="!summary"
           @click="handleShowEditAccountModal"
           type="button"
-          class="btn btn-sm btn-primary"
+          class="btn btn-sm btn-secondary"
         >
           Edit Account
         </button>

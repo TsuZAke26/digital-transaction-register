@@ -16,7 +16,9 @@
 
       <!-- Date & category -->
       <div class="flex items-center justify-between">
-        <div class="text-sm badge badge-secondary">{{ transaction.category }}</div>
+        <div class="text-sm font-semibold text-white badge badge-info">
+          {{ transaction.category }}
+        </div>
         <div class="text-sm font-medium">{{ formatTransactionDate(transaction.date) }}</div>
       </div>
     </div>

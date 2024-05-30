@@ -41,7 +41,7 @@
       <ul class="min-h-full p-4 w-60 menu bg-base-100 text-base-content">
         <li @click="handleMenuItemClick('home')"><a>Home</a></li>
         <li @click="handleMenuItemClick('accounts')"><a>Accounts</a></li>
-        <li><a>Reports</a></li>
+        <!-- <li><a>Reports</a></li> -->
         <div class="w-full my-2 border border-neutral-300"></div>
         <li @click="handleMenuItemClick('profile')"><a>Profile</a></li>
         <li @click="handleSignOut"><a>Sign Out</a></li>

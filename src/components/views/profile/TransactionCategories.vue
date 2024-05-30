@@ -2,21 +2,17 @@
   <div class="border card">
     <div class="card-body">
       <div class="card-title">Transaction Categories</div>
-      <ul v-if="categories" class="mt-2 space-y-3">
-        <!-- Category list item generator -->
-        <li
-          v-for="(category, index) in categories"
-          :key="index"
-          class="flex items-center justify-between"
-        >
-          <span class="text-lg">{{ category }}</span>
-          <button @click="removeCategory(index)" class="text-white btn btn-sm btn-circle btn-error">
-            X
-          </button>
-        </li>
 
-        <!-- Add Category list item -->
-        <li class="flex items-center justify-between gap-4">
+      <div v-if="categories" class="space-y-2">
+        <div class="flex flex-wrap items-center gap-2">
+          <TransactionCategoryBadge
+            v-for="(category, index) in categories"
+            :key="index"
+            :category="category"
+            @remove-category="removeCategory(index)"
+          />
+        </div>
+        <div class="flex items-center gap-4">
           <input
             v-model="newCategory"
             placeholder="New Category"
@@ -29,8 +25,8 @@
           >
             Add
           </button>
-        </li>
-      </ul>
+        </div>
+      </div>
 
       <div class="w-full my-4 border"></div>
 
@@ -49,6 +45,8 @@ import { storeToRefs } from 'pinia';
 import { useToast } from 'vue-toastification';
 
 import { useUserStore } from '@/stores/user';
+
+import TransactionCategoryBadge from '@/components/views/profile/TransactionCategoryBadge.vue';
 
 const toast = useToast();
 

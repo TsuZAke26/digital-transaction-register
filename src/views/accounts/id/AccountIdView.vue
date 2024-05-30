@@ -16,7 +16,7 @@
       <div class="border card">
         <div class="card-body">
           <div class="flex justify-between card-title">
-            Transactions
+            Recent Transactions
             <div
               class="flex items-center text-sm cursor-pointer"
               @click="$router.push({ name: 'account-transactions' })"
@@ -37,7 +37,7 @@
           </Suspense>
 
           <div class="justify-end card-actions">
-            <button @click="handleShowAddTransactionModal" class="btn btn-sm btn-primary">
+            <button @click="handleShowAddTransactionModal" class="btn btn-sm btn-secondary">
               Add Transaction
             </button>
           </div>
@@ -52,7 +52,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onBeforeMount, computed } from 'vue';
+import { onBeforeMount, computed } from 'vue';
 
 import { useAccountsStore } from '@/stores/accounts';
 import { useTransactionsStore } from '@/stores/transactions';

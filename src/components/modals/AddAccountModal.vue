@@ -61,11 +61,7 @@ import { useToast } from 'vue-toastification';
 import { useAccountsStore } from '@/stores/accounts';
 
 import type { Database } from '@/types/supabase';
-import {
-  ACCOUNT_TYPES,
-  ACCOUNT_TYPES_MAX_BALANCE_REQUIRED,
-  type NewAccount
-} from '@/types/ui-types';
+import { ACCOUNT_TYPES, ACCOUNT_TYPES_MAX_BALANCE_REQUIRED } from '@/types/ui-types';
 
 const toast = useToast();
 
@@ -78,10 +74,10 @@ const maxBalance = ref(undefined);
 
 async function handleAddAccount() {
   try {
-    const newAccountData: NewAccount = {
+    const newAccountData: Database['public']['Tables']['accounts']['Insert'] = {
       name: name.value,
-      accountType: accountType.value,
-      maxBalance: maxBalance.value
+      account_type: accountType.value,
+      max_balance: maxBalance.value
     };
     await addAccount(newAccountData);
 

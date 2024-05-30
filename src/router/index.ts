@@ -17,47 +17,35 @@ const router = createRouter({
         {
           path: '',
           name: 'home',
-          component: () => import('@/views/HomeView.vue'),
-          meta: {
-            auth: true
-          }
+          component: () => import('@/views/HomeView.vue')
         },
         {
           path: '/accounts/:id/transactions',
           name: 'account-transactions',
           component: () => import('@/views/accounts/id/transactions/AccountIdTransactionsView.vue'),
-          props: true,
-          meta: {
-            auth: true
-          }
+          props: true
         },
         {
           path: '/accounts/:id',
           name: 'account',
           component: () => import('@/views/accounts/id/AccountIdView.vue'),
-          props: true,
-          meta: {
-            auth: true
-          }
+          props: true
         },
         {
           path: '/accounts',
           name: 'accounts',
           component: () => import('@/views/accounts/AccountsView.vue'),
-          props: true,
-          meta: {
-            auth: true
-          }
+          props: true
         },
         {
-          path: 'profile',
+          path: '/profile',
           name: 'profile',
-          component: () => import('@/views/profile/ProfileView.vue'),
-          meta: {
-            auth: true
-          }
+          component: () => import('@/views/profile/ProfileView.vue')
         }
-      ]
+      ],
+      meta: {
+        auth: true
+      }
     },
     { path: '/:pathMatch(.*)', component: () => import('@/views/NotFoundView.vue') }
   ]

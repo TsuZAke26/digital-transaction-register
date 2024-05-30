@@ -24,7 +24,7 @@ export type Database = {
           id?: number
           max_balance?: number | null
           name: string
-          user_id: string
+          user_id?: string
         }
         Update: {
           account_type?: Database["public"]["Enums"]["account_type"]
@@ -124,7 +124,6 @@ export type Database = {
         Row: {
           balance: number | null
           id: number | null
-          name: string | null
         }
         Relationships: []
       }

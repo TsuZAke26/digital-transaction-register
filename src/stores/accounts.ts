@@ -11,7 +11,7 @@ import {
   deleteAccount
 } from '@/api/supabase/db-accounts';
 
-import type { AccountSummary, NewAccount } from '@/types/ui-types';
+import type { AccountSummary } from '@/types/ui-types';
 import type { Database } from '@/types/supabase';
 
 import { createAccountSummary } from '@/util/ui-utils';
@@ -55,11 +55,11 @@ export const useAccountsStore = defineStore('accounts', () => {
   }
 
   const accounts: Ref<Database['public']['Tables']['accounts']['Row'][]> = ref([]);
-  function _findAccount(accountId: number) {
-    return accounts.value.find((storeAccount) => storeAccount.id === accountId);
-  }
   function _accountIndexInStore(id: number) {
     return accounts.value.findIndex((storeAccount) => storeAccount.id === id);
+  }
+  function _findAccount(id: number) {
+    return accounts.value.find((storeAccount) => storeAccount.id === id);
   }
   async function loadAccounts() {
     const fetchedAccounts = await fetchAccounts();
@@ -84,7 +84,7 @@ export const useAccountsStore = defineStore('accounts', () => {
   function getAccountFromStore(id: number) {
     return _findAccount(id);
   }
-  async function addAccount(data: NewAccount) {
+  async function addAccount(data: Database['public']['Tables']['accounts']['Insert']) {
     const newAccount = await insertAccount(data);
     if (newAccount) {
       accounts.value.push(newAccount);
@@ -111,9 +111,9 @@ export const useAccountsStore = defineStore('accounts', () => {
     accounts.value.splice(storeIndex, 1);
   }
 
-  function getAccountSummary(accountId: number) {
-    const account = _findAccount(accountId);
-    const accountBalance = _findMatchingAccountBalance(accountId);
+  function getAccountSummary(id: number) {
+    const account = _findAccount(id);
+    const accountBalance = _findMatchingAccountBalance(id);
 
     if (account && accountBalance) {
       return createAccountSummary(account, accountBalance);
