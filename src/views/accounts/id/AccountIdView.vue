@@ -43,16 +43,44 @@
           </div>
         </div>
       </div>
+
+      <!-- Spending Reports Preview card -->
+      <div class="border card">
+        <div class="card-body">
+          <div class="flex justify-between card-title">
+            Spending Report
+            <div
+              class="flex items-center text-sm cursor-pointer"
+              @click="$router.push({ name: 'account-reports' })"
+            >
+              View All
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" class="w-6 h-6">
+                <path d="M504-480 320-664l56-56 240 240-240 240-56-56 184-184Z" />
+              </svg>
+            </div>
+          </div>
+
+          <Suspense>
+            <!-- <LatestTransactions :account-id="id" /> -->
+            <div>Insert Report Here</div>
+
+            <template #fallback>
+              <div>Loading spending report...</div>
+            </template>
+          </Suspense>
+        </div>
+      </div>
     </div>
   </div>
 
   <!-- Modals -->
   <AddTransactionModal :account-id="id" />
-  <EditAccountModal v-if="account" :account="account" />
+  <EditAccountModal v-if="currentAccount" :account="currentAccount" />
 </template>
 
 <script setup lang="ts">
-import { onBeforeMount, computed } from 'vue';
+import { onBeforeMount } from 'vue';
+import { storeToRefs } from 'pinia';
 
 import { useAccountsStore } from '@/stores/accounts';
 import { useTransactionsStore } from '@/stores/transactions';
@@ -63,7 +91,7 @@ import EditAccountModal from '@/components/modals/EditAccountModal.vue';
 import AccountSummaryRenderer from '@/components/views/accounts/id/AccountSummaryRenderer.vue';
 import LatestTransactions from '@/components/views/accounts/id/LatestTransactions.vue';
 
-const props = defineProps({
+defineProps({
   id: {
     type: String,
     required: true
@@ -71,12 +99,10 @@ const props = defineProps({
 });
 
 const accountsStore = useAccountsStore();
-const { getAccountFromStore } = accountsStore;
+const { currentAccount } = storeToRefs(accountsStore);
 
 const transactionsStore = useTransactionsStore();
 const { resetState } = transactionsStore;
-
-const account = computed(() => getAccountFromStore(Number.parseInt(props.id)));
 
 function handleShowAddTransactionModal() {
   const addTransactionDialogEl: HTMLElement | null =

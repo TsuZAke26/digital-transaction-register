@@ -15,3 +15,9 @@ export interface AccountSummary {
   accountType: Database['public']['Enums']['account_type'];
   balance: number;
 }
+
+export interface SpendReportItem {
+  name: string;
+  total: number;
+  percentage: number;
+}
