@@ -14,7 +14,7 @@
     <!-- Collapsible content -->
     <div class="collapse-content">
       <!-- Loaded & has summaries to render -->
-      <div v-if="loaded && summaries.length > 0" class="space-y-2">
+      <div v-if="!loading && summaries.length > 0" class="space-y-2">
         <div v-for="accountSummary in summaries" :key="accountSummary.id">
           <AccountSummarySmall
             :name="accountSummary.name"
@@ -25,7 +25,7 @@
         </div>
       </div>
       <!-- Loaded & doesn't have summaries to render -->
-      <div v-else-if="loaded && summaries.length === 0">
+      <div v-else-if="!loading && summaries.length === 0">
         No {{ title.toLowerCase() }} accounts found
       </div>
       <!-- Loading state -->
@@ -49,7 +49,7 @@ defineProps({
     type: Array as PropType<Array<AccountSummary>>,
     required: true
   },
-  loaded: {
+  loading: {
     type: Boolean,
     default: false
   }

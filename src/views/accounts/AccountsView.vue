@@ -14,22 +14,22 @@
 
       <!-- Checking -->
       <CollapsibleAccountSummaries
-        :summaries="accountSummariesByType('Checking')"
-        :loaded="loaded"
+        :summaries="summariesByAccountType('Checking')"
+        :loading="loading"
         title="Checking"
       />
 
       <!-- Savings -->
       <CollapsibleAccountSummaries
-        :summaries="accountSummariesByType('Savings')"
-        :loaded="loaded"
+        :summaries="summariesByAccountType('Savings')"
+        :loading="loading"
         title="Savings"
       />
 
       <!-- Credit Line -->
       <CollapsibleAccountSummaries
-        :summaries="accountSummariesByType('Credit Line')"
-        :loaded="loaded"
+        :summaries="summariesByAccountType('Credit Line')"
+        :loading="loading"
         title="Credit Line"
       />
     </div>
@@ -37,16 +37,26 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import { storeToRefs } from 'pinia';
 
 import { useAccountsStore } from '@/stores/accounts';
 
+import type { Database } from '@/types/supabase';
+
 import CollapsibleAccountSummaries from '@/components/views/accounts/CollapsibleAccountSummaries.vue';
 
 const accountsStore = useAccountsStore();
-const { accountSummariesByType } = storeToRefs(accountsStore);
+const { loading, accountSummaries } = storeToRefs(accountsStore);
 const { loadAccounts, loadAccountBalances } = accountsStore;
+
+const summariesByAccountType = computed(() => {
+  return (type: Database['public']['Enums']['account_type']) => {
+    return accountSummaries.value.filter((accountSummary) => {
+      return type === accountSummary.accountType;
+    });
+  };
+});
 
 function handleShowAddAccountModal() {
   const addAccountDialogEl = document.getElementById('modal-add-account');
@@ -55,11 +65,8 @@ function handleShowAddAccountModal() {
   }
 }
 
-const loaded = ref(false);
-loadAccounts().then(() => {
-  loadAccountBalances().then(() => {
-    loaded.value = true;
-  });
+loadAccounts().then(async () => {
+  await loadAccountBalances();
 });
 
 onMounted(() => {

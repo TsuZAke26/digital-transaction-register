@@ -17,72 +17,35 @@ import type { Database } from '@/types/supabase';
 import { createAccountSummary } from '@/util/ui-utils';
 
 export const useAccountsStore = defineStore('accounts', () => {
-  const accountBalances: Ref<Database['public']['Views']['account_balance']['Row'][]> = ref([]);
-  function _findMatchingAccountBalance(accountId: number) {
-    return accountBalances.value.find((storeBalance) => storeBalance.id === accountId);
-  }
-  async function loadAccountBalances() {
-    const fetchedAccountBalances = await fetchAccountBalances();
-    if (fetchedAccountBalances) {
-      fetchedAccountBalances.forEach((fetchedAccountBalance) => {
-        const fetchedAccountBalanceStoreIndex = accountBalances.value.findIndex(
-          (storeAccountBalance) => storeAccountBalance.id === fetchedAccountBalance.id
-        );
-
-        // Replace existing account balance with that fetched from database if already present
-        if (fetchedAccountBalanceStoreIndex > -1) {
-          accountBalances.value.splice(fetchedAccountBalanceStoreIndex, 1, fetchedAccountBalance);
-        }
-        // Otherwise, simply add it to the account balances in the store
-        else {
-          accountBalances.value.push(fetchedAccountBalance);
-        }
-      });
-    }
-  }
-  async function loadAccountBalanceById(accountId: number) {
-    const fetchedAccountBalance = await fetchAccountBalanceById(accountId);
-    if (fetchedAccountBalance) {
-      const accountBalanceIndex = accountBalances.value.findIndex(
-        (storeBalance) => fetchedAccountBalance.id === storeBalance.id
-      );
-      if (accountBalanceIndex > -1) {
-        accountBalances.value.splice(accountBalanceIndex, 1, fetchedAccountBalance);
-      } else {
-        accountBalances.value.push(fetchedAccountBalance);
-      }
-    }
+  const loading = ref(false);
+  function _setLoading(value: boolean) {
+    loading.value = value;
   }
 
+  /* Accounts */
   const accounts: Ref<Database['public']['Tables']['accounts']['Row'][]> = ref([]);
-  function _accountIndexInStore(id: number) {
+  const currentAccount: Ref<Database['public']['Tables']['accounts']['Row'] | null> = ref(null);
+  function _findAccountIndex(id: number) {
     return accounts.value.findIndex((storeAccount) => storeAccount.id === id);
   }
-  function _findAccount(id: number) {
-    return accounts.value.find((storeAccount) => storeAccount.id === id);
-  }
   async function loadAccounts() {
-    const fetchedAccounts = await fetchAccounts();
-    if (fetchedAccounts) {
-      accounts.value = fetchedAccounts;
-    }
+    _setLoading(true);
+    accounts.value = await fetchAccounts();
+    _setLoading(false);
   }
   async function loadAccountById(id: number) {
-    const fetchedAccount = await fetchAccountById(id);
-    if (fetchedAccount) {
-      const existingAccountIndex = accounts.value.findIndex(
-        (existingAccount) => fetchedAccount.id === existingAccount.id
-      );
+    _setLoading(true);
 
-      if (existingAccountIndex > -1) {
-        accounts.value.splice(existingAccountIndex, 1, fetchedAccount);
-      } else {
-        accounts.value.push(fetchedAccount);
-      }
+    const accountIndex = _findAccountIndex(id);
+    if (accountIndex > -1) {
+      currentAccount.value = accounts.value[accountIndex];
+    } else {
+      const fetchedAccount = await fetchAccountById(id);
+      accounts.value.push(fetchedAccount);
+      currentAccount.value = fetchedAccount;
     }
-  }
-  function getAccountFromStore(id: number) {
-    return _findAccount(id);
+
+    _setLoading(false);
   }
   async function addAccount(data: Database['public']['Tables']['accounts']['Insert']) {
     const newAccount = await insertAccount(data);
@@ -91,7 +54,7 @@ export const useAccountsStore = defineStore('accounts', () => {
     }
   }
   async function editAccount(id: number, data: Database['public']['Tables']['accounts']['Update']) {
-    const storeIndex = _accountIndexInStore(id);
+    const storeIndex = _findAccountIndex(id);
     if (storeIndex === -1) {
       throw new Error('Account not found in store');
     }
@@ -102,7 +65,7 @@ export const useAccountsStore = defineStore('accounts', () => {
     }
   }
   async function removeAccount(id: number) {
-    const storeIndex = _accountIndexInStore(id);
+    const storeIndex = _findAccountIndex(id);
     if (storeIndex === -1) {
       throw new Error('Account not found in store');
     }
@@ -111,61 +74,76 @@ export const useAccountsStore = defineStore('accounts', () => {
     accounts.value.splice(storeIndex, 1);
   }
 
-  function getAccountSummary(id: number) {
-    const account = _findAccount(id);
-    const accountBalance = _findMatchingAccountBalance(id);
-
-    if (account && accountBalance) {
-      return createAccountSummary(account, accountBalance);
-    }
+  /* Account Balances */
+  const accountBalances: Ref<Database['public']['Views']['account_balance']['Row'][]> = ref([]);
+  const currentAccountBalance: Ref<Database['public']['Views']['account_balance']['Row'] | null> =
+    ref(null);
+  function _findAccountBalanceIndex(id: number) {
+    return accountBalances.value.findIndex((storeAccountBalance) => storeAccountBalance.id === id);
   }
+  async function loadAccountBalances() {
+    _setLoading(true);
+    accountBalances.value = await fetchAccountBalances();
+    _setLoading(false);
+  }
+  async function loadAccountBalanceById(id: number) {
+    _setLoading(true);
+
+    const accountBalanceIndex = _findAccountBalanceIndex(id);
+    if (accountBalanceIndex > -1) {
+      currentAccountBalance.value = accountBalances.value[accountBalanceIndex];
+    } else {
+      const fetchedAccountBalance = await fetchAccountBalanceById(id);
+      accountBalances.value.push(fetchedAccountBalance);
+      currentAccountBalance.value = fetchedAccountBalance;
+    }
+
+    _setLoading(false);
+  }
+
+  /* Account Summaries */
   const accountSummaries = computed(() => {
     const result: AccountSummary[] = [];
     accounts.value.forEach((account) => {
-      const summary = getAccountSummary(account.id);
-      if (summary) {
-        result.push(summary);
+      const accountBalanceIndex = _findAccountBalanceIndex(account.id);
+      if (accountBalanceIndex > -1) {
+        const accountBalance = accountBalances.value[accountBalanceIndex];
+        result.push(createAccountSummary(account, accountBalance));
       }
     });
     return result;
   });
-  const accountSummariesByType = computed(() => {
-    return (type: Database['public']['Enums']['account_type']) => {
-      const result: AccountSummary[] = [];
-
-      const filteredAccounts = accounts.value.filter(
-        (storeAccount) => type === storeAccount.account_type
-      );
-      filteredAccounts.forEach((filteredAccount) => {
-        const summary = getAccountSummary(filteredAccount.id);
-        if (summary) {
-          result.push(summary);
-        }
-      });
-
-      return result;
-    };
+  const currentAccountSummary = computed(() => {
+    if (currentAccount.value && currentAccountBalance.value) {
+      return createAccountSummary(currentAccount.value, currentAccountBalance.value);
+    }
+    return undefined;
   });
 
   function resetState() {
-    accountBalances.value = [];
     accounts.value = [];
+    currentAccount.value = null;
+    accountBalances.value = [];
+    currentAccountBalance.value = null;
   }
 
   return {
-    accountBalances,
-    loadAccountBalances,
-    loadAccountBalanceById,
+    loading,
+
     accounts,
-    accountSummaries,
-    accountSummariesByType,
-    getAccountSummary,
+    currentAccount,
     loadAccounts,
     loadAccountById,
-    getAccountFromStore,
     addAccount,
     editAccount,
     removeAccount,
+
+    loadAccountBalances,
+    loadAccountBalanceById,
+
+    accountSummaries,
+    currentAccountSummary,
+
     resetState
   };
 });
