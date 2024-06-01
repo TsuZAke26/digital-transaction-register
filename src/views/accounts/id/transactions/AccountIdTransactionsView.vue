@@ -38,7 +38,7 @@ import { useAccountsStore } from '@/stores/accounts';
 import ImportTransactions from '@/components/views/accounts/id/transactions/ImportTransactions.vue';
 import FilteredTransactions from '@/components/views/accounts/id/transactions/FilteredTransactions.vue';
 
-defineProps({
+const props = defineProps({
   id: {
     type: String,
     required: true
