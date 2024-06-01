@@ -21,7 +21,7 @@
 
   <div class="w-full my-4 border"></div>
 
-  <div v-if="!loading && spendReport?.length > 0">
+  <div v-if="!loading && spendReport && spendReport.length > 0">
     <div class="overflow-x-auto border">
       <table class="table table-sm table-zebra">
         <thead>
