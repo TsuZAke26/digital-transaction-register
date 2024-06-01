@@ -1,11 +1,15 @@
 <template>
   <div class="container max-w-5xl p-4 mx-auto space-y-4">
-    <!-- Back Button -->
-    <div @click="$router.back()" class="flex items-center space-x-2 text-sm cursor-pointer">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" class="w-6 h-6 fill-black">
-        <path d="m313-440 224 224-57 56-320-320 320-320 57 56-224 224h487v80H313Z" />
-      </svg>
-      <span class="text-lg font-semibold">Back to Account</span>
+    <!-- Path Breadcrumbs -->
+    <div class="text-sm breadcrumbs">
+      <ul>
+        <li @click="$router.push({ name: 'home' })"><a>Home</a></li>
+        <li @click="$router.push({ name: 'accounts' })"><a>Accounts</a></li>
+        <li @click="$router.push({ name: 'account', params: { id: id } })">
+          <a>{{ currentAccount?.name }}</a>
+        </li>
+        <li>Transactions</li>
+      </ul>
     </div>
 
     <!-- Import Transactions card -->
@@ -26,6 +30,10 @@
 </template>
 
 <script setup lang="ts">
+import { storeToRefs } from 'pinia';
+
+import { useAccountsStore } from '@/stores/accounts';
+
 import ImportTransactions from '@/components/views/accounts/id/transactions/ImportTransactions.vue';
 import FilteredTransactions from '@/components/views/accounts/id/transactions/FilteredTransactions.vue';
 
@@ -35,4 +43,7 @@ defineProps({
     required: true
   }
 });
+
+const accountsStore = useAccountsStore();
+const { currentAccount } = storeToRefs(accountsStore);
 </script>

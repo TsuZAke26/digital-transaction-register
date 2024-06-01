@@ -1,5 +1,13 @@
 <template>
   <div class="container max-w-5xl p-4 mx-auto">
+    <!-- Path Breadcrumbs -->
+    <div class="text-sm breadcrumbs">
+      <ul>
+        <li @click="$router.push({ name: 'home' })"><a>Home</a></li>
+        <li>Accounts</li>
+      </ul>
+    </div>
+
     <div class="space-y-4">
       <div class="flex items-center justify-between">
         <div class="text-2xl font-bold">All Accounts</div>
@@ -37,7 +45,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue';
+import { onMounted, computed } from 'vue';
 import { storeToRefs } from 'pinia';
 
 import { useAccountsStore } from '@/stores/accounts';

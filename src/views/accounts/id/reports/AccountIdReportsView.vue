@@ -1,38 +1,40 @@
 <template>
   <div class="container max-w-5xl p-4 mx-auto">
-    <div class="space-y-4">Account {{ id }} Spending</div>
-    <div>
-      <div v-if="spendReport.length > 0" class="overflow-x-auto border">
-        <table class="table table-zebra">
-          <thead>
-            <tr>
-              <th>Category</th>
-              <th class="text-right">Total</th>
-              <th class="text-right">Spend %</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="(reportItem, index) in spendReport" :key="index">
-              <td>{{ reportItem.name }}</td>
-              <td class="text-right">{{ formatAmount(reportItem.total) }}</td>
-              <td class="text-right">{{ reportItem.percentage }}%</td>
-            </tr>
-          </tbody>
-        </table>
+    <div class="space-y-4">
+      <!-- Path Breadcrumbs -->
+      <div class="text-sm breadcrumbs">
+        <ul>
+          <li @click="$router.push({ name: 'home' })"><a>Home</a></li>
+          <li @click="$router.push({ name: 'accounts' })"><a>Accounts</a></li>
+          <li @click="$router.push({ name: 'account', params: { id: id } })">
+            <a>{{ currentAccount?.name }}</a>
+          </li>
+          <li>Spending Report</li>
+        </ul>
+      </div>
+
+      <!-- Spend Report card -->
+      <div class="border card">
+        <div class="card-body">
+          <div class="card-title">{{ currentAccount?.name }} Spending Report</div>
+
+          <Suspense>
+            <AccountSpendReport :account-id="id" />
+            <template #fallback>Loading spend report data...</template>
+          </Suspense>
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, type Ref } from 'vue';
+import { onMounted } from 'vue';
+import { storeToRefs } from 'pinia';
 
-import { fetchTransactionsByAccountIdForDateRange } from '@/api/supabase/db-transactions';
+import { useAccountsStore } from '@/stores/accounts';
 
-import type { SpendReportItem } from '@/types/ui-types';
-
-import { generateSpendReport } from '@/util/spending-report-utils';
-import { formatAmount } from '@/util/format-utils';
+import AccountSpendReport from '@/components/views/accounts/id/reports/AccountSpendReport.vue';
 
 const props = defineProps({
   id: {
@@ -41,13 +43,9 @@ const props = defineProps({
   }
 });
 
-const spendReport: Ref<SpendReportItem[]> = ref([]);
+const accountsStore = useAccountsStore();
+const { loadAccountById } = accountsStore;
+const { currentAccount } = storeToRefs(accountsStore);
 
-fetchTransactionsByAccountIdForDateRange(
-  Number.parseInt(props.id),
-  '2013-01-01',
-  '2013-12-31'
-).then((data) => {
-  spendReport.value = generateSpendReport(data);
-});
+onMounted(async () => await loadAccountById(Number.parseInt(props.id)));
 </script>

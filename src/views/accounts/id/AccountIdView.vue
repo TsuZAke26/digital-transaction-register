@@ -1,5 +1,14 @@
 <template>
   <div class="container max-w-5xl p-4 mx-auto">
+    <!-- Path Breadcrumbs -->
+    <div class="text-sm breadcrumbs">
+      <ul>
+        <li @click="$router.push({ name: 'home' })"><a>Home</a></li>
+        <li @click="$router.push({ name: 'accounts' })"><a>Accounts</a></li>
+        <li>{{ currentAccount?.name }}</li>
+      </ul>
+    </div>
+
     <div class="space-y-4">
       <!-- Account Summary card -->
       <Suspense>
