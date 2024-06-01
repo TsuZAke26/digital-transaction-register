@@ -47,13 +47,7 @@
 
         <!-- Clear/Apply Filters -->
         <div class="flex gap-4">
-          <button
-            :disabled="!canApplyFilters"
-            class="flex-grow btn btn-ghost"
-            @click="clearFilters"
-          >
-            Reset
-          </button>
+          <button class="flex-grow btn btn-ghost" @click="clearFilters">Reset</button>
 
           <button
             :disabled="!canApplyFilters"
