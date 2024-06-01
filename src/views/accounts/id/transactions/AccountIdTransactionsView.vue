@@ -30,6 +30,7 @@
 </template>
 
 <script setup lang="ts">
+import { onMounted } from 'vue';
 import { storeToRefs } from 'pinia';
 
 import { useAccountsStore } from '@/stores/accounts';
@@ -46,4 +47,7 @@ defineProps({
 
 const accountsStore = useAccountsStore();
 const { currentAccount } = storeToRefs(accountsStore);
+const { loadAccountById } = accountsStore;
+
+onMounted(async () => await loadAccountById(Number.parseInt(props.id)));
 </script>

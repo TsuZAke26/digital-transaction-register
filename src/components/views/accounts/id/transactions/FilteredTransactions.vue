@@ -28,6 +28,7 @@
 
         <!-- Transactions with Selected Categories -->
         <div v-if="categoriesForFiltering.length > 0" class="flex flex-wrap gap-4">
+          <!-- https://vuejs.org/guide/essentials/forms#checkbox -->
           <div
             v-for="(category, index) in categoriesForFiltering"
             :key="index"
