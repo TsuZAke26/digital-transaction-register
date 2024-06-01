@@ -30,7 +30,8 @@ export const useUserStore = defineStore('user', () => {
   }
 
   const categories = computed(() => {
-    return appSettings.value['categories'] as string[];
+    const categoriesFromSettings = appSettings.value['categories'] as string[];
+    return categoriesFromSettings ? categoriesFromSettings.sort() : [];
   });
   function addCategory(category: string) {
     const categories = appSettings.value['categories'] as string[];

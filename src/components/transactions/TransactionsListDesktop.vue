@@ -4,7 +4,7 @@
       <!-- Table header -->
       <thead>
         <tr>
-          <th class="w-auto">Category</th>
+          <th>Category</th>
           <th class="w-20">Date</th>
           <th>Name</th>
           <th class="text-right">Amount</th>

@@ -1,4 +1,73 @@
 <template>
+  <!-- Filter Controls -->
+  <div class="border collapse collapse-arrow">
+    <input type="checkbox" />
+
+    <div class="collapse-title">Filters</div>
+    <div class="collapse-content">
+      <div class="flex flex-col gap-4">
+        <!-- Start/End Date -->
+        <div class="flex gap-4">
+          <input
+            id="account-transactions-filters-start-date"
+            v-model="filters.startDate"
+            class="flex-grow input input-bordered"
+            type="date"
+          />
+
+          <input
+            id="account-transactions-filters-end-date"
+            v-model="filters.endDate"
+            class="flex-grow input input-bordered"
+            type="date"
+          />
+        </div>
+
+        <!-- Transaction Name Contains -->
+        <input class="w-full input input-bordered" v-model="filters.name" placeholder="Name" />
+
+        <!-- Transactions with Selected Categories -->
+        <div v-if="categoriesForFiltering.length > 0" class="flex flex-wrap gap-4">
+          <div
+            v-for="(category, index) in categoriesForFiltering"
+            :key="index"
+            class="flex items-center space-x-2"
+          >
+            <input
+              v-model="filters.categories"
+              :value="category"
+              :id="category"
+              type="checkbox"
+              class="checkbox"
+            />
+            <label :for="category">{{ category }}</label>
+          </div>
+        </div>
+
+        <!-- Clear/Apply Filters -->
+        <div class="flex gap-4">
+          <button
+            :disabled="!canApplyFilters"
+            class="flex-grow btn btn-ghost"
+            @click="clearFilters"
+          >
+            Reset
+          </button>
+
+          <button
+            :disabled="!canApplyFilters"
+            class="flex-grow btn btn-primary"
+            @click="updateFilteredTransactions"
+          >
+            Apply
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="w-full my-4 border"></div>
+
   <!-- Filtered Transactions - Mobile View -->
   <div class="sm:hidden">
     <TransactionsListMobile
@@ -42,14 +111,14 @@
 </template>
 
 <script setup lang="ts">
-import { ref, type Ref, type ComputedRef, computed, watch } from 'vue';
+import { ref, type Ref, type ComputedRef, computed, watch, reactive } from 'vue';
 import { storeToRefs } from 'pinia';
 
 import { useTransactionsStore } from '@/stores/transactions';
 
 import type { Database } from '@/types/supabase';
 
-import { sortTransactionsDesc } from '@/util/sort-utils';
+import { REGEX_DATE_FORMAT } from '@/util/regex';
 
 import EditTransactionModal from '@/components/modals/EditTransactionModal.vue';
 import TransactionsListMobile from '@/components/transactions/TransactionsListMobile.vue';
@@ -64,12 +133,47 @@ const props = defineProps({
 const accountIdAsNumber = Number.parseInt(props.accountId);
 
 const transactionsStore = useTransactionsStore();
-const { transactions } = storeToRefs(transactionsStore);
+const { transactionsDesc } = storeToRefs(transactionsStore);
 const { loadTransactionsByAccount } = transactionsStore;
 
+const filters = reactive({
+  startDate: '',
+  endDate: '',
+  name: '',
+  categories: [] as string[]
+});
+const categoriesForFiltering = computed(() => {
+  const result: string[] = [];
+  transactionsDesc.value.forEach((transaction) => {
+    const hasCategory = transaction.category !== null;
+    const alreadyInResult =
+      result.findIndex((resultTransaction) => resultTransaction === transaction.category) !== -1;
+    if (hasCategory && !alreadyInResult) {
+      result.push(transaction.category as string);
+    }
+  });
+  return result.sort();
+});
+const canApplyFilters = computed(() => {
+  const startDateValid = filters.startDate.length > 0 && REGEX_DATE_FORMAT.test(filters.startDate);
+  const endDateValid = filters.endDate.length > 0 && REGEX_DATE_FORMAT.test(filters.endDate);
+  const nameValid = filters.name.length >= 3;
+  const categoriesValid = filters.categories.length > 0;
+
+  return startDateValid || endDateValid || nameValid || categoriesValid;
+});
+function clearFilters() {
+  filters.startDate = '';
+  filters.endDate = '';
+  filters.name = '';
+  filters.categories = [];
+
+  filteredTransactions.value = transactionsDesc.value;
+}
+
 const filteredTransactions: Ref<Database['public']['Tables']['transactions']['Row'][]> = ref([]);
-watch(transactions, (newValue) => {
-  filteredTransactions.value = newValue.sort(sortTransactionsDesc);
+watch(transactionsDesc, (newValue) => {
+  filteredTransactions.value = newValue;
 });
 
 const filteredTransactionsPaginated: ComputedRef<
@@ -87,8 +191,43 @@ const perPage = 10;
 const currentPage = ref(1);
 const totalPages = computed(() => Math.ceil(filteredTransactions.value.length / perPage));
 
+function updateFilteredTransactions() {
+  let finalFilteredTransactions: Database['public']['Tables']['transactions']['Row'][] = [];
+  finalFilteredTransactions = transactionsDesc.value;
+
+  if (filters.startDate.length > 0) {
+    finalFilteredTransactions = finalFilteredTransactions.filter((transaction) => {
+      return transaction.date >= filters.startDate;
+    });
+  }
+
+  if (filters.endDate.length > 0) {
+    finalFilteredTransactions = finalFilteredTransactions.filter((transaction) => {
+      return transaction.date <= filters.endDate;
+    });
+  }
+
+  if (filters.name.length > 0) {
+    finalFilteredTransactions = finalFilteredTransactions.filter((tranasction) => {
+      return tranasction.name.includes(filters.name);
+    });
+  }
+
+  if (filters.categories.length > 0) {
+    finalFilteredTransactions = finalFilteredTransactions.filter((transaction) => {
+      if (transaction.category) {
+        return filters.categories.includes(transaction.category);
+      } else {
+        return transaction;
+      }
+    });
+  }
+
+  filteredTransactions.value = finalFilteredTransactions;
+}
+
 await loadTransactionsByAccount(accountIdAsNumber).then(() => {
-  filteredTransactions.value = transactions.value.sort(sortTransactionsDesc);
+  filteredTransactions.value = transactionsDesc.value;
 });
 
 const transactionToEdit: Ref<Database['public']['Tables']['transactions']['Row']> = ref({
@@ -100,7 +239,6 @@ const transactionToEdit: Ref<Database['public']['Tables']['transactions']['Row']
   account_id: -1,
   created_at: ''
 });
-
 function handleEditTransaction(transaction: Database['public']['Tables']['transactions']['Row']) {
   transactionToEdit.value = transaction;
 

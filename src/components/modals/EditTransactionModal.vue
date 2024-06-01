@@ -9,11 +9,7 @@
       <form @submit.prevent="handleEditTransaction" class="space-y-4">
         <div class="flex gap-4">
           <!-- Category -->
-          <select
-            v-model="localTransaction.category"
-            class="flex-1 select select-bordered"
-            required
-          >
+          <select v-model="localTransaction.category" class="flex-1 select select-bordered">
             <option v-for="(category, index) in categories" :key="index">{{ category }}</option>
             <option>Other</option>
           </select>
@@ -174,11 +170,11 @@ async function handleDeleteTransaction() {
   try {
     await removeTransaction(localTransaction.id);
 
+    await loadAccountBalances();
+
     close();
 
     toast.success('Transaction delete successful');
-
-    await loadAccountBalances();
   } catch (error) {
     console.error(error);
     toast.error('Transaction delete failed');

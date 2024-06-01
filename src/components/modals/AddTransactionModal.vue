@@ -9,7 +9,7 @@
       <form @submit.prevent="handleAddTransaction" class="space-y-4">
         <div class="flex gap-4">
           <!-- Category -->
-          <select v-model="transactionCategory" class="flex-1 select select-bordered" required>
+          <select v-model="transactionCategory" class="flex-1 select select-bordered">
             <option v-for="(category, index) in categories" :key="index">{{ category }}</option>
             <option>Other</option>
           </select>
@@ -66,7 +66,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, type Ref, toRef, onMounted } from 'vue';
+import { ref, type Ref, toRef } from 'vue';
 import { storeToRefs } from 'pinia';
 import { useToast } from 'vue-toastification';
 
@@ -106,6 +106,14 @@ function formatAmountValue(event: any) {
   amount.value = newAmount;
 }
 
+function close() {
+  const addTransactionDialogEl: HTMLElement | null =
+    document.getElementById('modal-add-transaction');
+  if (addTransactionDialogEl instanceof HTMLDialogElement) {
+    addTransactionDialogEl.close();
+  }
+}
+
 async function handleAddTransaction() {
   try {
     const accountIdAsNumber = Number.parseInt(toRef(props, 'accountId').value);
@@ -118,10 +126,7 @@ async function handleAddTransaction() {
     };
     await addTransaction(newTransactionData);
 
-    // Closes the add transaction modal
-    if (addTransactionDialogEl instanceof HTMLDialogElement) {
-      addTransactionDialogEl.close();
-    }
+    await loadAccountBalances();
 
     toast.success('Transaction creation successful');
 
@@ -131,15 +136,10 @@ async function handleAddTransaction() {
     name.value = '';
     amount.value = undefined;
 
-    await loadAccountBalances();
+    close();
   } catch (error) {
     console.error(error);
     toast.error('Transaction creation failed');
   }
 }
-
-let addTransactionDialogEl: HTMLElement | null;
-onMounted(() => {
-  addTransactionDialogEl = document.getElementById('modal-add-transaction');
-});
 </script>

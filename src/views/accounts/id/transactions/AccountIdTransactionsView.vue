@@ -13,7 +13,7 @@
     </div>
 
     <!-- Import Transactions card -->
-    <ImportTransactions :id="id" />
+    <ImportTransactions :accountId="id" />
 
     <!-- Render All Transactions card -->
     <div class="border card">

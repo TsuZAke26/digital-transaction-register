@@ -84,6 +84,13 @@ export const useAccountsStore = defineStore('accounts', () => {
   async function loadAccountBalances() {
     _setLoading(true);
     accountBalances.value = await fetchAccountBalances();
+
+    const currentAccountBalanceIndex = _findAccountBalanceIndex(
+      currentAccountBalance.value?.id as number
+    );
+    if (currentAccountBalance.value?.id && currentAccountBalanceIndex !== -1) {
+      currentAccountBalance.value = accountBalances.value[currentAccountBalanceIndex];
+    }
     _setLoading(false);
   }
   async function loadAccountBalanceById(id: number) {

@@ -20,7 +20,7 @@ const userStore = useUserStore();
 const { loadProfileData } = userStore;
 
 anonClient.auth.onAuthStateChange((event) => {
-  console.log(`Auth state: ${event}`);
+  // console.log(`Auth state: ${event}`);
   if (event === 'SIGNED_IN' && route.path === '/auth') {
     router.push({ name: 'home' });
   } else if (event === 'SIGNED_OUT') {

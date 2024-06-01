@@ -25,10 +25,12 @@
         </div>
 
         <!-- Maximum Balance -->
-        <label class="flex items-center input input-bordered">
+        <label
+          v-if="ACCOUNT_TYPES_MAX_BALANCE_REQUIRED.includes(localAccount.accountType)"
+          class="flex items-center input input-bordered"
+        >
           $
           <input
-            v-if="ACCOUNT_TYPES_MAX_BALANCE_REQUIRED.includes(localAccount.accountType)"
             v-model="localAccount.maxBalance"
             :placeholder="localAccount.accountType"
             class="w-full text-right"

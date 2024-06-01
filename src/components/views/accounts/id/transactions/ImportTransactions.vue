@@ -18,7 +18,7 @@
 
         <div class="flex gap-4 md:w-1/3">
           <button @click="handleDownloadTemplate" class="flex-1 btn btn-secondary btn-sm">
-            Download Template
+            Template
           </button>
           <button @click="handleImport" :disabled="!file" class="flex-1 btn btn-primary btn-sm">
             Import
@@ -42,7 +42,7 @@ import type { Database } from '@/types/supabase';
 import { importTransactionCSV, generateImportTemplate } from '@/util/csv-utils';
 
 const props = defineProps({
-  id: {
+  accountId: {
     type: String,
     required: true
   }
@@ -105,21 +105,13 @@ async function handleImport() {
         addCategory(transaction.category);
 
         const transformedTransaction = { ...transaction };
-        transformedTransaction.account_id = props.id;
+        transformedTransaction.account_id = props.accountId;
 
         return transformedTransaction;
       });
     await saveAppSettings();
 
     await addTransactions(transactionsToImport);
-    // const transactionsToImportNew: NewTransaction[] = transactionsJSON.map((transaction: any) => {
-    //   const transformedTransaction = { ...transaction };
-    //   transformedTransaction.accountId = props.id;
-    //   return transformedTransaction;
-    // });
-    // transactionsToImportNew.forEach(async (importTransaction) => {
-    //   await addTransaction(importTransaction);
-    // });
 
     toast.success('Transactions imported successfully!');
 
