@@ -28,8 +28,6 @@ import { useTransactionsStore } from '@/stores/transactions';
 
 import type { Database } from '@/types/supabase';
 
-import { getThirtyDaysAgo } from '@/util/date-utils';
-
 import EditTransactionModal from '@/components/modals/EditTransactionModal.vue';
 import TransactionsListMobile from '@/components/transactions/TransactionsListMobile.vue';
 import TransactionsListDesktop from '@/components/transactions/TransactionsListDesktop.vue';
@@ -46,10 +44,9 @@ const loaded = ref(false);
 
 const transactionsStore = useTransactionsStore();
 const { latestTransactions } = storeToRefs(transactionsStore);
-const { loadTransactionsByAccountInDateRange } = transactionsStore;
+const { loadLatestTransactions } = transactionsStore;
 
-const now = new Date();
-await loadTransactionsByAccountInDateRange(idAsNumber, getThirtyDaysAgo(now), now).then(() => {
+await loadLatestTransactions(idAsNumber).then(() => {
   loaded.value = true;
 });
 

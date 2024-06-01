@@ -1,8 +1,9 @@
-import { computed, ref, type Ref } from 'vue';
+import { computed, ref, type ComputedRef, type Ref } from 'vue';
 import { acceptHMRUpdate, defineStore } from 'pinia';
 
 import {
   deleteTransaction,
+  fetchLatestTransactionByAccountId,
   fetchTransactionsByAccountId,
   fetchTransactionsByAccountIdForDateRange,
   insertTransaction,
@@ -12,63 +13,48 @@ import {
 
 import type { Database } from '@/types/supabase';
 
-import { jsDateToSupabaseDate } from '@/util/date-utils';
+import { getThirtyDaysAgoFromJSDate, jsDateToSupabaseDate } from '@/util/date-utils';
 import { sortTransactionsDesc } from '@/util/sort-utils';
 
 export const useTransactionsStore = defineStore('transactions', () => {
   const transactions: Ref<Database['public']['Tables']['transactions']['Row'][]> = ref([]);
+  const transactionsDesc: ComputedRef<Database['public']['Tables']['transactions']['Row'][]> =
+    computed(() => {
+      return transactions.value.sort(sortTransactionsDesc);
+    });
   const latestTransactions = computed(() => {
     return transactions.value.sort(sortTransactionsDesc).slice(0, 5);
   });
-
   function _transactionIndexInStore(id: number) {
     return transactions.value.findIndex((storeTranasction) => storeTranasction.id === id);
   }
-
-  function transactionsByAccountInDateRange(accountId: number, from: Date, to: Date) {
-    const transactionsInRangeFromStore = transactions.value.filter((storeTransaction) => {
-      const matchesAccount = accountId === storeTransaction.account_id;
-      const gteFromDate = storeTransaction.date >= jsDateToSupabaseDate(from);
-      const lteToDate = storeTransaction.date <= jsDateToSupabaseDate(to);
-
-      return matchesAccount && gteFromDate && lteToDate;
-    });
-
-    return transactionsInRangeFromStore.sort(sortTransactionsDesc);
-  }
-
   async function loadTransactionsByAccount(accountId: number) {
-    const fetchedTransactions = await fetchTransactionsByAccountId(accountId);
-    if (fetchedTransactions && fetchedTransactions.length > 0) {
-      fetchedTransactions.forEach((fetchedTransaction) => {
-        if (
-          !transactions.value.find(
-            (existingTransaction) => existingTransaction.id === fetchedTransaction.id
-          )
-        ) {
-          transactions.value.push(fetchedTransaction);
-        }
-      });
-    }
+    transactions.value = await fetchTransactionsByAccountId(accountId);
+  }
+  async function loadLatestTransactions(accountId: number) {
+    const latestTransaction = await fetchLatestTransactionByAccountId(accountId);
+    const latestTransactionDate = new Date(Date.parse(latestTransaction.date));
+    const thirtyDaysAgo = getThirtyDaysAgoFromJSDate(latestTransactionDate);
+
+    await loadTransactionsByAccountInDateRange(accountId, thirtyDaysAgo, latestTransactionDate);
   }
   async function loadTransactionsByAccountInDateRange(accountId: number, from: Date, to: Date) {
+    const supabaseFromDate = jsDateToSupabaseDate(from);
+    const supabaseToDate = jsDateToSupabaseDate(to);
     const fetchedTransactionsForDateRange = await fetchTransactionsByAccountIdForDateRange(
       accountId,
-      jsDateToSupabaseDate(from),
-      jsDateToSupabaseDate(to)
+      supabaseFromDate,
+      supabaseToDate
     );
-    if (fetchedTransactionsForDateRange && fetchedTransactionsForDateRange.length > 0) {
+    if (fetchedTransactionsForDateRange.length > 0) {
       fetchedTransactionsForDateRange.forEach((fetchedTransaction) => {
-        if (
-          !transactions.value.find(
-            (existingTransaction) => existingTransaction.id === fetchedTransaction.id
-          )
-        ) {
+        const transactionStoreIndex = _transactionIndexInStore(fetchedTransaction.id);
+        if (transactionStoreIndex === -1) {
           transactions.value.push(fetchedTransaction);
+        } else {
+          transactions.value.splice(transactionStoreIndex, 1, fetchedTransaction);
         }
       });
-    } else {
-      await loadTransactionsByAccount(accountId);
     }
   }
 
@@ -116,14 +102,15 @@ export const useTransactionsStore = defineStore('transactions', () => {
 
   return {
     transactions,
+    transactionsDesc,
     latestTransactions,
-    transactionsByAccountInDateRange,
     loadTransactionsByAccount,
-    loadTransactionsByAccountInDateRange,
+    loadLatestTransactions,
     addTransaction,
     addTransactions,
     editTransaction,
     removeTransaction,
+
     resetState
   };
 });

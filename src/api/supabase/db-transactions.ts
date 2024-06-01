@@ -30,6 +30,20 @@ export async function fetchTransactionsByAccountId(accountId: number) {
   return transactions_data;
 }
 
+export async function fetchLatestTransactionByAccountId(accountId: number) {
+  const { data: transactions_data, error: transactions_error } = await anonClient
+    .from('transactions')
+    .select()
+    .order('date', { ascending: false })
+    .eq('account_id', accountId)
+    .limit(1)
+    .single();
+  if (transactions_error) {
+    throw transactions_error;
+  }
+  return transactions_data;
+}
+
 export async function insertTransaction(
   data: Database['public']['Tables']['transactions']['Insert']
 ) {
