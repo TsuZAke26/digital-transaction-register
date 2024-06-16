@@ -168,7 +168,8 @@ function clearFilters() {
 
 const filteredTransactions: Ref<Database['public']['Tables']['transactions']['Row'][]> = ref([]);
 watch(transactionsDesc, (newValue) => {
-  filteredTransactions.value = newValue;
+  // filteredTransactions.value = newValue;
+  updateFilteredTransactions();
 });
 
 const filteredTransactionsPaginated: ComputedRef<

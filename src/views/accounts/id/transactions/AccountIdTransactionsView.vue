@@ -12,6 +12,17 @@
       </ul>
     </div>
 
+    <!-- Account Summary card -->
+    <Suspense>
+      <AccountSummaryRenderer :id="id" />
+
+      <template #fallback>
+        <div class="border card">
+          <div class="card-body">Loading account summary...</div>
+        </div>
+      </template>
+    </Suspense>
+
     <!-- Import Transactions card -->
     <ImportTransactions :accountId="id" />
 
@@ -35,6 +46,7 @@ import { storeToRefs } from 'pinia';
 
 import { useAccountsStore } from '@/stores/accounts';
 
+import AccountSummaryRenderer from '@/components/views/accounts/id/AccountSummaryRenderer.vue';
 import ImportTransactions from '@/components/views/accounts/id/transactions/ImportTransactions.vue';
 import FilteredTransactions from '@/components/views/accounts/id/transactions/FilteredTransactions.vue';
 

@@ -1,18 +1,7 @@
 <template>
-  <div
-    :id="`accounts-collapsible-${title.toLowerCase().replace(' ', '-')}`"
-    class="border bg-slate-300 collapse collapse-arrow"
-  >
-    <input
-      type="checkbox"
-      :id="`accounts-collapsible-${title.toLowerCase().replace(' ', '-')}-checkbox`"
-    />
-
-    <!-- Collapsible title -->
-    <div class="text-xl font-semibold collapse-title">{{ title }}</div>
-
-    <!-- Collapsible content -->
-    <div class="collapse-content">
+  <div class="border card bg-slate-100">
+    <div class="card-body">
+      <div class="card-title">{{ title }}</div>
       <!-- Loaded & has summaries to render -->
       <div v-if="!loading && summaries.length > 0" class="space-y-2">
         <div v-for="accountSummary in summaries" :key="accountSummary.id">
@@ -38,7 +27,7 @@
 import { type PropType } from 'vue';
 import type { AccountSummary } from '@/types/ui-types';
 
-import AccountSummarySmall from '@/components/views/home/AccountSummarySmall.vue';
+import AccountSummarySmall from '@/components/accounts/AccountSummarySmall.vue';
 
 defineProps({
   title: {

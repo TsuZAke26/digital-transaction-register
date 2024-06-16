@@ -45,7 +45,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, computed } from 'vue';
+import { computed } from 'vue';
 import { storeToRefs } from 'pinia';
 
 import { useAccountsStore } from '@/stores/accounts';
@@ -75,14 +75,5 @@ function handleShowAddAccountModal() {
 
 loadAccounts().then(async () => {
   await loadAccountBalances();
-});
-
-onMounted(() => {
-  const checkingCollapsibleCheckbox = document.getElementById(
-    'accounts-collapsible-checking-checkbox'
-  );
-  if (checkingCollapsibleCheckbox instanceof HTMLInputElement) {
-    checkingCollapsibleCheckbox.click();
-  }
 });
 </script>

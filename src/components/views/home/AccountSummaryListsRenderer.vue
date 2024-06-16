@@ -19,7 +19,7 @@ import { storeToRefs } from 'pinia';
 
 import { useAccountsStore } from '@/stores/accounts';
 
-import AccountSummarySmall from '@/components/views/home/AccountSummarySmall.vue';
+import AccountSummarySmall from '@/components/accounts/AccountSummarySmall.vue';
 
 const accountsStore = useAccountsStore();
 const { loading, accountSummaries } = storeToRefs(accountsStore);
