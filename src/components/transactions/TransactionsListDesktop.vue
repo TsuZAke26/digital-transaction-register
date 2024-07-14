@@ -44,6 +44,8 @@
 <script setup lang="ts">
 import { type PropType } from 'vue';
 
+import { useModals } from '@/composables/useModals';
+
 import type { Database } from '@/types/supabase';
 
 import { formatAmount, styleAmount } from '@/util/format-utils';
@@ -55,11 +57,10 @@ defineProps({
   }
 });
 
-const emit = defineEmits<{
-  edit: [transaction: Database['public']['Tables']['transactions']['Row']];
-}>();
+const modals = useModals();
+const { openEditTransactionModal } = modals;
 
 function handleEditTransaction(transaction: Database['public']['Tables']['transactions']['Row']) {
-  emit('edit', transaction);
+  openEditTransactionModal(transaction);
 }
 </script>

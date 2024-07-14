@@ -1,75 +1,71 @@
-import { computed, ref, type ComputedRef, type Ref } from 'vue';
+import { ref, type Ref } from 'vue';
 import { acceptHMRUpdate, defineStore } from 'pinia';
 
 import {
-  deleteTransaction,
-  fetchLatestTransactionByAccountId,
-  fetchTransactionsByAccountId,
-  fetchTransactionsByAccountIdForDateRange,
-  insertTransaction,
-  insertTransactions,
-  updateTransaction
+  readTransactionsByAccountId,
+  readTransactionsByAccountIdWithLimit,
+  createTransaction,
+  createTransactions,
+  updateTransaction,
+  deleteTransaction
 } from '@/api/supabase/db-transactions';
 
 import type { Database } from '@/types/supabase';
 
-import { getThirtyDaysAgoFromJSDate, jsDateToSupabaseDate } from '@/util/date-utils';
 import { sortTransactionsDesc } from '@/util/sort-utils';
 
 export const useTransactionsStore = defineStore('transactions', () => {
+  const loading = ref(false);
+
   const transactions: Ref<Database['public']['Tables']['transactions']['Row'][]> = ref([]);
-  const transactionsDesc: ComputedRef<Database['public']['Tables']['transactions']['Row'][]> =
-    computed(() => {
-      return transactions.value.sort(sortTransactionsDesc);
-    });
-  const latestTransactions = computed(() => {
-    return transactions.value.sort(sortTransactionsDesc).slice(0, 5);
-  });
   function _transactionIndexInStore(id: number) {
-    return transactions.value.findIndex((storeTranasction) => storeTranasction.id === id);
+    return transactions.value.findIndex((localTranasction) => localTranasction.id === id);
+  }
+
+  const transactionToEdit: Ref<Database['public']['Tables']['transactions']['Update']> = ref({
+    id: -1,
+    name: '',
+    date: '',
+    category: '',
+    amount: 0,
+    accountId: -1
+  });
+  function resetTransactionToEdit() {
+    transactionToEdit.value = {
+      id: -1,
+      name: '',
+      date: '',
+      category: '',
+      amount: 0,
+      account_id: -1
+    };
+  }
+
+  async function latestTransactions(accountId: number) {
+    loading.value = true;
+    const result = await readTransactionsByAccountIdWithLimit(accountId, 5);
+    loading.value = false;
+    return result;
   }
   async function loadTransactionsByAccount(accountId: number) {
-    transactions.value = await fetchTransactionsByAccountId(accountId);
+    loading.value = true;
+    transactions.value = await readTransactionsByAccountId(accountId);
+    loading.value = false;
   }
-  async function loadLatestTransactions(accountId: number) {
-    const latestTransaction = await fetchLatestTransactionByAccountId(accountId);
-    const latestTransactionDate = new Date(Date.parse(latestTransaction.date));
-    const thirtyDaysAgo = getThirtyDaysAgoFromJSDate(latestTransactionDate);
-
-    await loadTransactionsByAccountInDateRange(accountId, thirtyDaysAgo, latestTransactionDate);
-  }
-  async function loadTransactionsByAccountInDateRange(accountId: number, from: Date, to: Date) {
-    const supabaseFromDate = jsDateToSupabaseDate(from);
-    const supabaseToDate = jsDateToSupabaseDate(to);
-    const fetchedTransactionsForDateRange = await fetchTransactionsByAccountIdForDateRange(
-      accountId,
-      supabaseFromDate,
-      supabaseToDate
-    );
-    if (fetchedTransactionsForDateRange.length > 0) {
-      fetchedTransactionsForDateRange.forEach((fetchedTransaction) => {
-        const transactionStoreIndex = _transactionIndexInStore(fetchedTransaction.id);
-        if (transactionStoreIndex === -1) {
-          transactions.value.push(fetchedTransaction);
-        } else {
-          transactions.value.splice(transactionStoreIndex, 1, fetchedTransaction);
-        }
-      });
-    }
-  }
-
   async function addTransaction(data: Database['public']['Tables']['transactions']['Insert']) {
-    const newTransaction = await insertTransaction(data);
+    const newTransaction = await createTransaction(data);
     if (newTransaction) {
       transactions.value.push(newTransaction);
+      transactions.value = transactions.value.sort(sortTransactionsDesc);
     }
   }
   async function addTransactions(data: Database['public']['Tables']['transactions']['Insert'][]) {
-    const newTransactions = await insertTransactions(data);
+    const newTransactions = await createTransactions(data);
     if (newTransactions) {
       newTransactions.forEach((newTransaction) => {
         transactions.value.push(newTransaction);
       });
+      transactions.value = transactions.value.sort(sortTransactionsDesc);
     }
   }
   async function editTransaction(
@@ -96,22 +92,19 @@ export const useTransactionsStore = defineStore('transactions', () => {
     transactions.value.splice(storeIndex, 1);
   }
 
-  function resetState() {
-    transactions.value = [];
-  }
-
   return {
+    loading,
     transactions,
-    transactionsDesc,
+
+    transactionToEdit,
+    resetTransactionToEdit,
+
     latestTransactions,
     loadTransactionsByAccount,
-    loadLatestTransactions,
     addTransaction,
     addTransactions,
     editTransaction,
-    removeTransaction,
-
-    resetState
+    removeTransaction
   };
 });
 

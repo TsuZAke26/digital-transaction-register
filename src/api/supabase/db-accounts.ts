@@ -2,7 +2,7 @@ import { anonClient } from '@/supabase/anon-client';
 
 import type { Database } from '@/types/supabase';
 
-export async function fetchAccountBalances() {
+export async function readAccountBalances() {
   const { data: accounts_data, error: accounts_error } = await anonClient
     .from('accounts')
     .select(`id`);
@@ -22,7 +22,7 @@ export async function fetchAccountBalances() {
   return account_balance_data;
 }
 
-export async function fetchAccountBalanceById(id: number) {
+export async function readAccountBalanceById(id: number) {
   const { data: accounts_data, error: accounts_error } = await anonClient
     .from('account_balance')
     .select()
@@ -34,7 +34,7 @@ export async function fetchAccountBalanceById(id: number) {
   return accounts_data;
 }
 
-export async function fetchAccounts() {
+export async function readAccounts() {
   const { data: accounts_data, error: accounts_error } = await anonClient.from('accounts').select();
   if (accounts_error) {
     throw accounts_error;
@@ -43,7 +43,7 @@ export async function fetchAccounts() {
   return accounts_data;
 }
 
-export async function fetchAccountById(id: number) {
+export async function readAccountById(id: number) {
   const { data: accounts_data, error: accounts_error } = await anonClient
     .from('accounts')
     .select()
@@ -55,7 +55,7 @@ export async function fetchAccountById(id: number) {
   return accounts_data;
 }
 
-export async function insertAccount(data: Database['public']['Tables']['accounts']['Insert']) {
+export async function createAccount(data: Database['public']['Tables']['accounts']['Insert']) {
   const userId = (await anonClient.auth.getSession()).data.session?.user.id;
   if (!userId) {
     throw new Error('User is not authenticated, abort new account creation');
@@ -82,11 +82,6 @@ export async function updateAccount(
   id: number,
   data: Database['public']['Tables']['accounts']['Update']
 ) {
-  const userId = (await anonClient.auth.getSession()).data.session?.user.id;
-  if (!userId) {
-    throw new Error('User is not authenticated, abort update account');
-  }
-
   const { data: accounts_data, error: accounts_error } = await anonClient
     .from('accounts')
     .update(data)
@@ -101,11 +96,6 @@ export async function updateAccount(
 }
 
 export async function deleteAccount(id: number) {
-  const userId = (await anonClient.auth.getSession()).data.session?.user.id;
-  if (!userId) {
-    throw new Error('User is not authenticated, abort delete account');
-  }
-
   const { error: accounts_error } = await anonClient.from('accounts').delete().eq('id', id);
   if (accounts_error) {
     throw accounts_error;

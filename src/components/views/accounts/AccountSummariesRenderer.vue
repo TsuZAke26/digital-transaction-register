@@ -1,5 +1,5 @@
 <template>
-  <div class="border card bg-slate-100">
+  <div class="border card">
     <div class="card-body">
       <div class="card-title">{{ title }}</div>
       <!-- Loaded & has summaries to render -->
@@ -9,7 +9,6 @@
             :name="accountSummary.name"
             :balance="accountSummary.balance"
             :id="accountSummary.id"
-            class="bg-white"
           />
         </div>
       </div>
@@ -25,6 +24,7 @@
 
 <script setup lang="ts">
 import { type PropType } from 'vue';
+
 import type { AccountSummary } from '@/types/ui-types';
 
 import AccountSummarySmall from '@/components/accounts/AccountSummarySmall.vue';

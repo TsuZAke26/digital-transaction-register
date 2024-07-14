@@ -39,7 +39,7 @@ defineEmits(['auth-view']);
 const toast = useToast();
 
 const userStore = useUserStore();
-const { loadProfileData } = userStore;
+const { loadUserData } = userStore;
 
 const email = ref('');
 const password = ref('');
@@ -59,7 +59,7 @@ async function handleSubmit() {
       if (error) {
         throw error;
       }
-      await loadProfileData();
+      await loadUserData();
       toast.success('Sign in successful!');
     } catch (error) {
       toast.error('Sign in failed!');

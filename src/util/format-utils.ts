@@ -25,7 +25,7 @@ export function formatAmount(amount: number) {
 }
 
 export function styleAmount(amount: number) {
-  const textColor = amount < 0 ? 'text-red-500' : 'text-black dark:text-white';
+  const textColor = amount < 0 ? 'text-red-500' : null;
 
   return textColor;
 }

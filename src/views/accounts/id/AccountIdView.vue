@@ -1,83 +1,43 @@
 <template>
   <div class="container max-w-5xl p-4 mx-auto">
-    <!-- Path Breadcrumbs -->
-    <div class="text-sm breadcrumbs">
-      <ul>
-        <li @click="$router.push({ name: 'home' })"><a>Home</a></li>
-        <li @click="$router.push({ name: 'accounts' })"><a>Accounts</a></li>
-        <li>{{ currentAccount?.name }}</li>
-      </ul>
-    </div>
-
     <div class="space-y-4">
-      <!-- Account Summary card -->
-      <Suspense>
-        <AccountSummaryRenderer :id="id" />
-
-        <template #fallback>
-          <div class="border card">
-            <div class="card-body">Loading account summary...</div>
-          </div>
-        </template>
-      </Suspense>
-
-      <!-- Transactions Preview card -->
-      <div class="border card">
-        <div class="card-body">
-          <div class="flex justify-between card-title">
-            Recent Transactions
-            <div
-              class="flex items-center text-sm cursor-pointer"
-              @click="$router.push({ name: 'account-transactions' })"
-            >
-              View All
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" class="w-6 h-6">
-                <path d="M504-480 320-664l56-56 240 240-240 240-56-56 184-184Z" />
-              </svg>
-            </div>
-          </div>
-
-          <Suspense>
-            <LatestTransactions :account-id="id" />
-
-            <template #fallback>
-              <div>Loading recent transactions...</div>
-            </template>
-          </Suspense>
-
-          <div class="justify-end card-actions">
-            <button @click="handleShowAddTransactionModal" class="btn btn-sm btn-secondary">
-              Add Transaction
-            </button>
+      <!-- Account Balance card -->
+      <div class="p-4 border rounded-xl">
+        <div class="flex flex-row items-center justify-between">
+          <div class="font-semibold truncate">{{ currentAccount?.name }}</div>
+          <div
+            v-if="currentAccountSummary"
+            :class="styleAmount(currentAccountSummary?.balance)"
+            class="text-2xl font-semibold"
+          >
+            {{ formatAmount(currentAccountSummary?.balance) }}
           </div>
         </div>
       </div>
 
-      <!-- Spending Reports Preview card -->
-      <div class="border card">
+      <!-- Latest Transactions card -->
+      <div v-if="$route.name === 'account'" class="border card">
         <div class="card-body">
-          <div class="flex justify-between card-title">
-            Spending Report
-            <div
-              class="flex items-center text-sm cursor-pointer"
-              @click="$router.push({ name: 'account-reports' })"
+          <div class="flex flex-row items-center justify-between card-title">
+            <span>Latest Transactions</span>
+
+            <button
+              @click="$router.push({ name: 'account-transactions', params: { id } })"
+              class="btn btn-sm btn-ghost"
             >
               View All
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" class="w-6 h-6">
-                <path d="M504-480 320-664l56-56 240 240-240 240-56-56 184-184Z" />
-              </svg>
-            </div>
+            </button>
           </div>
-
           <Suspense>
-            <!-- <LatestTransactions :account-id="id" /> -->
-            <div>Insert Report Here</div>
-
-            <template #fallback>
-              <div>Loading spending report...</div>
-            </template>
+            <AccountIdLatestTransactions :account-id="id" />
+            <template #fallback> Loading latest transactions... </template>
           </Suspense>
         </div>
+      </div>
+
+      <!-- Account Sub-View container -->
+      <div class="mb-16 md:mb-0">
+        <RouterView />
       </div>
     </div>
   </div>
@@ -88,30 +48,32 @@
 </template>
 
 <script setup lang="ts">
-import { onBeforeMount } from 'vue';
 import { storeToRefs } from 'pinia';
 
 import { useAccountsStore } from '@/stores/accounts';
-import { useTransactionsStore } from '@/stores/transactions';
+
+import { formatAmount, styleAmount } from '@/util/format-utils';
 
 import AddTransactionModal from '@/components/modals/AddTransactionModal.vue';
 import EditAccountModal from '@/components/modals/EditAccountModal.vue';
+import AccountIdLatestTransactions from '@/components/views/accounts/id/AccountIdLatestTransactions.vue';
 
-import AccountSummaryRenderer from '@/components/views/accounts/id/AccountSummaryRenderer.vue';
-import LatestTransactions from '@/components/views/accounts/id/LatestTransactions.vue';
+// import LatestTransactions from '@/components/views/accounts/id/LatestTransactions.vue';
 
-defineProps({
+const props = defineProps({
   id: {
     type: String,
     required: true
   }
 });
+const idAsNumber = Number.parseInt(props.id);
 
 const accountsStore = useAccountsStore();
-const { currentAccount } = storeToRefs(accountsStore);
+const { currentAccount, currentAccountSummary } = storeToRefs(accountsStore);
+const { loadAccountById, loadAccountBalanceById } = accountsStore;
 
-const transactionsStore = useTransactionsStore();
-const { resetState } = transactionsStore;
+loadAccountById(idAsNumber);
+loadAccountBalanceById(idAsNumber);
 
 function handleShowAddTransactionModal() {
   const addTransactionDialogEl: HTMLElement | null =
@@ -120,6 +82,4 @@ function handleShowAddTransactionModal() {
     addTransactionDialogEl.showModal();
   }
 }
-
-onBeforeMount(() => resetState());
 </script>

@@ -1,39 +1,54 @@
 <template>
-  <div class="border card">
-    <div class="card-body">
-      <div class="card-title">Transaction Categories</div>
-
-      <div v-if="categories" class="space-y-2">
-        <div class="flex flex-wrap items-center gap-2">
-          <TransactionCategoryBadge
-            v-for="(category, index) in categories"
-            :key="index"
-            :category="category"
-            @remove-category="removeCategory(index)"
-          />
-        </div>
-        <div class="flex items-center gap-4">
-          <input
-            v-model="newCategory"
-            placeholder="New Category"
-            class="w-full input input-bordered"
-          />
+  <div tabindex="0" class="border collapse collapse-arrow">
+    <input type="checkbox" />
+    <div class="text-xl font-semibold collapse-title">Transaction Categories</div>
+    <div class="collapse-content">
+      <div v-if="transactionCategories" class="space-y-4">
+        <!-- Add New Category -->
+        <div
+          class="flex items-center justify-between w-full gap-4 py-2 pl-4 pr-2 border rounded-md"
+        >
+          <input v-model="newCategory" placeholder="New Category" class="w-full" />
           <button
             @click="handleAddCategory"
-            class="text-white btn btn-primary"
+            class="btn btn-primary btn-sm btn-circle"
             :disabled="!newCategory.length"
           >
-            Add
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 -960 960 960"
+              class="w-6 h-6 fill-white"
+              fill="#FFFFFF"
+            >
+              <path d="M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Z" />
+            </svg>
           </button>
         </div>
-      </div>
 
-      <div class="w-full my-4 border"></div>
-
-      <div class="justify-end card-actions">
-        <button @click="handleSaveCategories" class="text-white btn btn-primary">
-          Save Categories
-        </button>
+        <!-- List of Transaction Categories -->
+        <div class="grid grid-cols-1 gap-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+          <div
+            v-for="(category, index) in transactionCategories"
+            :key="index"
+            class="flex items-center justify-between py-2 pl-4 pr-2 border rounded-md"
+          >
+            <span class="truncate">{{ category }}</span>
+            <button
+              class="bg-red-500 btn btn-circle btn-sm"
+              @click="removeTransactionCategory(index)"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 -960 960 960"
+                class="w-6 h-6 fill-white"
+              >
+                <path
+                  d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"
+                />
+              </svg>
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -42,34 +57,18 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { storeToRefs } from 'pinia';
-import { useToast } from 'vue-toastification';
 
 import { useUserStore } from '@/stores/user';
 
-import TransactionCategoryBadge from '@/components/views/profile/TransactionCategoryBadge.vue';
-
-const toast = useToast();
-
 const userStore = useUserStore();
-const { categories } = storeToRefs(userStore);
-const { addCategory, removeCategory, saveAppSettings } = userStore;
+const { transactionCategories } = storeToRefs(userStore);
+const { addTransactionCategory, removeTransactionCategory } = userStore;
 
 const newCategory = ref('');
 function handleAddCategory() {
-  if (newCategory.value.length > 0) {
-    addCategory(newCategory.value);
-    if (categories.value.includes(newCategory.value)) {
-      newCategory.value = '';
-    }
-  }
-}
-async function handleSaveCategories() {
-  try {
-    await saveAppSettings();
-    toast.success('Settings saved successfully!');
-  } catch (error) {
-    console.error('Error saving application settings: ', error);
-    toast.error('Error savings settings');
+  addTransactionCategory(newCategory.value);
+  if (transactionCategories.value.includes(newCategory.value)) {
+    newCategory.value = '';
   }
 }
 </script>

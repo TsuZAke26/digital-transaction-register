@@ -1,27 +1,26 @@
-import { computed, ref, type Ref } from 'vue';
+import { ref, type Ref } from 'vue';
 import { acceptHMRUpdate, defineStore } from 'pinia';
 
-import { fetchProfileData, updateDisplayName, updateAppSettings } from '@/api/supabase/db-profiles';
+import { readProfileData, updateDisplayName } from '@/api/supabase/db-profiles';
+import { readUserSettings, updateUserSettings } from '@/api/supabase/db-user-settings';
+import type { Database } from '@/types/supabase';
 
 export const useUserStore = defineStore('user', () => {
-  const displayName = ref('');
-  const appSettings: Ref<Record<string, number | string | string[]>> = ref({});
-
-  async function loadProfileData() {
-    const profileData = await fetchProfileData();
+  async function loadUserData() {
+    const profileData = await readProfileData();
     if (profileData) {
       displayName.value = profileData.display_name;
-      appSettings.value = profileData.app_settings as Record<string, number | string | string[]>;
+    }
 
-      // Set up default application settings if not currently persisted
-      if (!appSettings.value) {
-        appSettings.value = {
-          categories: ['Housing', 'Bills', 'Groceries', 'Utilities', 'Miscellaneous']
-        };
-      }
+    const userSettings = await readUserSettings();
+    if (userSettings) {
+      transactionCategories.value = userSettings.transaction_categories?.sort() ?? [];
+      // TODO: add more settings as I fetch them back
     }
   }
 
+  /* User Profile Data */
+  const displayName = ref('');
   async function modifyDisplayName(newDisplayName: string) {
     const updatedProfileData = await updateDisplayName(newDisplayName);
     if (updatedProfileData) {
@@ -29,42 +28,32 @@ export const useUserStore = defineStore('user', () => {
     }
   }
 
-  const categories = computed(() => {
-    const categoriesFromSettings = appSettings.value['categories'] as string[];
-    return categoriesFromSettings ? categoriesFromSettings.sort() : [];
-  });
-  function addCategory(category: string) {
-    const categories = appSettings.value['categories'] as string[];
-    const existingCategoryIndex = categories.findIndex((existing) => existing === category);
-    if (categories && existingCategoryIndex === -1) {
-      (appSettings.value['categories'] as string[]).push(category);
-    }
+  /* User Settings */
+  const transactionCategories: Ref<string[]> = ref([]);
+  function addTransactionCategory(category: string) {
+    transactionCategories.value.push(category);
+    transactionCategories.value = transactionCategories.value.sort();
   }
-  // function updateCategory(index: number, category: string) {
-  //   const categories = appSettings.value['categories'] as string[];
-  //   if (categories) {
-  //     (appSettings.value['categories'] as string[]).splice(index, 1, category);
-  //   }
-  // }
-  function removeCategory(index: number) {
-    const categories = appSettings.value['categories'] as string[];
-    if (categories) {
-      (appSettings.value['categories'] as string[]).splice(index, 1);
-    }
+  function removeTransactionCategory(index: number) {
+    transactionCategories.value.splice(index, 1);
   }
-
-  async function saveAppSettings() {
-    await updateAppSettings(appSettings.value);
+  async function saveUserSettings() {
+    const settingsData: Database['public']['Tables']['user_settings']['Update'] = {
+      transaction_categories: transactionCategories.value
+    };
+    await updateUserSettings(settingsData);
   }
 
   return {
+    loadUserData,
+
     displayName,
-    appSettings,
-    loadProfileData,
-    categories,
-    addCategory,
-    removeCategory,
-    saveAppSettings
+
+    transactionCategories,
+    addTransactionCategory,
+    removeTransactionCategory,
+
+    saveUserSettings
   };
 });
 

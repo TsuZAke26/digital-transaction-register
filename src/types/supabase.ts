@@ -44,35 +44,6 @@ export type Database = {
           },
         ]
       }
-      profiles: {
-        Row: {
-          app_settings: Json | null
-          created_at: string
-          display_name: string
-          user_id: string
-        }
-        Insert: {
-          app_settings?: Json | null
-          created_at?: string
-          display_name?: string
-          user_id: string
-        }
-        Update: {
-          app_settings?: Json | null
-          created_at?: string
-          display_name?: string
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "profiles_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: true
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       transactions: {
         Row: {
           account_id: number
@@ -114,6 +85,61 @@ export type Database = {
             columns: ["account_id"]
             isOneToOne: false
             referencedRelation: "accounts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_profiles: {
+        Row: {
+          created_at: string
+          display_name: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          display_name?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          display_name?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "profiles_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_settings: {
+        Row: {
+          created_at: string
+          transaction_categories: string[] | null
+          transaction_templates: Json | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          transaction_categories?: string[] | null
+          transaction_templates?: Json | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          transaction_categories?: string[] | null
+          transaction_templates?: Json | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_settings_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "users"
             referencedColumns: ["id"]
           },
         ]

@@ -2,11 +2,11 @@ import { computed, ref, type Ref } from 'vue';
 import { acceptHMRUpdate, defineStore } from 'pinia';
 
 import {
-  fetchAccountById,
-  fetchAccountBalances,
-  fetchAccountBalanceById,
-  fetchAccounts,
-  insertAccount,
+  readAccountById,
+  readAccountBalances,
+  readAccountBalanceById,
+  readAccounts,
+  createAccount,
   updateAccount,
   deleteAccount
 } from '@/api/supabase/db-accounts';
@@ -30,7 +30,7 @@ export const useAccountsStore = defineStore('accounts', () => {
   }
   async function loadAccounts() {
     _setLoading(true);
-    accounts.value = await fetchAccounts();
+    accounts.value = await readAccounts();
     _setLoading(false);
   }
   async function loadAccountById(id: number) {
@@ -40,7 +40,7 @@ export const useAccountsStore = defineStore('accounts', () => {
     if (accountIndex > -1) {
       currentAccount.value = accounts.value[accountIndex];
     } else {
-      const fetchedAccount = await fetchAccountById(id);
+      const fetchedAccount = await readAccountById(id);
       accounts.value.push(fetchedAccount);
       currentAccount.value = fetchedAccount;
     }
@@ -48,7 +48,7 @@ export const useAccountsStore = defineStore('accounts', () => {
     _setLoading(false);
   }
   async function addAccount(data: Database['public']['Tables']['accounts']['Insert']) {
-    const newAccount = await insertAccount(data);
+    const newAccount = await createAccount(data);
     if (newAccount) {
       accounts.value.push(newAccount);
     }
@@ -83,7 +83,7 @@ export const useAccountsStore = defineStore('accounts', () => {
   }
   async function loadAccountBalances() {
     _setLoading(true);
-    accountBalances.value = await fetchAccountBalances();
+    accountBalances.value = await readAccountBalances();
 
     const currentAccountBalanceIndex = _findAccountBalanceIndex(
       currentAccountBalance.value?.id as number
@@ -100,7 +100,7 @@ export const useAccountsStore = defineStore('accounts', () => {
     if (accountBalanceIndex > -1) {
       currentAccountBalance.value = accountBalances.value[accountBalanceIndex];
     } else {
-      const fetchedAccountBalance = await fetchAccountBalanceById(id);
+      const fetchedAccountBalance = await readAccountBalanceById(id);
       accountBalances.value.push(fetchedAccountBalance);
       currentAccountBalance.value = fetchedAccountBalance;
     }

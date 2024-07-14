@@ -1,26 +1,29 @@
 <template>
   <RouterView />
-  <AddAccountModal />
+  <EditTransactionModal />
 </template>
 
 <script setup lang="ts">
 import { onMounted } from 'vue';
 import { useRoute, useRouter, RouterView } from 'vue-router';
 
+import EditTransactionModal from '@/components/modals/EditTransactionModal.vue';
+
 import { anonClient } from './supabase/anon-client';
 
 import { useUserStore } from './stores/user';
-
-import AddAccountModal from '@/components/modals/AddAccountModal.vue';
+import { useAccountsStore } from './stores/accounts';
 
 const route = useRoute();
 const router = useRouter();
 
 const userStore = useUserStore();
-const { loadProfileData } = userStore;
+const { loadUserData } = userStore;
+
+const accountsStore = useAccountsStore();
+const { loadAccounts, loadAccountBalances } = accountsStore;
 
 anonClient.auth.onAuthStateChange((event) => {
-  // console.log(`Auth state: ${event}`);
   if (event === 'SIGNED_IN' && route.path === '/auth') {
     router.push({ name: 'home' });
   } else if (event === 'SIGNED_OUT') {
@@ -31,7 +34,9 @@ anonClient.auth.onAuthStateChange((event) => {
 onMounted(async () => {
   const isSignedIn = (await anonClient.auth.getSession()).data.session;
   if (isSignedIn) {
-    await loadProfileData();
+    await loadUserData();
+    await loadAccounts();
+    await loadAccountBalances();
   }
 });
 </script>

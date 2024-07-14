@@ -2,7 +2,7 @@
   <div class="container max-w-5xl p-4 mx-auto">
     <div class="space-y-4">
       <!-- Path Breadcrumbs -->
-      <div class="text-sm breadcrumbs">
+      <!-- <div class="text-sm breadcrumbs">
         <ul>
           <li @click="$router.push({ name: 'home' })"><a>Home</a></li>
           <li @click="$router.push({ name: 'accounts' })"><a>Accounts</a></li>
@@ -11,7 +11,7 @@
           </li>
           <li>Spending Report</li>
         </ul>
-      </div>
+      </div> -->
 
       <!-- Spend Report card -->
       <div class="border card">

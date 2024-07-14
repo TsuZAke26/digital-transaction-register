@@ -10,7 +10,9 @@
         <div class="flex gap-4">
           <!-- Category -->
           <select v-model="transactionCategory" class="flex-1 select select-bordered">
-            <option v-for="(category, index) in categories" :key="index">{{ category }}</option>
+            <option v-for="(category, index) in transactionCategories" :key="index">
+              {{ category }}
+            </option>
             <option>Other</option>
           </select>
 
@@ -89,10 +91,10 @@ const props = defineProps({
 const toast = useToast();
 
 const userStore = useUserStore();
-const { categories } = storeToRefs(userStore);
+const { transactionCategories } = storeToRefs(userStore);
 
 const accountsStore = useAccountsStore();
-const { loadAccountBalances } = accountsStore;
+const { loadAccountBalanceById } = accountsStore;
 
 const transactionsStore = useTransactionsStore();
 const { addTransaction } = transactionsStore;
@@ -126,7 +128,7 @@ async function handleAddTransaction() {
     };
     await addTransaction(newTransactionData);
 
-    await loadAccountBalances();
+    await loadAccountBalanceById(accountIdAsNumber);
 
     toast.success('Transaction creation successful');
 

@@ -1,13 +1,13 @@
 <template>
   <!-- Filter Controls -->
-  <div class="border collapse collapse-arrow">
-    <input type="checkbox" />
+  <!-- <div class="border collapse collapse-arrow">
+    <input type="checkbox" /> -->
 
-    <div class="collapse-title">Filters</div>
+  <!-- <div class="collapse-title">Filters</div>
     <div class="collapse-content">
-      <div class="flex flex-col gap-4">
-        <!-- Start/End Date -->
-        <div class="flex gap-4">
+      <div class="flex flex-col gap-4"> -->
+  <!-- Start/End Date -->
+  <!-- <div class="flex gap-4">
           <input
             id="account-transactions-filters-start-date"
             v-model="filters.startDate"
@@ -21,15 +21,15 @@
             class="flex-grow input input-bordered"
             type="date"
           />
-        </div>
+        </div> -->
 
-        <!-- Transaction Name Contains -->
-        <input class="w-full input input-bordered" v-model="filters.name" placeholder="Name" />
+  <!-- Transaction Name Contains -->
+  <!-- <input class="w-full input input-bordered" v-model="filters.name" placeholder="Name" /> -->
 
-        <!-- Transactions with Selected Categories -->
-        <div v-if="categoriesForFiltering.length > 0" class="flex flex-wrap gap-4">
-          <!-- https://vuejs.org/guide/essentials/forms#checkbox -->
-          <div
+  <!-- Transactions with Selected Categories -->
+  <!-- <div v-if="categoriesForFiltering.length > 0" class="flex flex-wrap gap-4"> -->
+  <!-- https://vuejs.org/guide/essentials/forms#checkbox -->
+  <!-- <div
             v-for="(category, index) in categoriesForFiltering"
             :key="index"
             class="flex items-center space-x-2"
@@ -43,10 +43,10 @@
             />
             <label :for="category">{{ category }}</label>
           </div>
-        </div>
+        </div> -->
 
-        <!-- Clear/Apply Filters -->
-        <div class="flex gap-4">
+  <!-- Clear/Apply Filters -->
+  <!-- <div class="flex gap-4">
           <button class="flex-grow btn btn-ghost" @click="clearFilters">Reset</button>
 
           <button
@@ -58,51 +58,45 @@
           </button>
         </div>
       </div>
+    </div> -->
+  <!-- </div> -->
+
+  <!-- <div class="w-full my-4 border"></div> -->
+
+  <div class="space-y-4">
+    <TransactionsListRenderer :transactions="filteredTransactionsPaginated" />
+
+    <div class="flex items-center justify-between gap-4">
+      <!-- Pagination controls -->
+      <div class="join">
+        <!-- Previous Page button -->
+        <button @click="currentPage -= 1" class="join-item btn btn-sm">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" class="w-4 h-4">
+            <path d="m313-440 224 224-57 56-320-320 320-320 57 56-224 224h487v80H313Z" />
+          </svg>
+        </button>
+
+        <button class="join-item btn btn-sm">Page {{ currentPage }} / {{ totalPages }}</button>
+
+        <!-- Next Page button -->
+        <button @click="currentPage += 1" class="join-item btn btn-sm">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 -960 960 960">
+            <path d="M647-440H160v-80h487L423-744l57-56 320 320-320 320-57-56 224-224Z" />
+          </svg>
+        </button>
+      </div>
+
+      <!-- Per Page selector -->
+      <div class="space-x-2">
+        <label>Per Page</label>
+        <select v-model="perPage" class="select select-bordered select-sm">
+          <option>10</option>
+          <option>20</option>
+          <option>50</option>
+        </select>
+      </div>
     </div>
   </div>
-
-  <div class="w-full my-4 border"></div>
-
-  <!-- Filtered Transactions - Mobile View -->
-  <div class="sm:hidden">
-    <TransactionsListMobile
-      :transactions="filteredTransactions"
-      @edit="handleEditTransaction($event)"
-    />
-  </div>
-
-  <!-- Filtered Transactions - Desktop View -->
-  <div class="hidden space-y-4 sm:grid">
-    <TransactionsListDesktop
-      :transactions="filteredTransactionsPaginated"
-      @edit="handleEditTransaction($event)"
-    />
-
-    <!-- Pagination controls -->
-    <div class="join place-content-center">
-      <!-- Previous Page button -->
-      <button @click="currentPage -= 1" :disabled="currentPage === 1" class="join-item btn btn-sm">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" class="w-4 h-4">
-          <path d="m313-440 224 224-57 56-320-320 320-320 57 56-224 224h487v80H313Z" />
-        </svg>
-      </button>
-
-      <button class="join-item btn btn-sm">Page {{ currentPage }}</button>
-
-      <!-- Next Page button -->
-      <button
-        @click="currentPage += 1"
-        :disabled="currentPage === totalPages"
-        class="join-item btn btn-sm"
-      >
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 -960 960 960">
-          <path d="M647-440H160v-80h487L423-744l57-56 320 320-320 320-57-56 224-224Z" />
-        </svg>
-      </button>
-    </div>
-  </div>
-
-  <EditTransactionModal :transaction="transactionToEdit" />
 </template>
 
 <script setup lang="ts">
@@ -115,9 +109,7 @@ import type { Database } from '@/types/supabase';
 
 import { REGEX_DATE_FORMAT } from '@/util/regex';
 
-import EditTransactionModal from '@/components/modals/EditTransactionModal.vue';
-import TransactionsListMobile from '@/components/transactions/TransactionsListMobile.vue';
-import TransactionsListDesktop from '@/components/transactions/TransactionsListDesktop.vue';
+import TransactionsListRenderer from '@/components/transactions/TransactionsListRenderer.vue';
 
 const props = defineProps({
   accountId: {
@@ -128,7 +120,7 @@ const props = defineProps({
 const accountIdAsNumber = Number.parseInt(props.accountId);
 
 const transactionsStore = useTransactionsStore();
-const { transactionsDesc } = storeToRefs(transactionsStore);
+const { transactions } = storeToRefs(transactionsStore);
 const { loadTransactionsByAccount } = transactionsStore;
 
 const filters = reactive({
@@ -139,7 +131,7 @@ const filters = reactive({
 });
 const categoriesForFiltering = computed(() => {
   const result: string[] = [];
-  transactionsDesc.value.forEach((transaction) => {
+  transactions.value.forEach((transaction) => {
     const hasCategory = transaction.category !== null;
     const alreadyInResult =
       result.findIndex((resultTransaction) => resultTransaction === transaction.category) !== -1;
@@ -163,33 +155,33 @@ function clearFilters() {
   filters.name = '';
   filters.categories = [];
 
-  filteredTransactions.value = transactionsDesc.value;
+  filteredTransactions.value = transactions.value;
 }
 
 const filteredTransactions: Ref<Database['public']['Tables']['transactions']['Row'][]> = ref([]);
-watch(transactionsDesc, (newValue) => {
-  // filteredTransactions.value = newValue;
+watch(transactions, (newValue) => {
+  filteredTransactions.value = newValue;
   updateFilteredTransactions();
 });
 
 const filteredTransactionsPaginated: ComputedRef<
   Database['public']['Tables']['transactions']['Row'][]
 > = computed(() => {
-  const startIndex = perPage * currentPage.value - perPage;
+  const startIndex = perPage.value * currentPage.value - perPage.value;
   const endIndex =
-    perPage * currentPage.value > filteredTransactions.value.length
+    perPage.value * currentPage.value > filteredTransactions.value.length
       ? filteredTransactions.value.length
-      : perPage * currentPage.value;
+      : perPage.value * currentPage.value;
 
   return filteredTransactions.value.slice(startIndex, endIndex);
 });
-const perPage = 10;
+const perPage = ref(10);
 const currentPage = ref(1);
-const totalPages = computed(() => Math.ceil(filteredTransactions.value.length / perPage));
+const totalPages = computed(() => Math.ceil(filteredTransactions.value.length / perPage.value));
 
 function updateFilteredTransactions() {
   let finalFilteredTransactions: Database['public']['Tables']['transactions']['Row'][] = [];
-  finalFilteredTransactions = transactionsDesc.value;
+  finalFilteredTransactions = transactions.value;
 
   if (filters.startDate.length > 0) {
     finalFilteredTransactions = finalFilteredTransactions.filter((transaction) => {
@@ -223,24 +215,6 @@ function updateFilteredTransactions() {
 }
 
 await loadTransactionsByAccount(accountIdAsNumber).then(() => {
-  filteredTransactions.value = transactionsDesc.value;
+  filteredTransactions.value = transactions.value;
 });
-
-const transactionToEdit: Ref<Database['public']['Tables']['transactions']['Row']> = ref({
-  id: -1,
-  name: '',
-  date: '',
-  category: '',
-  amount: 0,
-  account_id: -1,
-  created_at: ''
-});
-function handleEditTransaction(transaction: Database['public']['Tables']['transactions']['Row']) {
-  transactionToEdit.value = transaction;
-
-  const editTransactionDialogEl = document.getElementById('modal-edit-transaction');
-  if (editTransactionDialogEl instanceof HTMLDialogElement) {
-    editTransactionDialogEl.showModal();
-  }
-}
 </script>

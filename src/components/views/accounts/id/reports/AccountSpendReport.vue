@@ -52,7 +52,7 @@
 import { ref, type Ref } from 'vue';
 import { storeToRefs } from 'pinia';
 
-import { fetchTransactionsByAccountIdForDateRange } from '@/api/supabase/db-transactions';
+import { readTransactionsByAccountIdForDateRange } from '@/api/supabase/db-transactions';
 
 import { useTransactionsStore } from '@/stores/transactions';
 
@@ -104,7 +104,7 @@ async function generateSpendReportForDateRange() {
   loading.value = true;
 
   if (REGEX_DATE_FORMAT.test(startDate.value) && REGEX_DATE_FORMAT.test(endDate.value)) {
-    const transactionsForDateRange = await fetchTransactionsByAccountIdForDateRange(
+    const transactionsForDateRange = await readTransactionsByAccountIdForDateRange(
       Number.parseInt(props.accountId),
       startDate.value,
       endDate.value

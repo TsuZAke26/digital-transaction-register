@@ -51,10 +51,10 @@ const props = defineProps({
 const toast = useToast();
 
 const userStore = useUserStore();
-const { addCategory, saveAppSettings } = userStore;
+const { addTransactionCategory, saveUserSettings } = userStore;
 
 const accountsStore = useAccountsStore();
-const { loadAccountBalances } = accountsStore;
+const { loadAccountBalanceById } = accountsStore;
 
 const transactionsStore = useTransactionsStore();
 const { addTransactions } = transactionsStore;
@@ -102,23 +102,24 @@ async function handleImport() {
 
     const transactionsToImport: Database['public']['Tables']['transactions']['Insert'][] =
       transactionsJSON.map((transaction: any) => {
-        addCategory(transaction.category);
+        addTransactionCategory(transaction.category);
 
         const transformedTransaction = { ...transaction };
         transformedTransaction.account_id = props.accountId;
 
         return transformedTransaction;
       });
-    await saveAppSettings();
+    await saveUserSettings();
 
     await addTransactions(transactionsToImport);
 
     toast.success('Transactions imported successfully!');
 
-    await loadAccountBalances();
+    await loadAccountBalanceById(Number.parseInt(props.accountId));
 
     handleClear();
   } catch (error) {
+    console.error(error);
     toast.error('Error importing transactions');
   }
 }

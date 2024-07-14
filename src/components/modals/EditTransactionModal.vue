@@ -9,15 +9,17 @@
       <form @submit.prevent="handleEditTransaction" class="space-y-4">
         <div class="flex gap-4">
           <!-- Category -->
-          <select v-model="localTransaction.category" class="flex-1 select select-bordered">
-            <option v-for="(category, index) in categories" :key="index">{{ category }}</option>
+          <select v-model="transactionToEdit.category" class="flex-1 select select-bordered">
+            <option v-for="(category, index) in transactionCategories" :key="index">
+              {{ category }}
+            </option>
             <option>Other</option>
           </select>
 
           <!-- Date -->
           <input
             id="modal-add-transaction-form-date"
-            v-model="localTransaction.date"
+            v-model="transactionToEdit.date"
             class="input input-bordered"
             type="date"
             required
@@ -26,7 +28,7 @@
 
         <!-- Transaction Name -->
         <input
-          v-model="localTransaction.name"
+          v-model="transactionToEdit.name"
           class="w-full input input-bordered"
           maxlength="100"
           placeholder="Name"
@@ -39,7 +41,7 @@
           $
           <input
             id="modal-add-transaction-form-amount"
-            v-model="localTransaction.amount"
+            v-model="transactionToEdit.amount"
             class="w-full text-right"
             type="number"
             step="0.01"
@@ -52,11 +54,11 @@
         <!-- Modal actions-->
         <div class="space-x-4 modal-action">
           <!-- Delete Transaction -->
-          <button @click="handleDeleteTransaction" type="button" class="btn btn-error">
+          <!-- <button @click="handleDeleteTransaction" type="button" class="btn btn-error">
             Delete
-          </button>
+          </button> -->
 
-          <div class="w-full"></div>
+          <!-- <div class="w-full"></div> -->
 
           <!-- Close modal -->
           <form method="dialog">
@@ -73,7 +75,6 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, type PropType, toRef, watch } from 'vue';
 import { storeToRefs } from 'pinia';
 import { useToast } from 'vue-toastification';
 
@@ -85,55 +86,21 @@ import type { Database } from '@/types/supabase';
 
 import { REGEX_AMOUNT_STRING } from '@/util/regex';
 
-const props = defineProps({
-  transaction: {
-    type: Object as PropType<Database['public']['Tables']['transactions']['Row']>,
-    default: () => {
-      return {
-        id: -1,
-        name: '',
-        date: '',
-        category: '',
-        amount: 0,
-        accountId: -1
-      };
-    }
-  }
-});
-
 const toast = useToast();
 
 const userStore = useUserStore();
-const { categories } = storeToRefs(userStore);
+const { transactionCategories } = storeToRefs(userStore);
 
 const accountsStore = useAccountsStore();
 const { loadAccountBalances } = accountsStore;
 
 const transactionsStore = useTransactionsStore();
-const { editTransaction, removeTransaction } = transactionsStore;
+const { transactionToEdit } = storeToRefs(transactionsStore);
+const { editTransaction } = transactionsStore;
 
-const localTransaction = reactive({
-  id: -1,
-  name: '',
-  date: '',
-  category: '',
-  amount: '',
-  accountId: -1
-});
-watch(
-  () => toRef(props, 'transaction'),
-  (newValue) => {
-    localTransaction.id = newValue.value.id;
-    localTransaction.name = newValue.value.name;
-    localTransaction.date = newValue.value.date;
-    localTransaction.category = newValue.value.category as string;
-    localTransaction.amount = newValue.value.amount.toFixed(2).toString();
-    localTransaction.accountId = newValue.value.account_id;
-  }
-);
 function formatAmountValue(event: any) {
   const newAmount = Number.parseFloat(event.target?.value).toFixed(2);
-  localTransaction.amount = newAmount;
+  transactionToEdit.amount = newAmount;
 }
 
 function close() {
@@ -147,13 +114,13 @@ function close() {
 async function handleEditTransaction() {
   try {
     const updateData: Database['public']['Tables']['transactions']['Update'] = {
-      account_id: localTransaction.accountId,
-      category: localTransaction.category,
-      date: localTransaction.date,
-      name: localTransaction.name,
-      amount: Number.parseFloat(localTransaction.amount)
+      account_id: transactionToEdit.accountId,
+      category: transactionToEdit.category,
+      date: transactionToEdit.date,
+      name: transactionToEdit.name,
+      amount: Number.parseFloat(transactionToEdit.amount)
     };
-    await editTransaction(localTransaction.id, updateData);
+    await editTransaction(transactionToEdit.id, updateData);
 
     close();
 
@@ -166,18 +133,18 @@ async function handleEditTransaction() {
   }
 }
 
-async function handleDeleteTransaction() {
-  try {
-    await removeTransaction(localTransaction.id);
+// async function handleDeleteTransaction() {
+//   try {
+//     await removeTransaction(localTransaction.id);
 
-    await loadAccountBalances();
+//     await loadAccountBalances();
 
-    close();
+//     close();
 
-    toast.success('Transaction delete successful');
-  } catch (error) {
-    console.error(error);
-    toast.error('Transaction delete failed');
-  }
-}
+//     toast.success('Transaction delete successful');
+//   } catch (error) {
+//     console.error(error);
+//     toast.error('Transaction delete failed');
+//   }
+// }
 </script>

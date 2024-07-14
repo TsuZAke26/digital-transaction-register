@@ -20,33 +20,34 @@ const router = createRouter({
           component: () => import('@/views/HomeView.vue')
         },
         {
-          path: '/accounts/:id/transactions',
-          name: 'account-transactions',
-          component: () => import('@/views/accounts/id/transactions/AccountIdTransactionsView.vue'),
-          props: true
-        },
-        {
-          path: '/accounts/:id/reports',
-          name: 'account-reports',
-          component: () => import('@/views/accounts/id/reports/AccountIdReportsView.vue'),
-          props: true
+          path: '/test',
+          component: () => import('@/views/TestView.vue')
         },
         {
           path: '/accounts/:id',
           name: 'account',
           component: () => import('@/views/accounts/id/AccountIdView.vue'),
-          props: true
+          props: true,
+          children: [
+            {
+              path: '/accounts/:id/transactions',
+              name: 'account-transactions',
+              component: () =>
+                import('@/views/accounts/id/transactions/AccountIdTransactionsView.vue'),
+              props: true
+            },
+            {
+              path: '/accounts/:id/reports',
+              name: 'account-reports',
+              component: () => import('@/views/accounts/id/reports/AccountIdReportsView.vue'),
+              props: true
+            }
+          ]
         },
         {
-          path: '/accounts',
-          name: 'accounts',
-          component: () => import('@/views/accounts/AccountsView.vue'),
-          props: true
-        },
-        {
-          path: '/profile',
-          name: 'profile',
-          component: () => import('@/views/profile/ProfileView.vue')
+          path: '/settings',
+          name: 'settings',
+          component: () => import('@/views/settings/SettingsView.vue')
         }
       ],
       meta: {
